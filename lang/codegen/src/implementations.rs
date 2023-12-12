@@ -396,30 +396,30 @@ pub(crate) fn impl_psp34(impl_args: &mut ImplArgs) {
 pub(crate) fn impl_psp34_metadata(impl_args: &mut ImplArgs) {
     let storage_struct_name = impl_args.contract_name();
     let internal_default_impl = syn::parse2::<syn::ItemImpl>(quote!(
-        impl pendzl::contracts::token::psp34::extenstions::metadata::implementation::PSP34MetadataInternalDefaultImpl for #storage_struct_name {}
+        impl pendzl::contracts::token::psp34::extensions::metadata::implementation::PSP34MetadataInternalDefaultImpl for #storage_struct_name {}
     ))
     .expect("Should parse");
 
     let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
-        impl pendzl::contracts::token::psp34::extenstions::metadata::Internal for #storage_struct_name {
+        impl pendzl::contracts::token::psp34::extensions::metadata::PSP34MetadataInternal for #storage_struct_name {
 
-            fn _set_attribute(&mut self, id: Id, key: String, value: String) {
-                pendzl::contracts::token::psp34::extenstions::metadata::implementation::PSP34MetadataInternalDefaultImpl::_set_attribute_impl(self, id, key, value)
+            fn _set_attribute(&mut self, id: &Id, key: &String, value: &String) {
+                pendzl::contracts::token::psp34::extensions::metadata::implementation::PSP34MetadataInternalDefaultImpl::_set_attribute_default_impl(self, id, key, value)
             }
         }
     ))
     .expect("Should parse");
 
     let metadata_default_impl = syn::parse2::<syn::ItemImpl>(quote!(
-        impl pendzl::contracts::token::psp34::extenstions::metadata::implementation::PSP34MetadataImpl for #storage_struct_name {}
+        impl pendzl::contracts::token::psp34::extensions::metadata::implementation::PSP34MetadataDefaultImpl for #storage_struct_name {}
     ))
     .expect("Should parse");
 
     let mut metadata = syn::parse2::<syn::ItemImpl>(quote!(
-        impl pendzl::contracts::token::psp34::extenstions::metadata::PSP34Metadata for #storage_struct_name {
+        impl pendzl::contracts::token::psp34::extensions::metadata::PSP34Metadata for #storage_struct_name {
             #[ink(message)]
             fn get_attribute(&self, id: Id, key: String) -> Option<String> {
-                pendzl::contracts::token::psp34::extenstions::metadata::implementation::PSP34MetadataImpl::get_attribute_impl(self, id, key)
+                pendzl::contracts::token::psp34::extensions::metadata::implementation::PSP34MetadataDefaultImpl::get_attribute_default_impl(self, id, key)
             }
         }
     ))
@@ -435,7 +435,7 @@ pub(crate) fn impl_psp34_metadata(impl_args: &mut ImplArgs) {
     ))
     .expect("Should parse import");
 
-    impl_args.imports.insert("PSP34", import);
+    impl_args.imports.insert("PSP34Metadata", import);
     impl_args.imports.insert("PSP34MetadataData", import_data);
 
     impl_args.vec_import();

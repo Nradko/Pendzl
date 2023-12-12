@@ -1,7 +1,9 @@
 [package]
-name = "my_psp34"
+name = "my_psp34_metadata"
 version = "0.1.0-alpha"
-authors = ["Brushfam <dominik.krizo@727.ventures>"]
+authors = [
+    "Brushfam <dominik.krizo@727.ventures>, Konrad Wierzbik <konrad.wierzbik@gmail.com>",
+]
 edition = "2021"
 
 [dependencies]
@@ -15,14 +17,14 @@ scale-info = { version = "2.6", default-features = false, features = [
 ], optional = true }
 
 # These dependencies
-pendzl = { path = "../..", default-features = false, features = ["psp34"] }
+pendzl = { path = "../../..", default-features = false, features = ["psp34"] }
 
 [dev-dependencies]
 ink_e2e = "5.0.0-rc"
-test_helpers = { path = "../test_helpers", default-features = false }
+test_helpers = { path = "../../test_helpers", default-features = false }
 
 [lib]
-name = "my_psp34"
+name = "my_psp34_metadata"
 path = "lib.rs"
 
 
