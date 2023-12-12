@@ -156,17 +156,56 @@ pub mod ownable {
             assert_eq!(transfer_ownership_tx, Ok(()));
 
             let owner = client
-                .call(&ink_e2e::bob(), &contract.owner())
+                .call(&ink_e2e::alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();
 
             assert_eq!(owner, Some(account_id(Bob)));
 
-            let renounce_ownership_tx = client
-                .call(&ink_e2e::bob(), &contract.renounce_ownership())
+            let mint_res = client
+                .call(&ink_e2e::bob(), &contract.mint(account_id(Bob), 123))
                 .submit()
+                .await
+                .expect("mint failed")
+                .return_value();
+
+            assert_eq!(mint_res, Ok(()));
+
+            let balance_after = client
+                .call(&ink_e2e::alice(), &contract.balance_of(account_id(Bob)))
+                .dry_run()
                 .await?
+                .return_value();
+
+            assert_eq!(balance_after, 123);
+
+            Ok(())
+        }
+
+        #[ink_e2e::test]
+        async fn renounce_ownership_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+            let mut constructor = ContractRef::new();
+            let mut contract = client
+                .instantiate("my_ownable", &ink_e2e::alice(), &mut constructor)
+                .submit()
+                .await
+                .expect("instantiate failed")
+                .call::<Contract>();
+
+            let owner = client
+                .call(&ink_e2e::alice(), &contract.owner())
+                .dry_run()
+                .await?
+                .return_value();
+
+            assert_eq!(owner, Some(account_id(Alice)));
+
+            let renounce_ownership_tx = client
+                .call(&ink_e2e::alice(), &contract.renounce_ownership())
+                .submit()
+                .await
+                .expect("renounce_ownership failed")
                 .return_value();
 
             assert_eq!(renounce_ownership_tx, Ok(()));
