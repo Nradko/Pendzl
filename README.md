@@ -11,14 +11,16 @@ Why use this library?
 - All contracts are upgradeable by default
 
 Which Standard tokens & useful contracts does it provide?
-- **PSP22** - Fungible Token (*ERC20 equivalent*)
-- (*not yet supported*) **PSP34** - Non-Fungible Token (*ERC721 equivalent*) with extensions
+- **PSP22** - Fungible Token (*ERC20 equivalent*) with some extensions
+- **PSP34** - Non-Fungible Token (*ERC721 equivalent*) with some extensions
 - (*not yet supported*) **PSP37** - *ERC1155 equivalent* with extensions
 - **Ownable** Restrict access to action for non-owners
 - **Access Control** Define set of roles and restrict access to action by roles
 - **Pausable** Pause/Unpause the contract to disable/enable some operations
 - (*not yet supported*) **Timelock Controller** Execute transactions with some delay
 - (*not yet supported*) **Governor** Govern
+
+This library was created based on some of [openbrush-contracts](https://github.com/Brushfam/openbrush-contracts), Pendzlis using openbrush's implementation macro, Storage trait, examples and testsof features pendzl provides. 
 
 
 ### Additional stuff
@@ -33,13 +35,6 @@ functionality for your code. -->
 
 <!-- Not sure where to start? Use [the interactive generator](https://pendzl.io) to bootstrap your contract and learn about the components offered in pendzl. -->
 
-### ‼️ Important ‼️
-  
-The identifiers of events must be based on the name of the trait. At the moment, ink! doesn't support it,
-but it must be fixed with this [issue](https://github.com/paritytech/ink/issues/809).
-
-### Issues to be resolved before the library becomes production-ready:
-* [Event's identifiers are based on the naming of the storage structure](https://github.com/Brushfam/pendzl-contracts/issues/2)
 
 <!-- ## Roadmap 🚗
 
@@ -71,8 +66,7 @@ After you can run tests by `npm run test` command. It will build all contracts r
 
 ### Was it audited?
 
-Contracts in this repository have not yet been audited and contain several vulnerabilities due to the specific of the ink!. 
-Since ink! is audited now, pendzl is going to be audited after major breaking changes regarding switching to stable toolchain and adapting to latest ink! will be released.
+Contracts in this repository have not yet been audited and may contain several vulnerabilities. 
 
 ## License
 

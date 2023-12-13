@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use quote::{format_ident, quote};
 use std::collections::HashMap;
 use syn::Block;

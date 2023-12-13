@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #[test]
 fn ui_tests() {
     let t = trybuild::TestCases::new();

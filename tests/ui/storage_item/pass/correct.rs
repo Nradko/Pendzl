@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use pendzl::traits::AccountId;
 #[derive(Debug)]
 #[pendzl::storage_item]

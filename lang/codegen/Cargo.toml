@@ -7,11 +7,8 @@ authors = [
 edition = "2021"
 
 license = "MIT"
-repository = "https://github.com/Brushfam/pendzl-contracts"
-documentation = "https://learn.brushfam.io/docs/pendzl"
-homepage = "https://brushfam.io/"
 description = "pendzl codegeneration for macros in `pendzl_lang_macro`."
-keywords = ["wasm", "brushfam", "smart-contracts", "blockchain", "ink"]
+keywords = ["wasm", "smart-contracts", "blockchain", "ink"]
 categories = ["no-std", "embedded"]
 include = ["Cargo.toml", "src/**/*.rs"]
 

@@ -2,17 +2,17 @@
 name = "my_psp34_metadata"
 version = "0.1.0-alpha"
 authors = [
-    "Brushfam <dominik.krizo@727.ventures>, Konrad Wierzbik <konrad.wierzbik@gmail.com>",
+    " Brushfam <m.konstantinovna@727.ventures> (old author), Konrad Wierzbik <konrad.wierzbik@gmail.com ",
 ]
 edition = "2021"
 
 [dependencies]
 ink = { version = "5.0.0-rc", default-features = false }
 
-scale = { package = "parity-scale-codec", version = "3", default-features = false, features = [
+scale = { package = "parity-scale-codec", version = "3.6", default-features = false, features = [
     "derive",
 ] }
-scale-info = { version = "2.6", default-features = false, features = [
+scale-info = { version = "2.10", default-features = false, features = [
     "derive",
 ], optional = true }
 

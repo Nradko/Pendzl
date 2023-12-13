@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, scale::Encode, scale::Decode)]
 #[cfg_attr(
     feature = "std",

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::token::psp34::Id;
 use ink::{contract_ref, env::DefaultEnvironment, prelude::string::String};
 pub type PSP34MetadataRef = contract_ref!(PSP34Metadata, DefaultEnvironment);

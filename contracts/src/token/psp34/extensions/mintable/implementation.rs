@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use ink::primitives::AccountId;
 
 use crate::token::psp34::{Id, PSP34Error, PSP34Internal};

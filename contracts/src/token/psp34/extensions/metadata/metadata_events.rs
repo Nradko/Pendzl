@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #[ink::event]
 pub struct AttribiuteSet {
     #[ink(topic)]

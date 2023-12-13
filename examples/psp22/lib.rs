@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 use ink::{prelude::string::String, primitives::AccountId};

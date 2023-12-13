@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #[ink::contract]
 mod base_psp22 {
     use pendzl::traits::Storage;

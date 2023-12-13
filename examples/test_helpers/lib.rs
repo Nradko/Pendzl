@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #[macro_export]
 macro_rules! balance_of {
     ($client:ident, $contract:ident, $account:ident) => {{

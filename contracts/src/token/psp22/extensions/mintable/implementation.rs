@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use ink::primitives::AccountId;
 
 use crate::token::psp22::PSP22Error;
