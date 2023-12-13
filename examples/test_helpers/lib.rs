@@ -1,17 +1,10 @@
 #[macro_export]
-macro_rules! address_of {
-    ($account:ident) => {
-        ink_e2e::account_id(ink_e2e::AccountKeyring::$account)
-    };
-}
-
-#[macro_export]
 macro_rules! balance_of {
     ($client:ident, $contract:ident, $account:ident) => {{
         $client
             .call(
                 &ink_e2e::alice(),
-                &$contract.balance_of(address_of!($account)),
+                &$contract.balance_of(ink_e2e::account_id($account)),
             )
             .dry_run()
             .await?
@@ -38,7 +31,7 @@ macro_rules! owner_of {
 macro_rules! balance_of_37 {
     ($client:ident, $contract:ident, $account:ident, $token:expr) => {{
         let _msg = build_message::<ContractRef>($contract.clone())
-            .call(|contract| contract.balance_of(address_of!($account), $token));
+            .call(|contract| contract.balance_of(ink_e2e::account_id($account), $token));
         $client
             .call_dry_run(&ink_e2e::alice(), &_msg)
             .await
@@ -52,7 +45,7 @@ macro_rules! has_role {
         $client
             .call(
                 &ink_e2e::alice(),
-                &$contract.has_role($role, Some(address_of!($account))),
+                &$contract.has_role($role, Some(ink_e2e::account_id($account))),
             )
             .dry_run()
             .await
@@ -67,7 +60,7 @@ macro_rules! grant_role {
         $client
             .call(
                 &ink_e2e::alice(),
-                &mut $contract.grant_role($role, Some(address_of!($account))),
+                &mut $contract.grant_role($role, Some(ink_e2e::account_id($account))),
             )
             .submit()
             .await
@@ -82,7 +75,7 @@ macro_rules! revoke_role {
         $client
             .call(
                 &ink_e2e::alice(),
-                &$contract.revoke_role($role, Some(address_of!($account))),
+                &$contract.revoke_role($role, Some(ink_e2e::account_id($account))),
             )
             .submit()
             .await
@@ -97,7 +90,7 @@ macro_rules! mint_dry_run {
         $client
             .call(
                 &ink_e2e::$signer(),
-                contract.mint(address_of!($account), $amount),
+                contract.mint(ink_e2e::account_id($account), $amount),
             )
             .dry_run()
             .await
@@ -112,7 +105,7 @@ macro_rules! mint {
         $client
             .call(
                 &ink_e2e::$signer(),
-                contract.mint(address_of!($account), $amount),
+                contract.mint(ink_e2e::account_id($account), $amount),
             )
             .submit()
             .await
@@ -149,7 +142,10 @@ macro_rules! get_role_member {
 macro_rules! get_shares {
     ($client:ident, $contract:ident, $user:ident) => {{
         $client
-            .call(&ink_e2e::alice(), &contract.shares(address_of!($user)))
+            .call(
+                &ink_e2e::alice(),
+                &contract.shares(ink_e2e::account_id($user)),
+            )
             .dry_run()
             .await
             .expect("get_shares failed")

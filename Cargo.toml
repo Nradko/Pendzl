@@ -37,7 +37,7 @@ path = "src/lib.rs"
 crate-type = ["rlib"]
 
 [dev-dependencies]
-ink_env = "4.3.0"
+ink_env = "5.0.0-rc"
 trybuild = "1.0.80"
 ink_e2e = "5.0.0-rc"
 
@@ -52,29 +52,29 @@ std = [
 ]
 psp22 = ["pendzl_contracts/psp22"]
 psp34 = ["pendzl_contracts/psp34"]
-psp37 = ["pendzl_contracts/psp37"]
+# # psp37 = ["pendzl_contracts/psp37"]
 access_control = ["pendzl_contracts/access_control"]
 ownable = ["pendzl_contracts/ownable"]
 pausable = ["pendzl_contracts/pausable"]
-timelock_controller = ["pendzl_contracts/timelock_controller"]
+# timelock_controller = ["pendzl_contracts/timelock_controller"]
 # governance = ["pendzl_contracts/governance", "pendzl_contracts/checkpoints"]
-crypto = ["pendzl_contracts/crypto"]
-nonces = ["pendzl_contracts/nonces"]
-checkpoints = ["pendzl_contracts/checkpoints"]
-psp61 = ["pendzl_contracts/psp61"]
+# crypto = ["pendzl_contracts/crypto"]
+# nonces = ["pendzl_contracts/nonces"]
+# checkpoints = ["pendzl_contracts/checkpoints"]
+# psp61 = ["pendzl_contracts/psp61"]
 
 test-all = [
     "psp22",
     "psp34",
-    "psp37",
+    # "psp37",
     "access_control",
     "ownable",
     "pausable",
     # "timelock_controller",
     # "governance",
-    "crypto",
-    "nonces",
-    "checkpoints",
+    # "crypto",
+    # "nonces",
+    # "checkpoints",
 ]
 
 [profile.release]

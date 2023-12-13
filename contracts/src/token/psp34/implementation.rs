@@ -1,23 +1,21 @@
 // SPDX-License-Identifier: MIT
 
-use crate::token::psp34::{
-    Approval, Id, Operator, Owner, PSP34Error, PSP34Internal, PSP34Storage, Transfer,
-};
+use crate::token::psp34::{Approval, Id, PSP34Error, PSP34Internal, PSP34Storage, Transfer};
 use ink::{prelude::vec::Vec, primitives::AccountId, storage::Mapping};
 use pendzl::traits::{DefaultEnv, Storage};
 
 #[derive(Default, Debug)]
 #[pendzl::storage_item]
 pub struct Data {
-    owner_of: Mapping<Id, Owner>,
-    allowances: Mapping<(Owner, Operator, Option<Id>), ()>,
-    owned_tokens_count: Mapping<Owner, u32>,
+    owner_of: Mapping<Id, AccountId>,
+    allowances: Mapping<(AccountId, AccountId, Option<Id>), ()>,
+    owned_tokens_count: Mapping<AccountId, u32>,
     #[lazy]
     total_supply: u64,
 }
 
 impl PSP34Storage for Data {
-    fn balance_of(&self, owner: &Owner) -> u32 {
+    fn balance_of(&self, owner: &AccountId) -> u32 {
         self.owned_tokens_count.get(owner).unwrap_or(0)
     }
 
@@ -29,7 +27,7 @@ impl PSP34Storage for Data {
         self.owner_of.get(id)
     }
 
-    fn allowance(&self, owner: &Owner, operator: &Operator, id: &Option<Id>) -> bool {
+    fn allowance(&self, owner: &AccountId, operator: &AccountId, id: &Option<Id>) -> bool {
         self.allowances.get(&(*owner, *operator, None)).is_some()
             || (id.is_some()
                 && self
@@ -40,8 +38,8 @@ impl PSP34Storage for Data {
 
     fn set_operator_approval(
         &mut self,
-        owner: &Owner,
-        operator: &Operator,
+        owner: &AccountId,
+        operator: &AccountId,
         id: &Option<Id>,
         approved: &bool,
     ) {
@@ -69,9 +67,9 @@ impl PSP34Storage for Data {
         Ok(())
     }
 
-    fn remove_token_owner(&mut self, id: &Id, from: &AccountId) {
+    fn remove_token_owner(&mut self, id: &Id, from: &AccountId) -> Result<(), PSP34Error> {
         if self.owner_of.get(id) != Some(*from) {
-            panic!();
+            return Err(PSP34Error::NotApproved);
         }
         self.owner_of.remove(id);
         let balance = self.owned_tokens_count.get(from).unwrap_or(0);
@@ -79,6 +77,7 @@ impl PSP34Storage for Data {
 
         let total_suply = self.total_supply.get().unwrap();
         self.total_supply.set(&(total_suply - 1));
+        Ok(())
     }
 }
 
@@ -154,7 +153,7 @@ pub trait PSP34InternalDefaultImpl: Storage<Data>
 where
     Data: PSP34Storage,
 {
-    fn _balance_of_default_impl(&self, owner: &Owner) -> u32 {
+    fn _balance_of_default_impl(&self, owner: &AccountId) -> u32 {
         self.data().owned_tokens_count.get(owner).unwrap_or(0)
     }
 
@@ -192,7 +191,7 @@ where
         id: &Id,
     ) -> Result<(), PSP34Error> {
         if let Some(from) = from {
-            self.data().remove_token_owner(&id, from);
+            self.data().remove_token_owner(&id, from)?;
         }
 
         if let Some(to) = to {

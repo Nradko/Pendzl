@@ -110,13 +110,13 @@ pub trait PSP34Storage {
 
     fn set_operator_approval(
         &mut self,
-        owner: &Owner,
-        operator: &Operator,
+        owner: &AccountId,
+        operator: &AccountId,
         id: &Option<Id>,
         approved: &bool,
     );
 
     fn insert_token_owner(&mut self, id: &Id, to: &AccountId) -> Result<(), PSP34Error>;
 
-    fn remove_token_owner(&mut self, id: &Id, from: &AccountId);
+    fn remove_token_owner(&mut self, id: &Id, from: &AccountId) -> Result<(), PSP34Error>;
 }

@@ -24,44 +24,36 @@
 #[ink::contract]
 mod psp34_mintable {
     use pendzl::{
-        contracts::psp34::Id,
+        contracts::token::psp34::{Id, PSP34Error, PSP34},
         test_utils::accounts,
-        traits::{Storage, String},
+        traits::String,
     };
 
     #[derive(Default, Storage)]
     #[ink(storage)]
     pub struct PSP34Struct {
         #[storage_field]
-        psp34: psp34::Data,
+        psp34: PSP34Data,
         // field for testing _before_token_transfer
         return_err_on_before: bool,
         // field for testing _after_token_transfer
         return_err_on_after: bool,
     }
 
-    #[overrider(psp34::Internal)]
-    fn _before_token_transfer(
+    #[overrider(PSP34Internal)]
+    fn _update(
         &mut self,
-        _from: Option<&AccountId>,
-        _to: Option<&AccountId>,
-        _id: Id,
-    ) -> Result<(), PSP34Error> {
+        from: Option<&AccountId>,
+        to: Option<&AccountId>,
+        id: &Id,
+    ) -> Result<(), PSP22Error> {
         if self.return_err_on_before {
             return Err(PSP34Error::Custom(String::from(
                 "Error on _before_token_transfer",
             )));
         }
-        Ok(())
-    }
+        pendzl::contracts::token::psp34::implementation::PSP34InternalDefaultImpl::_update_default_impl(self, from, to, id)?;
 
-    #[overrider(psp34::Internal)]
-    fn _after_token_transfer(
-        &mut self,
-        _from: Option<&AccountId>,
-        _to: Option<&AccountId>,
-        _id: Id,
-    ) -> Result<(), PSP34Error> {
         if self.return_err_on_after {
             return Err(PSP34Error::Custom(String::from(
                 "Error on _after_token_transfer",

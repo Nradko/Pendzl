@@ -2,15 +2,15 @@
 
 #[ink::event]
 pub struct Transfer {
-    from: Option<AccountId>,
-    to: Option<AccountId>,
-    id: Id,
+    pub from: Option<AccountId>,
+    pub to: Option<AccountId>,
+    pub id: Id,
 }
 
 #[ink::event]
 pub struct Approval {
-    from: AccountId,
-    to: AccountId,
-    id: Option<Id>,
-    approved: bool,
+    pub from: AccountId,
+    pub to: AccountId,
+    pub id: Option<Id>,
+    pub approved: bool,
 }

@@ -200,7 +200,7 @@ where
         Self::env().emit_event(Transfer {
             from: from.and_then(|v| Some(*v)),
             to: to.and_then(|v| Some(*v)),
-            amount: *amount,
+            value: *amount,
         });
         Ok(())
     }
@@ -240,7 +240,7 @@ where
         Self::env().emit_event(Approval {
             owner: *owner,
             spender: *spender,
-            amount: *amount,
+            value: *amount,
         });
         Ok(())
     }
@@ -255,7 +255,7 @@ where
         Self::env().emit_event(Approval {
             owner: *owner,
             spender: *spender,
-            amount: allowance,
+            value: allowance,
         });
         Ok(())
     }
@@ -269,7 +269,7 @@ where
         Self::env().emit_event(Approval {
             owner: *owner,
             spender: *spender,
-            amount: allowance,
+            value: allowance,
         });
         Ok(())
     }

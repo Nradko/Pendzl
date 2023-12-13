@@ -6,7 +6,6 @@ pub mod ownable {
     use pendzl::contracts::token::psp22::extensions::{
         burnable::PSP22Burnable, mintable::PSP22Mintable,
     };
-    use pendzl::contracts::token::psp22::*;
 
     #[ink(storage)]
     #[derive(Default, Storage)]
@@ -60,14 +59,14 @@ pub mod ownable {
         ) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let contract = client
-                .instantiate("my_ownable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_ownable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
                 .call::<Contract>();
 
             let owner = client
-                .call(&ink_e2e::alice(), &contract.owner())
+                .call(&alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();
@@ -81,14 +80,14 @@ pub mod ownable {
         async fn only_owner_is_allowed_to_mint(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_ownable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_ownable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
                 .call::<Contract>();
 
             let owner = client
-                .call(&ink_e2e::alice(), &contract.owner())
+                .call(&alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();
@@ -96,7 +95,7 @@ pub mod ownable {
             assert_eq!(owner, Some(account_id(Alice)));
 
             let mint_res = client
-                .call(&ink_e2e::alice(), &contract.mint(account_id(Bob), 1))
+                .call(&alice(), &contract.mint(account_id(Bob), 1))
                 .submit()
                 .await
                 .expect("mint failed")
@@ -111,14 +110,14 @@ pub mod ownable {
         async fn transfer_ownership_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_ownable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_ownable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
                 .call::<Contract>();
 
             let owner = client
-                .call(&ink_e2e::alice(), &contract.owner())
+                .call(&alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();
@@ -126,7 +125,7 @@ pub mod ownable {
             assert_eq!(owner, Some(account_id(Alice)));
 
             let mint_res = client
-                .call(&ink_e2e::bob(), &contract.mint(account_id(Bob), 123))
+                .call(&bob(), &contract.mint(account_id(Bob), 123))
                 .dry_run()
                 .await?
                 .return_value();
@@ -137,7 +136,7 @@ pub mod ownable {
             );
 
             let balance_before = client
-                .call(&ink_e2e::alice(), &contract.balance_of(account_id(Bob)))
+                .call(&alice(), &contract.balance_of(account_id(Bob)))
                 .dry_run()
                 .await?
                 .return_value();
@@ -145,10 +144,7 @@ pub mod ownable {
             assert_eq!(balance_before, 0);
 
             let transfer_ownership_tx = client
-                .call(
-                    &ink_e2e::alice(),
-                    &contract.transfer_ownership(account_id(Bob)),
-                )
+                .call(&alice(), &contract.transfer_ownership(account_id(Bob)))
                 .submit()
                 .await?
                 .return_value();
@@ -156,7 +152,7 @@ pub mod ownable {
             assert_eq!(transfer_ownership_tx, Ok(()));
 
             let owner = client
-                .call(&ink_e2e::alice(), &contract.owner())
+                .call(&alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();
@@ -164,7 +160,7 @@ pub mod ownable {
             assert_eq!(owner, Some(account_id(Bob)));
 
             let mint_res = client
-                .call(&ink_e2e::bob(), &contract.mint(account_id(Bob), 123))
+                .call(&bob(), &contract.mint(account_id(Bob), 123))
                 .submit()
                 .await
                 .expect("mint failed")
@@ -173,7 +169,7 @@ pub mod ownable {
             assert_eq!(mint_res, Ok(()));
 
             let balance_after = client
-                .call(&ink_e2e::alice(), &contract.balance_of(account_id(Bob)))
+                .call(&alice(), &contract.balance_of(account_id(Bob)))
                 .dry_run()
                 .await?
                 .return_value();
@@ -187,14 +183,14 @@ pub mod ownable {
         async fn renounce_ownership_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_ownable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_ownable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
                 .call::<Contract>();
 
             let owner = client
-                .call(&ink_e2e::alice(), &contract.owner())
+                .call(&alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();
@@ -202,7 +198,7 @@ pub mod ownable {
             assert_eq!(owner, Some(account_id(Alice)));
 
             let renounce_ownership_tx = client
-                .call(&ink_e2e::alice(), &contract.renounce_ownership())
+                .call(&alice(), &contract.renounce_ownership())
                 .submit()
                 .await
                 .expect("renounce_ownership failed")
@@ -211,7 +207,7 @@ pub mod ownable {
             assert_eq!(renounce_ownership_tx, Ok(()));
 
             let owner = client
-                .call(&ink_e2e::alice(), &contract.owner())
+                .call(&alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();
@@ -227,14 +223,14 @@ pub mod ownable {
         ) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_ownable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_ownable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
                 .call::<Contract>();
 
             let owner = client
-                .call(&ink_e2e::alice(), &contract.owner())
+                .call(&alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();
@@ -242,7 +238,7 @@ pub mod ownable {
             assert_eq!(owner, Some(account_id(Alice)));
 
             let renounce_ownership_tx = client
-                .call(&ink_e2e::bob(), &contract.renounce_ownership())
+                .call(&bob(), &contract.renounce_ownership())
                 .dry_run()
                 .await?
                 .return_value();
@@ -253,7 +249,7 @@ pub mod ownable {
             );
 
             let owner = client
-                .call(&ink_e2e::alice(), &contract.owner())
+                .call(&alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();
@@ -269,14 +265,14 @@ pub mod ownable {
         ) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_ownable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_ownable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
                 .call::<Contract>();
 
             let owner = client
-                .call(&ink_e2e::alice(), &contract.owner())
+                .call(&alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();
@@ -284,7 +280,7 @@ pub mod ownable {
             assert_eq!(owner, Some(account_id(Alice)));
 
             let renounce_ownership_tx = client
-                .call(&ink_e2e::bob(), &contract.renounce_ownership())
+                .call(&bob(), &contract.renounce_ownership())
                 .dry_run()
                 .await?
                 .return_value();
@@ -295,7 +291,7 @@ pub mod ownable {
             );
 
             let owner = client
-                .call(&ink_e2e::alice(), &contract.owner())
+                .call(&alice(), &contract.owner())
                 .dry_run()
                 .await?
                 .return_value();

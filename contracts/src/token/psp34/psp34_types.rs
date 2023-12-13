@@ -30,6 +30,3 @@ impl Default for Id {
         Self::U8(0)
     }
 }
-
-pub type Owner = AccountId;
-pub type Operator = AccountId;

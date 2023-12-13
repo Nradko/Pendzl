@@ -36,9 +36,11 @@ pub mod my_psp34 {
         use super::*;
         #[rustfmt::skip]
         use ink_e2e::ContractsBackend;
+        use ink_e2e::account_id;
+        use ink_e2e::AccountKeyring::{Alice, Bob};
         use pendzl::contracts::token::psp34::Id;
 
-        use test_helpers::{address_of, balance_of, owner_of};
+        use test_helpers::{balance_of, owner_of};
 
         type E2EResult<T> = Result<T, Box<dyn std::error::Error>>;
 
@@ -135,7 +137,7 @@ pub mod my_psp34 {
             let transfer_result = client
                 .call(
                     &ink_e2e::alice(),
-                    &contract.transfer(address_of!(Bob), Id::U8(0), vec![]),
+                    &contract.transfer(account_id(Bob), Id::U8(0), vec![]),
                 )
                 .submit()
                 .await
@@ -178,7 +180,7 @@ pub mod my_psp34 {
             let approve_result = client
                 .call(
                     &ink_e2e::alice(),
-                    &contract.approve(address_of!(Bob), Some(Id::U8(0)), true),
+                    &contract.approve(account_id(Bob), Some(Id::U8(0)), true),
                 )
                 .submit()
                 .await
@@ -190,7 +192,7 @@ pub mod my_psp34 {
             let transfer_result = client
                 .call(
                     &ink_e2e::bob(),
-                    &contract.transfer(address_of!(Bob), Id::U8(0), vec![]),
+                    &contract.transfer(account_id(Bob), Id::U8(0), vec![]),
                 )
                 .submit()
                 .await
@@ -235,7 +237,7 @@ pub mod my_psp34 {
             let approve_result = client
                 .call(
                     &ink_e2e::alice(),
-                    &contract.approve(address_of!(Bob), None, true),
+                    &contract.approve(account_id(Bob), None, true),
                 )
                 .submit()
                 .await?
@@ -246,7 +248,7 @@ pub mod my_psp34 {
             let transfer_result = client
                 .call(
                     &ink_e2e::bob(),
-                    &contract.transfer(address_of!(Bob), Id::U8(0), vec![]),
+                    &contract.transfer(account_id(Bob), Id::U8(0), vec![]),
                 )
                 .submit()
                 .await
@@ -280,12 +282,12 @@ pub mod my_psp34 {
 
             assert_eq!(mint_result, Ok(()));
 
-            assert_eq!(owner_of!(client, contract, 0), Some(address_of!(Alice)));
+            assert_eq!(owner_of!(client, contract, 0), Some(account_id(Alice)));
 
             let transfer_result = client
                 .call(
                     &ink_e2e::alice(),
-                    &contract.transfer(address_of!(Bob), Id::U8(0), vec![]),
+                    &contract.transfer(account_id(Bob), Id::U8(0), vec![]),
                 )
                 .submit()
                 .await?
@@ -293,7 +295,7 @@ pub mod my_psp34 {
 
             assert_eq!(transfer_result, Ok(()));
 
-            assert_eq!(owner_of!(client, contract, 0), Some(address_of!(Bob)));
+            assert_eq!(owner_of!(client, contract, 0), Some(account_id(Bob)));
 
             Ok(())
         }
@@ -315,7 +317,7 @@ pub mod my_psp34 {
             let transfer_result = client
                 .call(
                     &ink_e2e::alice(),
-                    &contract.transfer(address_of!(Bob), Id::U8(0), vec![]),
+                    &contract.transfer(account_id(Bob), Id::U8(0), vec![]),
                 )
                 .dry_run()
                 .await?
@@ -351,7 +353,7 @@ pub mod my_psp34 {
             let transfer_result = client
                 .call(
                     &ink_e2e::bob(),
-                    &contract.transfer(address_of!(Bob), Id::U8(0), vec![]),
+                    &contract.transfer(account_id(Bob), Id::U8(0), vec![]),
                 )
                 .dry_run()
                 .await?

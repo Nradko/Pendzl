@@ -3,8 +3,8 @@
 #[pendzl::implementation(Pausable)]
 #[ink::contract]
 pub mod my_pausable {
-    use pendzl::contracts::security::pausable::PausableError;
-    use pendzl::contracts::security::pausable::PausableInternal;
+    // use pendzl::contracts::security::pausable::PausableError;
+    // use pendzl::contracts::security::pausable::PausableInternal;
 
     #[ink(storage)]
     #[derive(Default, Storage)]
@@ -44,9 +44,7 @@ pub mod my_pausable {
         use super::*;
         #[rustfmt::skip]
         use ink_e2e::ContractsBackend;
-        use ink_e2e::account_id;
         use ink_e2e::AccountKeyring::{Alice, Bob};
-        use ink_e2e::{alice, bob};
 
         use test_helpers::{method_call, method_call_dry_run};
 
@@ -56,7 +54,7 @@ pub mod my_pausable {
         async fn success_flip_when_not_paused(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_pausable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_pausable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
@@ -71,7 +69,7 @@ pub mod my_pausable {
         async fn success_pause_when_not_paused(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_pausable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_pausable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
@@ -86,7 +84,7 @@ pub mod my_pausable {
         async fn success_flip(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_pausable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_pausable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
@@ -101,7 +99,7 @@ pub mod my_pausable {
         async fn failed_double_pause(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_pausable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_pausable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
@@ -120,7 +118,7 @@ pub mod my_pausable {
         async fn success_pause_and_unpause(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_pausable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_pausable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
@@ -136,7 +134,7 @@ pub mod my_pausable {
         async fn failed_unpause(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_pausable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_pausable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")
@@ -154,7 +152,7 @@ pub mod my_pausable {
         async fn failed_flip_when_paused(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             let mut constructor = ContractRef::new();
             let mut contract = client
-                .instantiate("my_pausable", &ink_e2e::alice(), &mut constructor)
+                .instantiate("my_pausable", &alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed")

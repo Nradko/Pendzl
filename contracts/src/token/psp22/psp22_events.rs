@@ -1,18 +1,20 @@
 // SPDX-License-Identifier: MIT
 #[ink::event]
+#[derive(Debug)]
 pub struct Transfer {
     #[ink(topic)]
-    from: Option<AccountId>,
+    pub from: Option<AccountId>,
     #[ink(topic)]
-    to: Option<AccountId>,
-    amount: Balance,
+    pub to: Option<AccountId>,
+    pub value: Balance,
 }
 
 #[ink::event]
+#[derive(Debug)]
 pub struct Approval {
     #[ink(topic)]
-    owner: AccountId,
+    pub owner: AccountId,
     #[ink(topic)]
-    spender: AccountId,
-    amount: Balance,
+    pub spender: AccountId,
+    pub value: Balance,
 }

@@ -62,8 +62,8 @@ pub fn storage_derive(item: proc_macro::TokenStream) -> proc_macro::TokenStream 
 ////        psp22: psp22::Data
 ////    }
 ////
-////    // this will override a function from psp22::Internal
-////    #[overrider(psp22::Internal)]
+////    // this will override a function from PSP22Internal
+////    #[overrider(PSP22Internal)]
 ////    fn _before_token_transfer(
 ////        &mut self,
 ////        from: Option<&AccountId>,

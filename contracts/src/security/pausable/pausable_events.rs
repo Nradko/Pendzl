@@ -3,11 +3,11 @@
 #[ink::event]
 pub struct Paused {
     #[ink(topic)]
-    account: AccountId,
+    pub account: AccountId,
 }
 
 #[ink::event]
 pub struct Unpaused {
     #[ink(topic)]
-    account: AccountId,
+    pub account: AccountId,
 }

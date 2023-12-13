@@ -2,5 +2,5 @@
 #[ink::event]
 pub struct OwnershipTransferred {
     #[ink(topic)]
-    new: Option<AccountId>,
+    pub new: Option<AccountId>,
 }

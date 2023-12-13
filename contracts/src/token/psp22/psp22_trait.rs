@@ -3,7 +3,7 @@
 use ink::{contract_ref, env::DefaultEnvironment, prelude::vec::Vec, primitives::AccountId};
 pub type PSP22Ref = contract_ref!(PSP22, DefaultEnvironment);
 
-pub type Balance = u128;
+pub use pendzl::traits::Balance;
 
 /// Trait implemented by all PSP-22 respecting smart traits.
 #[ink::trait_definition]

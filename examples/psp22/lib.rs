@@ -63,8 +63,10 @@ pub mod my_psp22 {
     #[cfg(all(test, feature = "e2e-tests"))]
     pub mod tests {
         use super::*;
+        use ink_e2e::account_id;
+        use ink_e2e::AccountKeyring::{Alice, Bob};
         use ink_e2e::ContractsBackend;
-        use test_helpers::{address_of, balance_of};
+        use test_helpers::balance_of;
 
         type E2EResult<T> = Result<T, Box<dyn std::error::Error>>;
 
@@ -79,7 +81,7 @@ pub mod my_psp22 {
                 .call::<Contract>();
 
             let balance_of_deployer = client
-                .call(&ink_e2e::alice(), &contract.balance_of(address_of!(Alice)))
+                .call(&ink_e2e::alice(), &contract.balance_of(account_id(Alice)))
                 .dry_run()
                 .await?
                 .return_value();
@@ -105,7 +107,7 @@ pub mod my_psp22 {
                 client
                     .call(
                         &ink_e2e::alice(),
-                        &contract.transfer(address_of!(Bob), 50, vec![]),
+                        &contract.transfer(account_id(Bob), 50, vec![]),
                     )
                     .submit()
                     .await
@@ -140,7 +142,7 @@ pub mod my_psp22 {
             let result = client
                 .call(
                     &ink_e2e::alice(),
-                    &contract.transfer(address_of!(Bob), 101, vec![]),
+                    &contract.transfer(account_id(Bob), 101, vec![]),
                 )
                 .dry_run()
                 .await?
@@ -166,7 +168,7 @@ pub mod my_psp22 {
             let result = client
                 .call(
                     &ink_e2e::alice(),
-                    &contract.transfer(address_of!(Bob), 10, vec![]),
+                    &contract.transfer(account_id(Bob), 10, vec![]),
                 )
                 .submit()
                 .await
@@ -182,7 +184,7 @@ pub mod my_psp22 {
             let result = client
                 .call(
                     &ink_e2e::alice(),
-                    &contract.set_hated_account(address_of!(Bob)),
+                    &contract.set_hated_account(account_id(Bob)),
                 )
                 .submit()
                 .await
@@ -194,7 +196,7 @@ pub mod my_psp22 {
             let result = client
                 .call(
                     &ink_e2e::alice(),
-                    &contract.transfer(address_of!(Bob), 10, vec![]),
+                    &contract.transfer(account_id(Bob), 10, vec![]),
                 )
                 .dry_run()
                 .await?

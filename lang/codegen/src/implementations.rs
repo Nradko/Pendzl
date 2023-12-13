@@ -45,7 +45,7 @@ impl<'a> ImplArgs<'a> {
 
     // fn signature_import(&mut self) {
     //     let sig_import = syn::parse2::<syn::ItemUse>(quote!(
-    //         use pendzl::utils::crypto::Signature;
+    //       pub use pendzl::utils::crypto::Signature;
     //     ))
     //     .expect("Should parse");
     //     self.imports.insert("Signature", sig_import);
@@ -88,7 +88,7 @@ pub(crate) fn impl_psp22(impl_args: &mut ImplArgs) {
                 to: &AccountId,
                 amount: &Balance,
             ) -> Result<(), PSP22Error> {
-                pendzl::contracts::token::psp22::implementation::PSP22InternalDefaultImpl::_transfer_default_impl(self, from, to, amount)
+                pendzl::contracts::token::psp22::PSP22Internal::_update(self, Some(from), Some(to), amount)
             }
 
             fn _mint_to(
@@ -96,7 +96,7 @@ pub(crate) fn impl_psp22(impl_args: &mut ImplArgs) {
                 to: &AccountId,
                 amount: &Balance,
             ) -> Result<(), PSP22Error> {
-                pendzl::contracts::token::psp22::implementation::PSP22InternalDefaultImpl::_mint_to_default_impl(self, to, amount)
+                pendzl::contracts::token::psp22::PSP22Internal::_update(self, None, Some(to), amount)
             }
             
             fn _burn_from(
@@ -104,7 +104,7 @@ pub(crate) fn impl_psp22(impl_args: &mut ImplArgs) {
                 from: &AccountId,
                 amount: &Balance,
             ) -> Result<(), PSP22Error> {
-                pendzl::contracts::token::psp22::implementation::PSP22InternalDefaultImpl::_burn_from_default_impl(self, from, amount)
+                pendzl::contracts::token::psp22::PSP22Internal::_update(self, Some(from), None, amount)
             }
 
             fn _approve(
@@ -195,12 +195,12 @@ pub(crate) fn impl_psp22(impl_args: &mut ImplArgs) {
     .expect("Should parse");
 
     let import = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::token::psp22::*;
+      pub use pendzl::contracts::token::psp22::*;
     ))
     .expect("Should parse");
 
     let import_data = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::token::psp22::implementation::Data as PSP22Data;
+      pub use pendzl::contracts::token::psp22::implementation::Data as PSP22Data;
     ))
     .expect("Should parse import");
 
@@ -221,6 +221,68 @@ pub(crate) fn impl_psp22(impl_args: &mut ImplArgs) {
     impl_args.items.push(syn::Item::Impl(psp22));
 }
 
+pub(crate) fn impl_psp22_burnable(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let burnable_default_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl pendzl::contracts::token::psp22::extensions::burnable::implementation::PSP22BurnableDefaultImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut burnable = syn::parse2::<syn::ItemImpl>(quote!(
+        impl pendzl::contracts::token::psp22::extensions::burnable::PSP22Burnable for #storage_struct_name {
+            #[ink(message)]
+            fn burn(&mut self, from: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+                pendzl::contracts::token::psp22::extensions::burnable::implementation::PSP22BurnableDefaultImpl::burn_default_impl(self,from,amount)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+      pub use pendzl::contracts::token::psp22::extensions::burnable::*;
+    ))
+    .expect("Should parse");
+
+    impl_args.imports.insert("PSP22Burnable", import);
+    impl_args.vec_import();
+
+    override_functions("PSP22Burnable", &mut burnable, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(burnable_default_impl));
+    impl_args.items.push(syn::Item::Impl(burnable));
+}
+
+
+pub(crate) fn impl_psp22_mintable(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let mintable_default_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl pendzl::contracts::token::psp22::extensions::mintable::implementation::PSP22MintableDefaultImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut mintable = syn::parse2::<syn::ItemImpl>(quote!(
+        impl pendzl::contracts::token::psp22::extensions::mintable::PSP22Mintable for #storage_struct_name {
+            #[ink(message)]
+            fn mint(&mut self, from: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+                pendzl::contracts::token::psp22::extensions::mintable::implementation::PSP22MintableDefaultImpl::mint_default_impl(self,from,amount)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+      pub use pendzl::contracts::token::psp22::extensions::mintable::*;
+    ))
+    .expect("Should parse");
+
+    impl_args.imports.insert("PSP22Mintable", import);
+    impl_args.vec_import();
+
+    override_functions("PSP22Mintable", &mut mintable, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(mintable_default_impl));
+    impl_args.items.push(syn::Item::Impl(mintable));
+}
 
 pub(crate) fn impl_psp22_metadata(impl_args: &mut ImplArgs) {
     let storage_struct_name = impl_args.contract_name();
@@ -250,11 +312,11 @@ pub(crate) fn impl_psp22_metadata(impl_args: &mut ImplArgs) {
     .expect("Should parse");
 
     let import = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::token::psp22::extensions::metadata::*;
+      pub use pendzl::contracts::token::psp22::extensions::metadata::*;
     ))
     .expect("Should parse");
     let import_data = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::token::psp22::extensions::metadata::implementation::Data as PSP22MetadataData;
+      pub use pendzl::contracts::token::psp22::extensions::metadata::implementation::Data as PSP22MetadataData;
     ))
     .expect("Should parse");
 
@@ -290,7 +352,7 @@ pub(crate) fn impl_psp34(impl_args: &mut ImplArgs) {
                 pendzl::contracts::token::psp34::implementation::PSP34InternalDefaultImpl::_owner_of_default_impl(self,id)
             }
             
-            fn _allowance(&self, owner: &Owner, operator: &Operator, id: &Option<Id>) -> bool {
+            fn _allowance(&self, owner: &AccountId, operator: &AccountId, id: &Option<Id>) -> bool {
                 pendzl::contracts::token::psp34::implementation::PSP34InternalDefaultImpl::_allowance_default_impl(self, owner, operator, id)
             }
             
@@ -309,15 +371,15 @@ pub(crate) fn impl_psp34(impl_args: &mut ImplArgs) {
             }
         
             fn _transfer(&mut self, from: &AccountId, to: &AccountId, id: &Id, data: &Vec<u8>) -> Result<(), PSP34Error> {
-                pendzl::contracts::token::psp34::implementation::PSP34InternalDefaultImpl::_transfer_default_impl(self, from, to, id, data)
+                pendzl::contracts::token::psp34::PSP34Internal::_update(self, &Some(from), &Some(to), id)
             }
 
             fn _mint_to(&mut self, to: &AccountId, id: &Id) -> Result<(), PSP34Error> {
-                pendzl::contracts::token::psp34::implementation::PSP34InternalDefaultImpl::_mint_to_default_impl(self, to, id)
+                pendzl::contracts::token::psp34::PSP34Internal::_update(self, &None, &Some(to), id)
             }
 
             fn _burn_from(&mut self, from: &AccountId, id: &Id) -> Result<(), PSP34Error> {
-                pendzl::contracts::token::psp34::implementation::PSP34InternalDefaultImpl::_burn_from_default_impl(self, from, id)
+                pendzl::contracts::token::psp34::PSP34Internal::_update(self, &Some(from), &None, id)
             }
 
         }
@@ -370,12 +432,12 @@ pub(crate) fn impl_psp34(impl_args: &mut ImplArgs) {
     .expect("Should parse");
 
     let import = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::token::psp34::*;
+      pub use pendzl::contracts::token::psp34::*;
     ))
     .expect("Should parse");
 
     let import_data = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::token::psp34::implementation::Data as PSP34Data;
+      pub use pendzl::contracts::token::psp34::implementation::Data as PSP34Data;
     ))
     .expect("Should parse import");
 
@@ -391,6 +453,70 @@ pub(crate) fn impl_psp34(impl_args: &mut ImplArgs) {
     impl_args.items.push(syn::Item::Impl(internal));
     impl_args.items.push(syn::Item::Impl(psp34_default_impl));
     impl_args.items.push(syn::Item::Impl(psp34));
+}
+
+
+pub(crate) fn impl_psp34_burnable(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let burnable_default_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl pendzl::contracts::token::psp34::extensions::burnable::implementation::PSP34BurnableDefaultImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut burnable = syn::parse2::<syn::ItemImpl>(quote!(
+        impl pendzl::contracts::token::psp34::extensions::burnable::PSP34Burnable for #storage_struct_name {
+            #[ink(message)]
+            fn burn(&mut self, from: AccountId, id: Id) -> Result<(), PSP34Error> {
+                pendzl::contracts::token::psp34::extensions::burnable::implementation::PSP34BurnableDefaultImpl::burn_default_impl(self,from,id)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+      pub use pendzl::contracts::token::psp34::extensions::burnable::*;
+    ))
+    .expect("Should parse");
+
+    impl_args.imports.insert("PSP34Burnable", import);
+    impl_args.vec_import();
+
+    override_functions("PSP34Burnable", &mut burnable, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(burnable_default_impl));
+    impl_args.items.push(syn::Item::Impl(burnable));
+}
+
+
+pub(crate) fn impl_psp34_mintable(impl_args: &mut ImplArgs) {
+    let storage_struct_name = impl_args.contract_name();
+    let mintable_default_impl = syn::parse2::<syn::ItemImpl>(quote!(
+        impl pendzl::contracts::token::psp34::extensions::mintable::implementation::PSP34MintableDefaultImpl for #storage_struct_name {}
+    ))
+    .expect("Should parse");
+
+    let mut mintable = syn::parse2::<syn::ItemImpl>(quote!(
+        impl pendzl::contracts::token::psp34::extensions::mintable::PSP34Mintable for #storage_struct_name {
+            #[ink(message)]
+            fn mint(&mut self, from: AccountId, id: Id) -> Result<(), PSP34Error> {
+                pendzl::contracts::token::psp34::extensions::mintable::implementation::PSP34MintableDefaultImpl::mint_default_impl(self,from,id)
+            }
+        }
+    ))
+    .expect("Should parse");
+
+    let import = syn::parse2::<syn::ItemUse>(quote!(
+      pub use pendzl::contracts::token::psp34::extensions::mintable::*;
+    ))
+    .expect("Should parse");
+
+    impl_args.imports.insert("PSP34Mintable", import);
+    impl_args.vec_import();
+
+    override_functions("PSP34Mintable", &mut mintable, impl_args.map);
+
+    impl_args.items.push(syn::Item::Impl(mintable_default_impl));
+    impl_args.items.push(syn::Item::Impl(mintable));
 }
 
 pub(crate) fn impl_psp34_metadata(impl_args: &mut ImplArgs) {
@@ -426,12 +552,12 @@ pub(crate) fn impl_psp34_metadata(impl_args: &mut ImplArgs) {
     .expect("Should parse");
 
     let import = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::token::psp34::extensions::metadata::*;
+      pub use pendzl::contracts::token::psp34::extensions::metadata::*;
     ))
     .expect("Should parse");
 
     let import_data = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::token::psp34::extensions::metadata::implementation::Data as PSP34MetadataData;
+      pub use pendzl::contracts::token::psp34::extensions::metadata::implementation::Data as PSP34MetadataData;
     ))
     .expect("Should parse import");
 
@@ -498,12 +624,12 @@ pub(crate) fn impl_ownable(impl_args: &mut ImplArgs) {
     .expect("Should parse");
 
     let import = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::access::ownable::*;
+      pub use pendzl::contracts::access::ownable::*;
     ))
     .expect("Should parse");
     
     let import_data = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::access::ownable::implementation::Data as OwnableData;
+      pub use pendzl::contracts::access::ownable::implementation::Data as OwnableData;
     ))
     .expect("Should parse import");
 
@@ -596,12 +722,12 @@ pub(crate) fn impl_access_control(impl_args: &mut ImplArgs) {
     .expect("Should parse");
 
     let import = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::access::access_control::*;
+      pub use pendzl::contracts::access::access_control::*;
     ))
     .expect("Should parse");
 
     let import_data = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::access::access_control::implementation::Data as AccessControlData;
+      pub use pendzl::contracts::access::access_control::implementation::Data as AccessControlData;
     ))
     .expect("Should parse import");
         
@@ -665,12 +791,12 @@ pub(crate) fn impl_pausable(impl_args: &mut ImplArgs) {
     .expect("Should parse");
 
     let import = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::security::pausable::*;
+      pub use pendzl::contracts::security::pausable::*;
     ))
     .expect("Should parse import");
 
     let import_data = syn::parse2::<syn::ItemUse>(quote!(
-        use pendzl::contracts::security::pausable::implementation::Data as PausableData;
+      pub use pendzl::contracts::security::pausable::implementation::Data as PausableData;
     ))
     .expect("Should parse import");
     impl_args.imports.insert("Pausable", import);

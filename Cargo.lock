@@ -2083,23 +2083,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "64f0047f1e70ddeae00d45c55bb069d94836ac74d895d2f24c3d6a65ba13b628"
 dependencies = [
  "derive_more",
- "ink_env 5.0.0-rc",
+ "ink_env",
  "ink_macro",
- "ink_metadata 5.0.0-rc",
+ "ink_metadata",
  "ink_prelude 5.0.0-rc",
  "ink_primitives 5.0.0-rc",
  "ink_storage",
  "parity-scale-codec",
  "scale-info",
-]
-
-[[package]]
-name = "ink_allocator"
-version = "4.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "870914970470fd77a3f42d3c5d1918b562817af127fd063ee8b1d9fbf59aa1fe"
-dependencies = [
- "cfg-if",
 ]
 
 [[package]]
@@ -2145,7 +2136,7 @@ dependencies = [
  "impl-serde",
  "ink",
  "ink_e2e_macro",
- "ink_env 5.0.0-rc",
+ "ink_env",
  "ink_primitives 5.0.0-rc",
  "jsonrpsee",
  "pallet-contracts-primitives",
@@ -2184,21 +2175,6 @@ dependencies = [
 
 [[package]]
 name = "ink_engine"
-version = "4.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "722ec3a5eb557124b001c60ff8f961079f6d566af643edea579f152b15822fe5"
-dependencies = [
- "blake2",
- "derive_more",
- "ink_primitives 4.3.0",
- "parity-scale-codec",
- "secp256k1 0.27.0",
- "sha2 0.10.8",
- "sha3",
-]
-
-[[package]]
-name = "ink_engine"
 version = "5.0.0-rc"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b99aae25c6820d9e9dae12f79df79a10cba3c961fe1204a68fefaf72f9ae7b14"
@@ -2214,34 +2190,6 @@ dependencies = [
 
 [[package]]
 name = "ink_env"
-version = "4.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "584e73bc0982f6f1a067bb63ebc75262f6dc54ed2a17060efa73eaba84dc9308"
-dependencies = [
- "arrayref",
- "blake2",
- "cfg-if",
- "derive_more",
- "ink_allocator 4.3.0",
- "ink_engine 4.3.0",
- "ink_prelude 4.3.0",
- "ink_primitives 4.3.0",
- "ink_storage_traits 4.3.0",
- "num-traits",
- "parity-scale-codec",
- "paste",
- "rlibc",
- "scale-decode",
- "scale-encode",
- "scale-info",
- "secp256k1 0.27.0",
- "sha2 0.10.8",
- "sha3",
- "static_assertions",
-]
-
-[[package]]
-name = "ink_env"
 version = "5.0.0-rc"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2c8f814ac18100f5ba3d265fbc29e1639325660571883184bedf31dcfecd2428"
@@ -2250,11 +2198,11 @@ dependencies = [
  "cfg-if",
  "const_env",
  "derive_more",
- "ink_allocator 5.0.0-rc",
- "ink_engine 5.0.0-rc",
+ "ink_allocator",
+ "ink_engine",
  "ink_prelude 5.0.0-rc",
  "ink_primitives 5.0.0-rc",
- "ink_storage_traits 5.0.0-rc",
+ "ink_storage_traits",
  "num-traits",
  "parity-scale-codec",
  "paste",
@@ -2316,20 +2264,6 @@ dependencies = [
 
 [[package]]
 name = "ink_metadata"
-version = "4.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fddff95ce3e01f42002fdaf96edda691dbccb08c9ae76d7101daa1fa634e601"
-dependencies = [
- "derive_more",
- "impl-serde",
- "ink_prelude 4.3.0",
- "ink_primitives 4.3.0",
- "scale-info",
- "serde",
-]
-
-[[package]]
-name = "ink_metadata"
 version = "5.0.0-rc"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "75859c7142101f3ad30a763fd0e5468df164e3d424086df8de40531fb54940f3"
@@ -2371,9 +2305,6 @@ dependencies = [
  "derive_more",
  "ink_prelude 4.3.0",
  "parity-scale-codec",
- "scale-decode",
- "scale-encode",
- "scale-info",
  "xxhash-rust",
 ]
 
@@ -2401,24 +2332,11 @@ dependencies = [
  "array-init",
  "cfg-if",
  "derive_more",
- "ink_env 5.0.0-rc",
- "ink_metadata 5.0.0-rc",
+ "ink_env",
+ "ink_metadata",
  "ink_prelude 5.0.0-rc",
  "ink_primitives 5.0.0-rc",
- "ink_storage_traits 5.0.0-rc",
- "parity-scale-codec",
- "scale-info",
-]
-
-[[package]]
-name = "ink_storage_traits"
-version = "4.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a8dcb50f70377ac35c28d63b06383a0a3cbb79542ea4cdc5b00e3e2b3de4a549"
-dependencies = [
- "ink_metadata 4.3.0",
- "ink_prelude 4.3.0",
- "ink_primitives 4.3.0",
+ "ink_storage_traits",
  "parity-scale-codec",
  "scale-info",
 ]
@@ -2429,7 +2347,7 @@ version = "5.0.0-rc"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4a469c01b48282a459130ca72a75e57feedbb69ab151639f532156d10d574353"
 dependencies = [
- "ink_metadata 5.0.0-rc",
+ "ink_metadata",
  "ink_prelude 5.0.0-rc",
  "ink_primitives 5.0.0-rc",
  "parity-scale-codec",
@@ -3157,7 +3075,7 @@ version = "0.1.0-alpha"
 dependencies = [
  "ink",
  "ink_e2e",
- "ink_env 4.3.0",
+ "ink_env",
  "parity-scale-codec",
  "pendzl_contracts",
  "pendzl_lang",

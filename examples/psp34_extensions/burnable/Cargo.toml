@@ -1,0 +1,42 @@
+[package]
+name = "my_psp34_burnable"
+version = "0.1.0-alpha"
+authors = ["Brushfam <m.konstantinovna@727.ventures>"]
+edition = "2021"
+
+[dependencies]
+ink = { version = "5.0.0-rc", default-features = false }
+
+scale = { package = "parity-scale-codec", version = "3.6", default-features = false, features = [
+    "derive",
+] }
+scale-info = { version = "2.10", default-features = false, features = [
+    "derive",
+], optional = true }
+
+# These dependencies
+pendzl = { path = "../../..", default-features = false, features = ["psp34"] }
+
+[dev-dependencies]
+ink_e2e = "5.0.0-rc"
+test_helpers = { path = "../../test_helpers", default-features = false }
+
+[lib]
+name = "my_psp34_burnable"
+path = "lib.rs"
+
+
+[features]
+default = ["std"]
+std = [
+    "ink/std",
+    "scale/std",
+    "scale-info/std",
+    # These dependencies
+    "pendzl/std",
+]
+ink-as-dependency = []
+e2e-tests = []
+
+[profile.dev]
+codegen-units = 16

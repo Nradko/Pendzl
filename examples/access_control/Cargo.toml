@@ -17,7 +17,7 @@ scale-info = { version = "2.10", default-features = false, features = [
 # These dependencies
 pendzl = { path = "../..", default-features = false, features = [
     "access_control",
-    "psp22",
+    "psp34",
 ] }
 
 [dev-dependencies]
