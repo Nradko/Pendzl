@@ -159,13 +159,10 @@ where
         id: &Option<Id>,
         approved: &bool,
     ) -> Result<(), PSP34Error> {
-        let caller = Self::env().caller();
         if let Some(id) = id.clone() {
-            let owner = self
-                ._owner_of_default_impl(&id)
-                .ok_or(PSP34Error::TokenNotExists)?;
+            let owner = self._owner_of(&id).ok_or(PSP34Error::TokenNotExists)?;
 
-            if owner == *operator {
+            if owner == operator {
                 return Err(PSP34Error::SelfApprove);
             }
 
