@@ -45,7 +45,7 @@ pub mod my_pausable {
         use super::*;
         #[rustfmt::skip]
         use ink_e2e::ContractsBackend;
-        use ink_e2e::AccountKeyring::{Alice, Bob};
+        use ink_e2e::alice;
 
         use test_helpers::{method_call, method_call_dry_run};
 
