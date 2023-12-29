@@ -850,7 +850,11 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
             
             fn _handle_transfer_out(&mut self, asset: Option<AccountId>, to: AccountId, amount: Balance) -> Result<(), VestingError> {
                 pendzl::contracts::finance::uvester::implementation::VestingInternalDefaultImpl::_handle_transfer_out_default_impl(self, asset, to, amount)
-            } 
+            }
+
+            fn _next_id_vest_of(&self,  of: AccountId, asset: Option<AccountId>) -> u32 {
+                pendzl::contracts::finance::uvester::implementation::VestingInternalDefaultImpl::_next_id_vest_of_default_impl(self, of, asset)
+            }
         }
     ))
     .expect("Should parse");
@@ -862,7 +866,7 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
 
     let mut vesting = syn::parse2::<syn::ItemImpl>(quote!(
         impl  pendzl::contracts::finance::uvester::Vesting for #storage_struct_name {
-            #[ink(message)]
+            #[ink(message, payable)]
             fn create_vest(
                 &mut self,
                 to: AccountId,
@@ -887,6 +891,10 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
             #[ink(message)]
             fn release_by_vest_id(&mut self, asset: Option<AccountId>, id: u32) -> Result<(), VestingError> {
                 pendzl::contracts::finance::uvester::implementation::VestingDefaultImpl::release_by_vest_id_default_impl(self, asset, id)
+            }
+            #[ink(message)]
+            fn next_id_vest_of(&self,  of: AccountId, asset: Option<AccountId>) -> u32 {
+                pendzl::contracts::finance::uvester::implementation::VestingDefaultImpl::next_id_vest_of_default_impl(self, of, asset)
             }
         }
     ))

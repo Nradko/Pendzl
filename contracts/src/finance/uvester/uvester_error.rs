@@ -8,6 +8,7 @@ pub enum VestingError {
     PSP22Error(PSP22Error),
     InvalidScheduleKey,
     NativeTransferFailed,
+    InvalidAmountPaid,
 }
 
 impl From<PSP22Error> for VestingError {

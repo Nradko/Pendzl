@@ -142,6 +142,18 @@ pub trait VestingDefaultImpl: VestingInternal + Sized {
     ) -> Result<(), VestingError> {
         self._release_by_vest_id(asset, id)
     }
+
+    // fn vest_of(
+    //     &mut self,
+    //     of: AccountId,
+    //     asset: Option<AccountId>,
+    //     id: u32,
+    // ) -> Option<VestingSchedule> {
+    //     self._vest_of(of, asset, id)
+    // }
+    fn next_id_vest_of_default_impl(&self, of: AccountId, asset: Option<AccountId>) -> u32 {
+        self._next_id_vest_of(of, asset)
+    }
 }
 
 pub trait VestingInternalDefaultImpl: Storage<Data> + VestingInternal
@@ -229,10 +241,23 @@ where
             }
             None => {
                 if Self::env().transferred_value() != amount {
-                    return Err(VestingError::NativeTransferFailed);
+                    return Err(VestingError::InvalidAmountPaid);
                 }
             }
         }
         Ok(())
+    }
+
+    // fn _vest_of_default_impl(
+    //     &self,
+    //     of: AccountId,
+    //     asset: Option<AccountId>,
+    //     id: u32,
+    // ) -> Option<VestingSchedule> {
+    //     self.data().schedules.get(&(of, asset, id))
+    // }
+
+    fn _next_id_vest_of_default_impl(&self, of: AccountId, asset: Option<AccountId>) -> u32 {
+        self.data().next_id.get((of, asset)).unwrap_or(0)
     }
 }

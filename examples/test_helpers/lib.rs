@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: MIT
+
+pub use subxt_signer::sr25519::Keypair;
+
 #[macro_export]
 macro_rules! balance_of {
     ($client:ident, $contract:ident, $account:ident) => {{
@@ -220,4 +223,7 @@ macro_rules! method_call_dry_run {
             .await
             .return_value()
     }};
+}
+pub fn keypair_to_account<AccountId: From<[u8; 32]>>(keypair: &Keypair) -> AccountId {
+    AccountId::from(keypair.public_key().0)
 }

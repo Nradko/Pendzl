@@ -5,7 +5,7 @@ use pendzl::traits::Timestamp;
 
 #[ink::trait_definition]
 pub trait Vesting {
-    #[ink(message)]
+    #[ink(message, payable)]
     fn create_vest(
         &mut self,
         to: AccountId,
@@ -19,19 +19,15 @@ pub trait Vesting {
     #[ink(message)]
     fn release_by_vest_id(&mut self, asset: Option<AccountId>, id: u32)
         -> Result<(), VestingError>;
+    // #[ink(message)]
+    // fn vest_of(
+    //     &mut self,
+    //     of: AccountId,
+    //     asset: Option<AccountId>,
+    //     id: u32,
+    // ) -> Option<VestingSchedule>;
     #[ink(message)]
-    fn vest_of(
-        &mut self,
-        of: AccountId,
-        asset: Option<AccountId>,
-        id: u32,
-    ) -> Result<(), VestingError>;
-    #[ink(message)]
-    fn next_id_vest_of(
-        &mut self,
-        of: AccountId,
-        asset: Option<AccountId>,
-    ) -> Result<(), VestingError>;
+    fn next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>) -> u32;
 }
 
 pub trait VestingInternal {
@@ -63,6 +59,14 @@ pub trait VestingInternal {
         to: AccountId,
         amount: Balance,
     ) -> Result<(), VestingError>;
+
+    // fn _vest_of(
+    //     &mut self,
+    //     of: AccountId,
+    //     asset: Option<AccountId>,
+    //     id: u32,
+    // ) -> Option<VestingSchedule>;
+    fn _next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>) -> u32;
 }
 /// supports adding element and identifying it by some id/ iterating over all elements, removing element by id
 pub trait VestingStorage {

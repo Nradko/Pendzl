@@ -26,7 +26,7 @@ pub struct VestingScheduled {
     /// The amount of tokens released.
     pub amount: Balance,
     // The vesting start time.
-    vesting_start: Timestamp,
+    pub vesting_start: Timestamp,
     // The vesting end time.
-    vesting_end: Timestamp,
+    pub vesting_end: Timestamp,
 }
