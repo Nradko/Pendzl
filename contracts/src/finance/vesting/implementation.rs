@@ -1,47 +1,12 @@
 use ink::{prelude::vec, storage::Mapping};
-use pendzl::traits::{AccountId, Balance, DefaultEnv, Storage, Timestamp};
-use scale::{Decode, Encode};
+use pendzl::traits::{AccountId, Balance, Storage, Timestamp};
 
-use crate::token::psp22::{PSP22Ref, PSP22};
+use crate::{
+    finance::vesting::VestingSchedule,
+    token::psp22::{PSP22Ref, PSP22},
+};
 
 use super::{TokenReleased, VestingError, VestingInternal, VestingScheduled, VestingStorage};
-
-#[derive(Default, Debug, Encode, Decode)]
-#[cfg_attr(
-    feature = "std",
-    derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
-)]
-pub struct VestingSchedule {
-    start: Timestamp,
-    end: Timestamp,
-    amount: Balance,
-    released: Balance,
-}
-
-impl VestingSchedule {
-    fn collect_releasable(&mut self) -> Balance {
-        let amount_releaseable = self.amount_releaseable();
-        self.released += amount_releaseable;
-        amount_releaseable
-    }
-    fn amount_releaseable(&self) -> Balance {
-        let now: Timestamp = Self::env().block_timestamp();
-        if self.is_overdue() {
-            return self.amount - self.released;
-        }
-        if self.end == self.start {
-            return 0;
-        }
-        let total_to_release = self.amount * u128::try_from(now - self.start).unwrap()
-            / u128::try_from(self.end - self.start).unwrap();
-        let amount_releaseable = total_to_release - self.released;
-        amount_releaseable
-    }
-    fn is_overdue(&self) -> bool {
-        let now: Timestamp = Self::env().block_timestamp();
-        now >= self.end
-    }
-}
 
 #[derive(Default, Debug)]
 #[pendzl::storage_item]
@@ -79,12 +44,15 @@ impl VestingStorage for Data {
         asset: Option<AccountId>,
     ) -> Result<Balance, VestingError> {
         let next_id = self.next_id.get((to, asset)).unwrap_or(0);
+        let mut tail_id = next_id - 1;
         let mut current_id = 0;
         let mut total_amount = 0;
-        while current_id < next_id {
-            let (is_overdue, amount_released) = self.release_by_vest_id(to, asset, current_id)?;
+        while current_id <= tail_id {
+            let (was_swapped_for_tail, amount_released) =
+                self.release_by_vest_id(to, asset, current_id)?;
             total_amount += amount_released;
-            if is_overdue {
+            if was_swapped_for_tail {
+                tail_id = tail_id.saturating_sub(1);
                 continue;
             }
             current_id += 1;
@@ -98,25 +66,37 @@ impl VestingStorage for Data {
         asset: Option<AccountId>,
         id: u32,
     ) -> Result<(bool, Balance), VestingError> {
-        let mut data = self
-            .schedules
-            .get(&(to, asset, id))
-            .ok_or(VestingError::InvalidScheduleKey)?;
-        let amount_released = data.collect_releasable();
+        let mut data = match self.schedules.get(&(to, asset, id)) {
+            Some(data) => data,
+            None => return Ok((false, 0)),
+        };
+        let amount_released = data.collect_releasable_rdown();
         if data.is_overdue() {
-            let next_id = self.next_id.get((to, asset)).unwrap_or(0);
+            let leftover = data.amount - data.released;
+            let next_id = self.next_id.get((to, asset)).unwrap(); // data is some => next_id must exist and be > 0
             let tail_id = next_id - 1;
             let tail = self
                 .schedules
                 .get(&(to, asset, tail_id))
                 .ok_or(VestingError::InvalidScheduleKey)?;
             self.schedules.remove(&(to, asset, tail_id));
-            self.schedules.insert((to, asset, id), &tail);
+            if tail_id != id {
+                self.schedules.insert((to, asset, id), &tail);
+            }
             self.next_id.insert((to, asset), &(tail_id));
-            return Ok((true, amount_released));
+            return Ok((true, amount_released + leftover));
         }
         self.schedules.insert((to, asset, id), &data);
         Ok((false, amount_released))
+    }
+
+    fn get_schedule_by_id(
+        &self,
+        to: AccountId,
+        asset: Option<AccountId>,
+        id: u32,
+    ) -> Option<VestingSchedule> {
+        self.schedules.get(&(to, asset, id))
     }
 }
 

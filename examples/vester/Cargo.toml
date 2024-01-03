@@ -21,6 +21,7 @@ my_psp22_mintable = { path = "../psp22_extensions/mintable", default-features = 
 [dev-dependencies]
 ink_e2e = "5.0.0-rc"
 test_helpers = { path = "../test_helpers", default-features = false }
+subxt = { version = "0.33.0"}
 
 [lib]
 name = "vester"

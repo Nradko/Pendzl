@@ -2,7 +2,6 @@ pub use pendzl::traits::Balance;
 
 use ink::primitives::AccountId;
 use pendzl::traits::Timestamp;
-
 #[ink::trait_definition]
 pub trait Vesting {
     #[ink(message, payable)]
@@ -88,4 +87,11 @@ pub trait VestingStorage {
         asset: Option<AccountId>,
         id: u32,
     ) -> Result<(bool, Balance), VestingError>;
+
+    fn get_schedule_by_id(
+        &self,
+        to: AccountId,
+        asset: Option<AccountId>,
+        id: u32,
+    ) -> Option<VestingSchedule>;
 }
