@@ -825,35 +825,41 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
                 asset: Option<AccountId>,
                 amount: Balance,
                 vesting_start: Timestamp,
-                vesting_end: Timestamp)-> Result<(), VestingError>  {
+                vesting_end: Timestamp,
+                data: &Vec<u8>)-> Result<(), VestingError>  {
                 pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_create_vest_default_impl(
                     self,
                     receiver,
                     asset,
                     amount,
                     vesting_start,
-                    vesting_end
+                    vesting_end,
+                    data
                 )
             }
 
-            fn _release(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>) -> Result<(), VestingError> {
-                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_release_default_impl(self, receiver, asset)
+            fn _release(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>, data: &Vec<u8>) -> Result<(), VestingError> {
+                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_release_default_impl(self, receiver, asset, data)
             }
 
-            fn _release_by_vest_id(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>, id: u32) -> Result<(), VestingError> {
-                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_release_by_vest_id_default_impl(self, receiver, asset, id)
+            fn _release_by_vest_id(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>, id: u32, data: &Vec<u8>) -> Result<(), VestingError> {
+                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_release_by_vest_id_default_impl(self, receiver, asset, id, data)
             }
             
-            fn _handle_transfer_in(&mut self, asset: Option<AccountId>, from: AccountId, amount: Balance) -> Result<(), VestingError> {
-                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_handle_transfer_in_default_impl(self, asset, from, amount)
+            fn _handle_transfer_in(&mut self, asset: Option<AccountId>, from: AccountId, amount: Balance, data: &Vec<u8>) -> Result<(), VestingError> {
+                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_handle_transfer_in_default_impl(self, asset, from, amount, data)
             }
             
-            fn _handle_transfer_out(&mut self, asset: Option<AccountId>, to: AccountId, amount: Balance) -> Result<(), VestingError> {
-                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_handle_transfer_out_default_impl(self, asset, to, amount)
+            fn _handle_transfer_out(&mut self, asset: Option<AccountId>, to: AccountId, amount: Balance, data: &Vec<u8>) -> Result<(), VestingError> {
+                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_handle_transfer_out_default_impl(self, asset, to, amount, data)
             }
 
-            fn _next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>) -> u32 {
-                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_next_id_vest_of_default_impl(self, of, asset)
+            fn _next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>, data: &Vec<u8>) -> u32 {
+                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_next_id_vest_of_default_impl(self, of, asset, data)
+            }
+
+            fn _vesting_schedule_of(&self, of: AccountId, asset: Option<AccountId>, id: u32, data: &Vec<u8>) -> Option<VestingSchedule> {
+                pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_vesting_schedule_of_default_impl(self, of, asset, id, data)
             }
         }
     ))
@@ -874,6 +880,7 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
                 amount: Balance,
                 vesting_start: Timestamp,
                 vesting_end: Timestamp,
+                data: Vec<u8>,
             ) -> Result<(), VestingError> {
                 pendzl::contracts::finance::vesting::implementation::VestingDefaultImpl::create_vest_default_impl(
                     self,
@@ -881,20 +888,25 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
                     asset,
                     amount,
                     vesting_start,
-                    vesting_end
+                    vesting_end,
+                    data
                 )
             }
             #[ink(message)]
-            fn release(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>) -> Result<(), VestingError> {
-                pendzl::contracts::finance::vesting::implementation::VestingDefaultImpl::release_default_impl(self, receiver, asset)
+            fn release(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>, data: Vec<u8>) -> Result<(), VestingError> {
+                pendzl::contracts::finance::vesting::implementation::VestingDefaultImpl::release_default_impl(self, receiver, asset, data)
             }
             #[ink(message)]
-            fn release_by_vest_id(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>, id: u32) -> Result<(), VestingError> {
-                pendzl::contracts::finance::vesting::implementation::VestingDefaultImpl::release_by_vest_id_default_impl(self, receiver, asset, id)
+            fn release_by_vest_id(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>, id: u32, data: Vec<u8>) -> Result<(), VestingError> {
+                pendzl::contracts::finance::vesting::implementation::VestingDefaultImpl::release_by_vest_id_default_impl(self, receiver, asset, id, data)
             }
             #[ink(message)]
-            fn next_id_vest_of(&self,  of: AccountId, asset: Option<AccountId>) -> u32 {
-                pendzl::contracts::finance::vesting::implementation::VestingDefaultImpl::next_id_vest_of_default_impl(self, of, asset)
+            fn next_id_vest_of(&self,  of: AccountId, asset: Option<AccountId>, data: Vec<u8>) -> u32 {
+                pendzl::contracts::finance::vesting::implementation::VestingDefaultImpl::next_id_vest_of_default_impl(self, of, asset, data)
+            }
+            #[ink(message)]
+            fn vesting_schedule_of(&self, of: AccountId, asset: Option<AccountId>, id: u32, data: Vec<u8>) -> Option<VestingSchedule> {
+                pendzl::contracts::finance::vesting::implementation::VestingDefaultImpl::vesting_schedule_of_default_impl(self, of, asset, id, data)
             }
         }
     ))

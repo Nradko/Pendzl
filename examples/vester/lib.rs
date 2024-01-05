@@ -30,16 +30,6 @@ pub mod vester {
         pub fn new() -> Self {
             Default::default()
         }
-
-        #[ink(message)]
-        pub fn get_schedule_by_id(
-            &self,
-            of: AccountId,
-            asset: Option<AccountId>,
-            id: u32,
-        ) -> Option<VestingSchedule> {
-            self.vesting.get_schedule_by_id(of, asset, id)
-        }
     }
 }
 
@@ -242,6 +232,7 @@ pub mod tests {
                     create_vest_args.amount,
                     create_vest_args.vesting_start,
                     create_vest_args.vesting_end,
+                    vec![],
                 ),
             )
             .dry_run()
@@ -272,6 +263,7 @@ pub mod tests {
                     create_vest_args.amount,
                     create_vest_args.vesting_start,
                     create_vest_args.vesting_end,
+                    vec![],
                 ),
             )
             .dry_run()
@@ -322,6 +314,7 @@ pub mod tests {
                     create_vest_args.amount,
                     create_vest_args.vesting_start,
                     create_vest_args.vesting_end,
+                    vec![],
                 ),
             )
             .submit()
@@ -458,6 +451,7 @@ pub mod tests {
                     create_vest_args.amount,
                     create_vest_args.vesting_start,
                     create_vest_args.vesting_end,
+                    vec![],
                 ),
             )
             .submit()
@@ -509,7 +503,11 @@ pub mod tests {
         let release_res = client
             .call(
                 &vest_to,
-                &vester.release(Some(create_vest_args.vest_to), create_vest_args.asset),
+                &vester.release(
+                    Some(create_vest_args.vest_to),
+                    create_vest_args.asset,
+                    vec![],
+                ),
             )
             .submit()
             .await
@@ -636,6 +634,7 @@ pub mod tests {
                     create_vest_args.amount,
                     create_vest_args.vesting_start,
                     create_vest_args.vesting_end,
+                    vec![],
                 ),
             )
             .submit()
@@ -691,7 +690,11 @@ pub mod tests {
         let release_res = client
             .call(
                 &release_caller,
-                &vester.release(Some(create_vest_args.vest_to), create_vest_args.asset),
+                &vester.release(
+                    Some(create_vest_args.vest_to),
+                    create_vest_args.asset,
+                    vec![],
+                ),
             )
             .submit()
             .await
@@ -774,6 +777,7 @@ pub mod tests {
                     create_vest_args.amount,
                     create_vest_args.vesting_start,
                     create_vest_args.vesting_end,
+                    vec![],
                 ),
             )
             .value(create_vest_args.amount - 1)
@@ -792,6 +796,7 @@ pub mod tests {
                     create_vest_args.amount,
                     create_vest_args.vesting_start,
                     create_vest_args.vesting_end,
+                    vec![],
                 ),
             )
             .value(create_vest_args.amount + 1)
@@ -810,6 +815,7 @@ pub mod tests {
                     create_vest_args.amount,
                     create_vest_args.vesting_start,
                     create_vest_args.vesting_end,
+                    vec![],
                 ),
             )
             .value(create_vest_args.amount)
@@ -897,6 +903,7 @@ pub mod tests {
             create_vest_args.amount,
             create_vest_args.vesting_start,
             create_vest_args.vesting_end,
+            vec![],
         );
         set_block_timestamp(create_vest_args.vesting_start - 1);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
@@ -906,6 +913,7 @@ pub mod tests {
             &mut vester,
             Some(create_vest_args.vest_to),
             create_vest_args.asset,
+            vec![],
         );
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
@@ -922,6 +930,7 @@ pub mod tests {
             &mut vester,
             Some(create_vest_args.vest_to),
             create_vest_args.asset,
+            vec![],
         );
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
@@ -934,7 +943,7 @@ pub mod tests {
         );
         //verify storage
         let vesting_schedule =
-            vester.get_schedule_by_id(create_vest_args.vest_to, create_vest_args.asset, 0);
+            vester.vesting_schedule_of(create_vest_args.vest_to, create_vest_args.asset, 0, vec![]);
         assert!(vesting_schedule.is_some());
         let vesting_schedule = vesting_schedule.unwrap();
         assert_eq!(vesting_schedule.released, 1);
@@ -944,7 +953,7 @@ pub mod tests {
 
         // try release succeeds & does release adequate amount of tokens
         set_block_timestamp(create_vest_args.vesting_start + ONE_DAY);
-        let res = Vesting::release(&mut vester, Some(vest_to), create_vest_args.asset);
+        let res = Vesting::release(&mut vester, Some(vest_to), create_vest_args.asset, vec![]);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
@@ -956,7 +965,7 @@ pub mod tests {
         );
         //verify storage
         let vesting_schedule =
-            vester.get_schedule_by_id(create_vest_args.vest_to, create_vest_args.asset, 0);
+            vester.vesting_schedule_of(create_vest_args.vest_to, create_vest_args.asset, 0, vec![]);
         assert!(vesting_schedule.is_some());
         let vesting_schedule = vesting_schedule.unwrap();
         assert_eq!(vesting_schedule.released, (ONE_DAY - 1).into());
@@ -970,7 +979,7 @@ pub mod tests {
         // get django balance
         let django_balance_pre = get_account_balance(accounts.django);
         set_block_timestamp(create_vest_args.vesting_end + 1);
-        let res = Vesting::release(&mut vester, Some(vest_to), create_vest_args.asset);
+        let res = Vesting::release(&mut vester, Some(vest_to), create_vest_args.asset, vec![]);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
@@ -980,10 +989,11 @@ pub mod tests {
             create_vest_args.asset,
             create_vest_args.amount - u128::from(ONE_DAY - 1), // ONE_DAY + 1 already released
         );
-        let next_id = vester.next_id_vest_of(create_vest_args.vest_to, create_vest_args.asset);
+        let next_id =
+            vester.next_id_vest_of(create_vest_args.vest_to, create_vest_args.asset, vec![]);
         assert_eq!(next_id, 0);
         let vesting_schedule =
-            vester.get_schedule_by_id(create_vest_args.vest_to, create_vest_args.asset, 0);
+            vester.vesting_schedule_of(create_vest_args.vest_to, create_vest_args.asset, 0, vec![]);
         assert!(vesting_schedule.is_none());
 
         let vest_to_balance_post = get_account_balance(vest_to);
@@ -1059,6 +1069,7 @@ pub mod tests {
                 create_vest_args.amount,
                 create_vest_args.vesting_start,
                 create_vest_args.vesting_end,
+                vec![],
             );
             assert!(res.is_ok(), "release failed. res: {:?}", res);
         }
@@ -1068,14 +1079,14 @@ pub mod tests {
         set_block_timestamp(init_timestamp);
         // pre action
         let event_count_before = ink::env::test::recorded_events().collect::<Vec<_>>().len();
-        assert_eq!(vester.next_id_vest_of(vest_to, None), 5);
+        assert_eq!(vester.next_id_vest_of(vest_to, None, vec![]), 5);
         for i in 0..3 {
             assert!(vester
-                .get_schedule_by_id(vest_to, None, i.try_into().unwrap())
+                .vesting_schedule_of(vest_to, None, i.try_into().unwrap(), vec![])
                 .is_some());
         }
         set_next_caller(vest_to);
-        let res = Vesting::release(&mut vester, Some(vest_to), None);
+        let res = Vesting::release(&mut vester, Some(vest_to), None, vec![]);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
@@ -1086,18 +1097,20 @@ pub mod tests {
             (ONE_DAY * 12 - 1).into(),
         );
         assert_eq!(emitted_events.len() - event_count_before, 1);
-        assert_eq!(vester.next_id_vest_of(vest_to, None), 4);
-        assert!(vester.get_schedule_by_id(vest_to, None, 4).is_none());
+        assert_eq!(vester.next_id_vest_of(vest_to, None, vec![]), 4);
+        assert!(vester
+            .vesting_schedule_of(vest_to, None, 4, vec![])
+            .is_none());
         for i in 0..3 {
             assert!(vester
-                .get_schedule_by_id(vest_to, None, i.try_into().unwrap())
+                .vesting_schedule_of(vest_to, None, i.try_into().unwrap(), vec![])
                 .is_some());
         }
 
         // move time past 1st schedule end
         set_block_timestamp(create_vest_args_vec[1].vesting_end + ONE_DAY);
         let event_count_before = ink::env::test::recorded_events().collect::<Vec<_>>().len();
-        let res = Vesting::release(&mut vester, Some(vest_to), None);
+        let res = Vesting::release(&mut vester, Some(vest_to), None, vec![]);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
@@ -1108,17 +1121,19 @@ pub mod tests {
             (ONE_DAY * 7 - 1).into(),
         );
         assert_eq!(emitted_events.len() - event_count_before, 1);
-        assert_eq!(vester.next_id_vest_of(vest_to, None), 3); // 1st & 2nd schedule removed
-        assert!(vester.get_schedule_by_id(vest_to, None, 3).is_none());
+        assert_eq!(vester.next_id_vest_of(vest_to, None, vec![]), 3); // 1st & 2nd schedule removed
+        assert!(vester
+            .vesting_schedule_of(vest_to, None, 3, vec![])
+            .is_none());
         for i in 0..2 {
             assert!(vester
-                .get_schedule_by_id(vest_to, None, i.try_into().unwrap())
+                .vesting_schedule_of(vest_to, None, i.try_into().unwrap(), vec![])
                 .is_some());
         }
 
         // move time past last schedule end
         set_block_timestamp(create_vest_args_vec[create_vest_args_vec.len() - 1].vesting_end + 1);
-        let res = Vesting::release(&mut vester, Some(vest_to), None);
+        let res = Vesting::release(&mut vester, Some(vest_to), None, vec![]);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
@@ -1128,11 +1143,11 @@ pub mod tests {
             None,
             (ONE_DAY * 53 + 1 + 1).into(),
         );
-        let next_id = vester.next_id_vest_of(vest_to, None);
+        let next_id = vester.next_id_vest_of(vest_to, None, vec![]);
         assert_eq!(next_id, 0);
         for i in 0..5 {
             assert!(vester
-                .get_schedule_by_id(vest_to, None, i.try_into().unwrap())
+                .vesting_schedule_of(vest_to, None, i.try_into().unwrap(), vec![])
                 .is_none());
         }
 

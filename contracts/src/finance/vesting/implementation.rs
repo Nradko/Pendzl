@@ -23,6 +23,7 @@ impl VestingStorage for Data {
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
+        _data: &Vec<u8>,
     ) -> Result<(), VestingError> {
         let id = self.next_id.get((to, asset)).unwrap_or(0);
         self.schedules.insert(
@@ -42,6 +43,7 @@ impl VestingStorage for Data {
         &mut self,
         to: AccountId,
         asset: Option<AccountId>,
+        data: &Vec<u8>,
     ) -> Result<Balance, VestingError> {
         let next_id = self.next_id.get((to, asset)).unwrap_or(0);
         let mut tail_id = next_id - 1;
@@ -49,7 +51,7 @@ impl VestingStorage for Data {
         let mut total_amount = 0;
         while current_id <= tail_id {
             let (was_swapped_for_tail, amount_released) =
-                self.release_by_vest_id(to, asset, current_id)?;
+                self.release_by_vest_id(to, asset, current_id, &data)?;
             total_amount += amount_released;
             if was_swapped_for_tail {
                 tail_id = tail_id.saturating_sub(1);
@@ -65,6 +67,7 @@ impl VestingStorage for Data {
         to: AccountId,
         asset: Option<AccountId>,
         id: u32,
+        _data: &Vec<u8>,
     ) -> Result<(bool, Balance), VestingError> {
         let mut data = match self.schedules.get(&(to, asset, id)) {
             Some(data) => data,
@@ -95,6 +98,7 @@ impl VestingStorage for Data {
         to: AccountId,
         asset: Option<AccountId>,
         id: u32,
+        _data: &Vec<u8>,
     ) -> Option<VestingSchedule> {
         self.schedules.get(&(to, asset, id))
     }
@@ -108,36 +112,45 @@ pub trait VestingDefaultImpl: VestingInternal + Sized {
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
+        data: Vec<u8>,
     ) -> Result<(), VestingError> {
-        self._create_vest(receiver, asset, amount, vesting_start, vesting_end)
+        self._create_vest(receiver, asset, amount, vesting_start, vesting_end, &data)
     }
 
     fn release_default_impl(
         &mut self,
         receiver: Option<AccountId>,
         asset: Option<AccountId>,
+        data: Vec<u8>,
     ) -> Result<(), VestingError> {
-        self._release(receiver, asset)
+        self._release(receiver, asset, &data)
     }
     fn release_by_vest_id_default_impl(
         &mut self,
         receiver: Option<AccountId>,
         asset: Option<AccountId>,
         id: u32,
+        data: Vec<u8>,
     ) -> Result<(), VestingError> {
-        self._release_by_vest_id(receiver, asset, id)
+        self._release_by_vest_id(receiver, asset, id, &data)
     }
 
-    // fn vest_of(
-    //     &mut self,
-    //     of: AccountId,
-    //     asset: Option<AccountId>,
-    //     id: u32,
-    // ) -> Option<VestingSchedule> {
-    //     self._vest_of(of, asset, id)
-    // }
-    fn next_id_vest_of_default_impl(&self, of: AccountId, asset: Option<AccountId>) -> u32 {
-        self._next_id_vest_of(of, asset)
+    fn vesting_schedule_of_default_impl(
+        &self,
+        of: AccountId,
+        asset: Option<AccountId>,
+        id: u32,
+        data: Vec<u8>,
+    ) -> Option<VestingSchedule> {
+        self._vesting_schedule_of(of, asset, id, &data)
+    }
+    fn next_id_vest_of_default_impl(
+        &self,
+        of: AccountId,
+        asset: Option<AccountId>,
+        data: Vec<u8>,
+    ) -> u32 {
+        self._next_id_vest_of(of, asset, &data)
     }
 }
 
@@ -152,11 +165,12 @@ where
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
+        data: &Vec<u8>,
     ) -> Result<(), VestingError> {
         let creator = Self::env().caller();
-        self._handle_transfer_in(asset, creator, amount)?;
+        self._handle_transfer_in(asset, creator, amount, data)?;
         self.data()
-            .create(receiver, asset, amount, vesting_start, vesting_end)?;
+            .create(receiver, asset, amount, vesting_start, vesting_end, data)?;
         Self::env().emit_event(VestingScheduled {
             creator,
             receiver,
@@ -172,11 +186,12 @@ where
         &mut self,
         receiver: Option<AccountId>,
         asset: Option<AccountId>,
+        data: &Vec<u8>,
     ) -> Result<(), VestingError> {
         let caller = Self::env().caller();
         let receiver = receiver.unwrap_or(caller);
-        let amount_released = self.data().release(receiver, asset)?;
-        self._handle_transfer_out(asset, receiver, amount_released)?;
+        let amount_released = self.data().release(receiver, asset, &data)?;
+        self._handle_transfer_out(asset, receiver, amount_released, &data)?;
         Self::env().emit_event(TokenReleased {
             caller,
             asset,
@@ -190,11 +205,12 @@ where
         receiver: Option<AccountId>,
         asset: Option<AccountId>,
         id: u32,
+        data: &Vec<u8>,
     ) -> Result<(), VestingError> {
         let caller = Self::env().caller();
         let receiver = receiver.unwrap_or(caller);
-        let (_, amount_released) = self.data().release_by_vest_id(receiver, asset, id)?;
-        self._handle_transfer_out(asset, receiver, amount_released)?;
+        let (_, amount_released) = self.data().release_by_vest_id(receiver, asset, id, &data)?;
+        self._handle_transfer_out(asset, receiver, amount_released, &data)?;
         Self::env().emit_event(TokenReleased {
             caller,
             asset,
@@ -209,6 +225,7 @@ where
         asset: Option<AccountId>,
         to: AccountId,
         amount: Balance,
+        _data: &Vec<u8>,
     ) -> Result<(), VestingError> {
         match asset {
             Some(asset) => {
@@ -227,6 +244,7 @@ where
         asset: Option<AccountId>,
         from: AccountId,
         amount: Balance,
+        _data: &Vec<u8>,
     ) -> Result<(), VestingError> {
         match asset {
             Some(asset) => {
@@ -243,16 +261,22 @@ where
         Ok(())
     }
 
-    // fn _vest_of_default_impl(
-    //     &self,
-    //     of: AccountId,
-    //     asset: Option<AccountId>,
-    //     id: u32,
-    // ) -> Option<VestingSchedule> {
-    //     self.data().schedules.get(&(of, asset, id))
-    // }
+    fn _vesting_schedule_of_default_impl(
+        &self,
+        of: AccountId,
+        asset: Option<AccountId>,
+        id: u32,
+        _data: &Vec<u8>,
+    ) -> Option<VestingSchedule> {
+        self.data().schedules.get(&(of, asset, id))
+    }
 
-    fn _next_id_vest_of_default_impl(&self, of: AccountId, asset: Option<AccountId>) -> u32 {
+    fn _next_id_vest_of_default_impl(
+        &self,
+        of: AccountId,
+        asset: Option<AccountId>,
+        _data: &Vec<u8>,
+    ) -> u32 {
         self.data().next_id.get((of, asset)).unwrap_or(0)
     }
 }

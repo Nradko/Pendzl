@@ -1,6 +1,6 @@
 pub use pendzl::traits::Balance;
 
-use ink::primitives::AccountId;
+use ink::{prelude::vec::Vec, primitives::AccountId};
 use pendzl::traits::Timestamp;
 #[ink::trait_definition]
 pub trait Vesting {
@@ -12,12 +12,14 @@ pub trait Vesting {
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
+        data: Vec<u8>,
     ) -> Result<(), VestingError>;
     #[ink(message)]
     fn release(
         &mut self,
         receiver: Option<AccountId>,
         asset: Option<AccountId>,
+        data: Vec<u8>,
     ) -> Result<(), VestingError>;
     #[ink(message)]
     fn release_by_vest_id(
@@ -25,16 +27,18 @@ pub trait Vesting {
         receiver: Option<AccountId>,
         asset: Option<AccountId>,
         id: u32,
+        data: Vec<u8>,
     ) -> Result<(), VestingError>;
-    // #[ink(message)]
-    // fn vest_of(
-    //     &mut self,
-    //     of: AccountId,
-    //     asset: Option<AccountId>,
-    //     id: u32,
-    // ) -> Option<VestingSchedule>;
     #[ink(message)]
-    fn next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>) -> u32;
+    fn vesting_schedule_of(
+        &self,
+        of: AccountId,
+        asset: Option<AccountId>,
+        id: u32,
+        data: Vec<u8>,
+    ) -> Option<VestingSchedule>;
+    #[ink(message)]
+    fn next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>, data: Vec<u8>) -> u32;
 }
 
 pub trait VestingInternal {
@@ -45,12 +49,14 @@ pub trait VestingInternal {
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
+        data: &Vec<u8>,
     ) -> Result<(), VestingError>;
 
     fn _release(
         &mut self,
         receiver: Option<AccountId>,
         asset: Option<AccountId>,
+        data: &Vec<u8>,
     ) -> Result<(), VestingError>;
 
     fn _release_by_vest_id(
@@ -58,27 +64,31 @@ pub trait VestingInternal {
         receiver: Option<AccountId>,
         asset: Option<AccountId>,
         id: u32,
+        data: &Vec<u8>,
     ) -> Result<(), VestingError>;
     fn _handle_transfer_in(
         &mut self,
         asset: Option<AccountId>,
         from: AccountId,
         amount: Balance,
+        data: &Vec<u8>,
     ) -> Result<(), VestingError>;
     fn _handle_transfer_out(
         &mut self,
         asset: Option<AccountId>,
         to: AccountId,
         amount: Balance,
+        data: &Vec<u8>,
     ) -> Result<(), VestingError>;
 
-    // fn _vest_of(
-    //     &mut self,
-    //     of: AccountId,
-    //     asset: Option<AccountId>,
-    //     id: u32,
-    // ) -> Option<VestingSchedule>;
-    fn _next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>) -> u32;
+    fn _vesting_schedule_of(
+        &self,
+        of: AccountId,
+        asset: Option<AccountId>,
+        id: u32,
+        data: &Vec<u8>,
+    ) -> Option<VestingSchedule>;
+    fn _next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>, data: &Vec<u8>) -> u32;
 }
 pub trait VestingStorage {
     fn create(
@@ -88,12 +98,14 @@ pub trait VestingStorage {
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
+        data: &Vec<u8>,
     ) -> Result<(), VestingError>;
 
     fn release(
         &mut self,
         receiver: AccountId,
         asset: Option<AccountId>,
+        data: &Vec<u8>,
     ) -> Result<Balance, VestingError>;
 
     fn release_by_vest_id(
@@ -101,6 +113,7 @@ pub trait VestingStorage {
         receiver: AccountId,
         asset: Option<AccountId>,
         id: u32,
+        data: &Vec<u8>,
     ) -> Result<(bool, Balance), VestingError>;
 
     fn get_schedule_by_id(
@@ -108,5 +121,6 @@ pub trait VestingStorage {
         receiver: AccountId,
         asset: Option<AccountId>,
         id: u32,
+        data: &Vec<u8>,
     ) -> Option<VestingSchedule>;
 }
