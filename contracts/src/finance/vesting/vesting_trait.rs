@@ -7,17 +7,25 @@ pub trait Vesting {
     #[ink(message, payable)]
     fn create_vest(
         &mut self,
-        to: AccountId,
+        receiver: AccountId,
         asset: Option<AccountId>,
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
     ) -> Result<(), VestingError>;
     #[ink(message)]
-    fn release(&mut self, asset: Option<AccountId>) -> Result<(), VestingError>;
+    fn release(
+        &mut self,
+        receiver: Option<AccountId>,
+        asset: Option<AccountId>,
+    ) -> Result<(), VestingError>;
     #[ink(message)]
-    fn release_by_vest_id(&mut self, asset: Option<AccountId>, id: u32)
-        -> Result<(), VestingError>;
+    fn release_by_vest_id(
+        &mut self,
+        receiver: Option<AccountId>,
+        asset: Option<AccountId>,
+        id: u32,
+    ) -> Result<(), VestingError>;
     // #[ink(message)]
     // fn vest_of(
     //     &mut self,
@@ -32,17 +40,22 @@ pub trait Vesting {
 pub trait VestingInternal {
     fn _create_vest(
         &mut self,
-        to: AccountId,
+        receiver: AccountId,
         asset: Option<AccountId>,
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
     ) -> Result<(), VestingError>;
 
-    fn _release(&mut self, asset: Option<AccountId>) -> Result<(), VestingError>;
+    fn _release(
+        &mut self,
+        receiver: Option<AccountId>,
+        asset: Option<AccountId>,
+    ) -> Result<(), VestingError>;
 
     fn _release_by_vest_id(
         &mut self,
+        receiver: Option<AccountId>,
         asset: Option<AccountId>,
         id: u32,
     ) -> Result<(), VestingError>;
@@ -67,30 +80,32 @@ pub trait VestingInternal {
     // ) -> Option<VestingSchedule>;
     fn _next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>) -> u32;
 }
-/// supports adding element and identifying it by some id/ iterating over all elements, removing element by id
 pub trait VestingStorage {
     fn create(
         &mut self,
-        to: AccountId,
+        receiver: AccountId,
         asset: Option<AccountId>,
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
     ) -> Result<(), VestingError>;
 
-    fn release(&mut self, to: AccountId, asset: Option<AccountId>)
-        -> Result<Balance, VestingError>;
+    fn release(
+        &mut self,
+        receiver: AccountId,
+        asset: Option<AccountId>,
+    ) -> Result<Balance, VestingError>;
 
     fn release_by_vest_id(
         &mut self,
-        to: AccountId,
+        receiver: AccountId,
         asset: Option<AccountId>,
         id: u32,
     ) -> Result<(bool, Balance), VestingError>;
 
     fn get_schedule_by_id(
         &self,
-        to: AccountId,
+        receiver: AccountId,
         asset: Option<AccountId>,
         id: u32,
     ) -> Option<VestingSchedule>;

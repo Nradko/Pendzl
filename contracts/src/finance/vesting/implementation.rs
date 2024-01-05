@@ -103,24 +103,29 @@ impl VestingStorage for Data {
 pub trait VestingDefaultImpl: VestingInternal + Sized {
     fn create_vest_default_impl(
         &mut self,
-        to: AccountId,
+        receiver: AccountId,
         asset: Option<AccountId>,
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
     ) -> Result<(), VestingError> {
-        self._create_vest(to, asset, amount, vesting_start, vesting_end)
+        self._create_vest(receiver, asset, amount, vesting_start, vesting_end)
     }
 
-    fn release_default_impl(&mut self, asset: Option<AccountId>) -> Result<(), VestingError> {
-        self._release(asset)
+    fn release_default_impl(
+        &mut self,
+        receiver: Option<AccountId>,
+        asset: Option<AccountId>,
+    ) -> Result<(), VestingError> {
+        self._release(receiver, asset)
     }
     fn release_by_vest_id_default_impl(
         &mut self,
+        receiver: Option<AccountId>,
         asset: Option<AccountId>,
         id: u32,
     ) -> Result<(), VestingError> {
-        self._release_by_vest_id(asset, id)
+        self._release_by_vest_id(receiver, asset, id)
     }
 
     // fn vest_of(
@@ -142,18 +147,19 @@ where
 {
     fn _create_vest_default_impl(
         &mut self,
-        to: AccountId,
+        receiver: AccountId,
         asset: Option<AccountId>,
         amount: Balance,
         vesting_start: Timestamp,
         vesting_end: Timestamp,
     ) -> Result<(), VestingError> {
-        let from = Self::env().caller();
-        self._handle_transfer_in(asset, from, amount)?;
+        let creator = Self::env().caller();
+        self._handle_transfer_in(asset, creator, amount)?;
         self.data()
-            .create(to, asset, amount, vesting_start, vesting_end)?;
+            .create(receiver, asset, amount, vesting_start, vesting_end)?;
         Self::env().emit_event(VestingScheduled {
-            to,
+            creator,
+            receiver,
             asset,
             amount,
             vesting_start,
@@ -162,28 +168,37 @@ where
         Ok(())
     }
 
-    fn _release_default_impl(&mut self, asset: Option<AccountId>) -> Result<(), VestingError> {
-        let to = Self::env().caller();
-        let amount_released = self.data().release(to, asset)?;
-        self._handle_transfer_out(asset, to, amount_released)?;
+    fn _release_default_impl(
+        &mut self,
+        receiver: Option<AccountId>,
+        asset: Option<AccountId>,
+    ) -> Result<(), VestingError> {
+        let caller = Self::env().caller();
+        let receiver = receiver.unwrap_or(caller);
+        let amount_released = self.data().release(receiver, asset)?;
+        self._handle_transfer_out(asset, receiver, amount_released)?;
         Self::env().emit_event(TokenReleased {
+            caller,
             asset,
-            to,
+            to: receiver,
             amount: amount_released,
         });
         Ok(())
     }
     fn _release_by_vest_id_default_impl(
         &mut self,
+        receiver: Option<AccountId>,
         asset: Option<AccountId>,
         id: u32,
     ) -> Result<(), VestingError> {
-        let to = Self::env().caller();
-        let (_, amount_released) = self.data().release_by_vest_id(to, asset, id)?;
-        self._handle_transfer_out(asset, to, amount_released)?;
+        let caller = Self::env().caller();
+        let receiver = receiver.unwrap_or(caller);
+        let (_, amount_released) = self.data().release_by_vest_id(receiver, asset, id)?;
+        self._handle_transfer_out(asset, receiver, amount_released)?;
         Self::env().emit_event(TokenReleased {
+            caller,
             asset,
-            to,
+            to: receiver,
             amount: amount_released,
         });
         Ok(())

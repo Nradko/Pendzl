@@ -91,13 +91,20 @@ pub mod tests {
 
     fn assert_token_released_event(
         event: &EmittedEvent,
-        expected_asset: Option<AccountId>,
+        expected_caller: AccountId,
         expected_to: AccountId,
+        expected_asset: Option<AccountId>,
         expected_amount: Balance,
     ) {
-        let TokenReleased { asset, to, amount } = <TokenReleased>::decode(&mut &event.data[..])
+        let TokenReleased {
+            caller,
+            asset,
+            to,
+            amount,
+        } = <TokenReleased>::decode(&mut &event.data[..])
             .expect("encountered invalid contract event data buffer");
 
+        assert_eq_msg!("caller", caller, expected_caller);
         assert_eq_msg!("Assets", asset, expected_asset);
         assert_eq_msg!("To", to, expected_to);
         assert_eq_msg!("Amounts", amount, expected_amount);
@@ -105,22 +112,25 @@ pub mod tests {
 
     fn assert_vesting_scheduled_event(
         event: &ContractEmitted<DefaultEnvironment>,
+        expected_creator: AccountId,
+        expected_receiver: AccountId,
         expected_asset: Option<AccountId>,
-        expected_to: AccountId,
         expected_amount: Balance,
         expected_vesting_start: Timestamp,
         expected_vesting_end: Timestamp,
     ) {
         let VestingScheduled {
+            creator,
             asset,
-            to,
+            receiver,
             amount,
             vesting_start,
             vesting_end,
         } = <VestingScheduled>::decode(&mut &event.data[..])
             .expect("encountered invalid contract event data buffer");
-        assert_eq_msg!("Assets", asset, expected_asset);
-        assert_eq_msg!("To", to, expected_to);
+        assert_eq_msg!("Asset", asset, expected_asset);
+        assert_eq_msg!("creator", creator, expected_creator);
+        assert_eq_msg!("receiver", receiver, expected_receiver);
         assert_eq_msg!("Amounts", amount, expected_amount);
         assert_eq_msg!("Vesting start", vesting_start, expected_vesting_start);
         assert_eq_msg!("Vesting end", vesting_end, expected_vesting_end);
@@ -143,6 +153,28 @@ pub mod tests {
         assert_eq_msg!("Transfer.value", value, expected_value);
         assert_eq_msg!("Transfer.asset", event.contract, expected_asset);
     }
+
+    fn assert_token_released_event_e2e<E: ink::env::Environment<AccountId = AccountId>>(
+        event: &ContractEmitted<E>,
+        expected_caller: AccountId,
+        expected_to: AccountId,
+        expected_asset: Option<AccountId>,
+        expected_amount: Balance,
+    ) {
+        let TokenReleased {
+            caller,
+            asset,
+            to,
+            amount,
+        } = <TokenReleased>::decode(&mut &event.data[..])
+            .expect("encountered invalid contract event data buffer");
+
+        assert_eq_msg!("caller", caller, expected_caller);
+        assert_eq_msg!("Assets", asset, expected_asset);
+        assert_eq_msg!("To", to, expected_to);
+        assert_eq_msg!("Amounts", amount, expected_amount);
+    }
+
     fn set_next_caller(caller: AccountId) {
         ink::env::test::set_caller::<ink::env::DefaultEnvironment>(caller);
     }
@@ -316,8 +348,9 @@ pub mod tests {
         );
         assert_vesting_scheduled_event(
             &vester_events[0].event,
-            Some(psp22.to_account_id()),
+            keypair_to_account(&vester_submitter),
             create_vest_args.vest_to,
+            Some(psp22.to_account_id()),
             create_vest_args.amount,
             create_vest_args.vesting_start,
             create_vest_args.vesting_end,
@@ -339,6 +372,362 @@ pub mod tests {
 
         assert_eq!(balance_of_vester, create_vest_args.amount);
         assert_eq!(balance_of_vester_submitter, 0);
+
+        Ok(())
+    }
+    #[ink_e2e::test]
+    async fn release_psp22(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+        let vester_creator = ink_e2e::alice();
+        let vester_submitter = client
+            .create_and_fund_account(&ink_e2e::alice(), 10_000_000_000_000)
+            .await;
+        let psp22_mintable_creator = ink_e2e::bob();
+        let mut psp22_constructor = PSP22Ref::new(1_000_000);
+        let mut psp22 = client
+            .instantiate(
+                "my_psp22_mintable",
+                &psp22_mintable_creator,
+                &mut psp22_constructor,
+            )
+            .submit()
+            .await
+            .expect("instantiate psp22 failed")
+            .call::<Contract>();
+        let vest_to = ink_e2e::charlie();
+
+        // create_vest args
+        let create_vest_args = CreateVestingScheduleArgs {
+            vest_to: keypair_to_account(&ink_e2e::charlie()),
+            asset: Some(psp22.to_account_id()),
+            amount: 100,
+            vesting_start: 100,
+            vesting_end: 101,
+        };
+
+        let mut vester_constructor = VesterRef::new();
+        let mut vester = client
+            .instantiate("vester", &vester_creator, &mut vester_constructor)
+            .submit()
+            .await
+            .expect("instantiate vester failed")
+            .call::<Vester>();
+
+        let _ = client
+            .call(
+                &vester_submitter,
+                &psp22.increase_allowance(vester.to_account_id(), create_vest_args.amount),
+            )
+            .submit()
+            .await
+            .expect("give allowance failed")
+            .return_value();
+
+        let _ = client
+            .call(
+                &vester_creator,
+                &psp22.mint(
+                    keypair_to_account(&vester_submitter),
+                    create_vest_args.amount,
+                ),
+            )
+            .submit()
+            .await
+            .expect("mint failed");
+
+        let balance_of_vester = client
+            .call(&ink_e2e::alice(), &psp22.balance_of(vester.to_account_id()))
+            .dry_run()
+            .await?
+            .return_value();
+
+        let balance_of_vester_submitter = client
+            .call(
+                &ink_e2e::alice(),
+                &psp22.balance_of(keypair_to_account(&vester_submitter)),
+            )
+            .dry_run()
+            .await?
+            .return_value();
+
+        let create_vest_res = client
+            .call(
+                &vester_submitter,
+                &vester.create_vest(
+                    create_vest_args.vest_to,
+                    create_vest_args.asset,
+                    create_vest_args.amount,
+                    create_vest_args.vesting_start,
+                    create_vest_args.vesting_end,
+                ),
+            )
+            .submit()
+            .await
+            .expect("create vest failed");
+
+        let contract_emitted_events = create_vest_res.contract_emitted_events()?;
+        let vester_events: Vec<_> = contract_emitted_events
+            .iter()
+            .filter(|event_with_topics| event_with_topics.event.contract == vester.to_account_id())
+            .collect();
+        let psp22_events: Vec<_> = contract_emitted_events
+            .iter()
+            .filter(|event_with_topics| event_with_topics.event.contract == psp22.to_account_id())
+            .collect();
+        assert!(matches!(create_vest_res.return_value(), Ok(())));
+
+        assert_psp22_transfer_event(
+            &psp22_events[1].event, //psp22 transfer emits 2 events, here we check for the actual Transfer event
+            keypair_to_account(&vester_submitter),
+            vester.to_account_id(),
+            create_vest_args.amount,
+            psp22.to_account_id(),
+        );
+        assert_vesting_scheduled_event(
+            &vester_events[0].event,
+            keypair_to_account(&vester_submitter),
+            create_vest_args.vest_to,
+            Some(psp22.to_account_id()),
+            create_vest_args.amount,
+            create_vest_args.vesting_start,
+            create_vest_args.vesting_end,
+        );
+
+        let balance_of_vester_pre = client
+            .call(&ink_e2e::alice(), &psp22.balance_of(vester.to_account_id()))
+            .dry_run()
+            .await?
+            .return_value();
+        let balance_of_vest_receiver = client
+            .call(
+                &ink_e2e::alice(),
+                &psp22.balance_of(create_vest_args.vest_to),
+            )
+            .dry_run()
+            .await?
+            .return_value();
+
+        let release_res = client
+            .call(
+                &vest_to,
+                &vester.release(Some(create_vest_args.vest_to), create_vest_args.asset),
+            )
+            .submit()
+            .await
+            .expect("release failed");
+
+        let contract_emitted_events = release_res.contract_emitted_events()?;
+        let vester_events: Vec<_> = contract_emitted_events
+            .iter()
+            .filter(|event_with_topics| event_with_topics.event.contract == vester.to_account_id())
+            .collect();
+        let psp22_events: Vec<_> = contract_emitted_events
+            .iter()
+            .filter(|event_with_topics| event_with_topics.event.contract == psp22.to_account_id())
+            .collect();
+
+        let return_value = release_res.return_value();
+        assert!(
+            return_value.is_ok(),
+            "release failed. res: {:?}",
+            return_value
+        );
+
+        assert_psp22_transfer_event(
+            &psp22_events[0].event,
+            vester.to_account_id(),
+            keypair_to_account(&vest_to),
+            create_vest_args.amount,
+            psp22.to_account_id(),
+        );
+        assert_token_released_event_e2e(
+            &vester_events[0].event,
+            create_vest_args.vest_to,
+            create_vest_args.vest_to,
+            Some(psp22.to_account_id()),
+            create_vest_args.amount,
+        );
+
+        Ok(())
+    }
+
+    #[ink_e2e::test]
+    async fn release_psp22_different_caller(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+        let vester_creator = ink_e2e::alice();
+        let vester_submitter = client
+            .create_and_fund_account(&ink_e2e::alice(), 10_000_000_000_000)
+            .await;
+        let release_caller = client
+            .create_and_fund_account(&ink_e2e::alice(), 10_000_000_000_000)
+            .await;
+        let psp22_mintable_creator = ink_e2e::bob();
+        let mut psp22_constructor = PSP22Ref::new(1_000_000);
+        let mut psp22 = client
+            .instantiate(
+                "my_psp22_mintable",
+                &psp22_mintable_creator,
+                &mut psp22_constructor,
+            )
+            .submit()
+            .await
+            .expect("instantiate psp22 failed")
+            .call::<Contract>();
+        let vest_to = ink_e2e::charlie();
+
+        // create_vest args
+        let create_vest_args = CreateVestingScheduleArgs {
+            vest_to: keypair_to_account(&ink_e2e::charlie()),
+            asset: Some(psp22.to_account_id()),
+            amount: 100,
+            vesting_start: 100,
+            vesting_end: 101,
+        };
+
+        let mut vester_constructor = VesterRef::new();
+        let mut vester = client
+            .instantiate("vester", &vester_creator, &mut vester_constructor)
+            .submit()
+            .await
+            .expect("instantiate vester failed")
+            .call::<Vester>();
+
+        let _ = client
+            .call(
+                &vester_submitter,
+                &psp22.increase_allowance(vester.to_account_id(), create_vest_args.amount),
+            )
+            .submit()
+            .await
+            .expect("give allowance failed")
+            .return_value();
+
+        let _ = client
+            .call(
+                &vester_creator,
+                &psp22.mint(
+                    keypair_to_account(&vester_submitter),
+                    create_vest_args.amount,
+                ),
+            )
+            .submit()
+            .await
+            .expect("mint failed");
+
+        let balance_of_vester = client
+            .call(&ink_e2e::alice(), &psp22.balance_of(vester.to_account_id()))
+            .dry_run()
+            .await?
+            .return_value();
+
+        let balance_of_vester_submitter = client
+            .call(
+                &ink_e2e::alice(),
+                &psp22.balance_of(keypair_to_account(&vester_submitter)),
+            )
+            .dry_run()
+            .await?
+            .return_value();
+
+        let create_vest_res = client
+            .call(
+                &vester_submitter,
+                &vester.create_vest(
+                    create_vest_args.vest_to,
+                    create_vest_args.asset,
+                    create_vest_args.amount,
+                    create_vest_args.vesting_start,
+                    create_vest_args.vesting_end,
+                ),
+            )
+            .submit()
+            .await
+            .expect("create vest failed");
+
+        let contract_emitted_events = create_vest_res.contract_emitted_events()?;
+        let vester_events: Vec<_> = contract_emitted_events
+            .iter()
+            .filter(|event_with_topics| event_with_topics.event.contract == vester.to_account_id())
+            .collect();
+        let psp22_events: Vec<_> = contract_emitted_events
+            .iter()
+            .filter(|event_with_topics| event_with_topics.event.contract == psp22.to_account_id())
+            .collect();
+        assert!(matches!(create_vest_res.return_value(), Ok(())));
+
+        /*
+        psp22 transfer_from emits 2 events (Approval - decrease allowance of vester_submitter & Transfer)
+        here we check for the actual Transfer event, hence pulling event of index 1
+        */
+        assert_psp22_transfer_event(
+            &psp22_events[1].event,
+            keypair_to_account(&vester_submitter),
+            vester.to_account_id(),
+            create_vest_args.amount,
+            psp22.to_account_id(),
+        );
+        assert_vesting_scheduled_event(
+            &vester_events[0].event,
+            keypair_to_account(&vester_submitter),
+            create_vest_args.vest_to,
+            Some(psp22.to_account_id()),
+            create_vest_args.amount,
+            create_vest_args.vesting_start,
+            create_vest_args.vesting_end,
+        );
+
+        let balance_of_vester_pre = client
+            .call(&ink_e2e::alice(), &psp22.balance_of(vester.to_account_id()))
+            .dry_run()
+            .await?
+            .return_value();
+        let balance_of_vest_receiver = client
+            .call(
+                &ink_e2e::alice(),
+                &psp22.balance_of(create_vest_args.vest_to),
+            )
+            .dry_run()
+            .await?
+            .return_value();
+
+        let release_res = client
+            .call(
+                &release_caller,
+                &vester.release(Some(create_vest_args.vest_to), create_vest_args.asset),
+            )
+            .submit()
+            .await
+            .expect("release failed");
+
+        let contract_emitted_events = release_res.contract_emitted_events()?;
+        let vester_events: Vec<_> = contract_emitted_events
+            .iter()
+            .filter(|event_with_topics| event_with_topics.event.contract == vester.to_account_id())
+            .collect();
+        let psp22_events: Vec<_> = contract_emitted_events
+            .iter()
+            .filter(|event_with_topics| event_with_topics.event.contract == psp22.to_account_id())
+            .collect();
+
+        let return_value = release_res.return_value();
+        assert!(
+            return_value.is_ok(),
+            "release failed. res: {:?}",
+            return_value
+        );
+
+        assert_psp22_transfer_event(
+            &psp22_events[0].event,
+            vester.to_account_id(),
+            keypair_to_account(&vest_to),
+            create_vest_args.amount,
+            psp22.to_account_id(),
+        );
+        assert_token_released_event_e2e(
+            &vester_events[0].event,
+            keypair_to_account(&release_caller),
+            create_vest_args.vest_to,
+            Some(psp22.to_account_id()),
+            create_vest_args.amount,
+        );
 
         Ok(())
     }
@@ -447,8 +836,9 @@ pub mod tests {
         assert_eq!(pallet_balances_events.len(), 1);
         assert_vesting_scheduled_event(
             &vester_events[0].event,
-            None,
+            keypair_to_account(&vester_submitter),
             create_vest_args.vest_to,
+            None,
             create_vest_args.amount,
             create_vest_args.vesting_start,
             create_vest_args.vesting_end,
@@ -512,24 +902,34 @@ pub mod tests {
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         //try release succeeds & does not release anything
         set_next_caller(create_vest_args.vest_to);
-        let res = Vesting::release(&mut vester, create_vest_args.asset);
+        let res = Vesting::release(
+            &mut vester,
+            Some(create_vest_args.vest_to),
+            create_vest_args.asset,
+        );
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
             &emitted_events[emitted_events.len() - 1],
-            create_vest_args.asset,
             create_vest_args.vest_to,
+            create_vest_args.vest_to,
+            create_vest_args.asset,
             0,
         );
         // try release succeeds & does release adequate amount of tokens eq 1
         set_block_timestamp(create_vest_args.vesting_start + 2);
-        let res = Vesting::release(&mut vester, create_vest_args.asset);
+        let res = Vesting::release(
+            &mut vester,
+            Some(create_vest_args.vest_to),
+            create_vest_args.asset,
+        );
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
             &emitted_events[emitted_events.len() - 1],
-            create_vest_args.asset,
             create_vest_args.vest_to,
+            create_vest_args.vest_to,
+            create_vest_args.asset,
             1, // accounting for rounding down
         );
         //verify storage
@@ -544,13 +944,14 @@ pub mod tests {
 
         // try release succeeds & does release adequate amount of tokens
         set_block_timestamp(create_vest_args.vesting_start + ONE_DAY);
-        let res = Vesting::release(&mut vester, create_vest_args.asset);
+        let res = Vesting::release(&mut vester, Some(vest_to), create_vest_args.asset);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
             &emitted_events[emitted_events.len() - 1],
-            create_vest_args.asset,
             create_vest_args.vest_to,
+            create_vest_args.vest_to,
+            create_vest_args.asset,
             (ONE_DAY - 1 - 1).into(), //1 already released + accounting for rounding down
         );
         //verify storage
@@ -564,14 +965,19 @@ pub mod tests {
         assert_eq!(vesting_schedule.start, create_vest_args.vesting_start);
 
         // try release succeeds & does release the rest of tokens
+        // use django as caller
+        set_next_caller(accounts.django);
+        // get django balance
+        let django_balance_pre = get_account_balance(accounts.django);
         set_block_timestamp(create_vest_args.vesting_end + 1);
-        let res = Vesting::release(&mut vester, create_vest_args.asset);
+        let res = Vesting::release(&mut vester, Some(vest_to), create_vest_args.asset);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
             &emitted_events[emitted_events.len() - 1],
-            create_vest_args.asset,
+            accounts.django,
             create_vest_args.vest_to,
+            create_vest_args.asset,
             create_vest_args.amount - u128::from(ONE_DAY - 1), // ONE_DAY + 1 already released
         );
         let next_id = vester.next_id_vest_of(create_vest_args.vest_to, create_vest_args.asset);
@@ -590,6 +996,8 @@ pub mod tests {
             vester_balance_post,
             vester_balance_pre - create_vest_args.amount
         );
+        //ensure django balance has not decreased
+        assert_eq!(get_account_balance(accounts.django), django_balance_pre);
     }
 
     #[ink::test]
@@ -667,13 +1075,14 @@ pub mod tests {
                 .is_some());
         }
         set_next_caller(vest_to);
-        let res = Vesting::release(&mut vester, None);
+        let res = Vesting::release(&mut vester, Some(vest_to), None);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
             &emitted_events[emitted_events.len() - 1],
-            None,
             vest_to,
+            vest_to,
+            None,
             (ONE_DAY * 12 - 1).into(),
         );
         assert_eq!(emitted_events.len() - event_count_before, 1);
@@ -688,13 +1097,14 @@ pub mod tests {
         // move time past 1st schedule end
         set_block_timestamp(create_vest_args_vec[1].vesting_end + ONE_DAY);
         let event_count_before = ink::env::test::recorded_events().collect::<Vec<_>>().len();
-        let res = Vesting::release(&mut vester, None);
+        let res = Vesting::release(&mut vester, Some(vest_to), None);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
             &emitted_events[emitted_events.len() - 1],
-            None,
             vest_to,
+            vest_to,
+            None,
             (ONE_DAY * 7 - 1).into(),
         );
         assert_eq!(emitted_events.len() - event_count_before, 1);
@@ -708,13 +1118,14 @@ pub mod tests {
 
         // move time past last schedule end
         set_block_timestamp(create_vest_args_vec[create_vest_args_vec.len() - 1].vesting_end + 1);
-        let res = Vesting::release(&mut vester, None);
+        let res = Vesting::release(&mut vester, Some(vest_to), None);
         assert!(res.is_ok(), "release failed. res: {:?}", res);
         let emitted_events = ink::env::test::recorded_events().collect::<Vec<_>>();
         assert_token_released_event(
             &emitted_events[emitted_events.len() - 1],
-            None,
             vest_to,
+            vest_to,
+            None,
             (ONE_DAY * 53 + 1 + 1).into(),
         );
         let next_id = vester.next_id_vest_of(vest_to, None);
