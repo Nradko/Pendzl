@@ -77,8 +77,8 @@ impl VestingStorage for Data {
             Some(data) => data,
             None => return Ok((false, 0)),
         };
-        let amount_released = data.collect_releasable_rdown();
-        if data.is_overdue() {
+        let amount_released = data.collect_releasable_rdown()?;
+        if data.is_overdue()? {
             let leftover = data.amount - data.released;
             let next_id = self.next_id.get((to, asset)).unwrap(); // data is some => next_id must exist and be > 0
             let tail_id = next_id - 1;
