@@ -1135,6 +1135,8 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
     .expect("Should parse import");
     impl_args.imports.insert("Vesting", import);
     impl_args.imports.insert("VestingData", import_data);
+    
+    impl_args.vec_import();
 
     override_functions("VestingInternal", &mut internal, impl_args.map);
     override_functions("Vesting", &mut vesting, impl_args.map);
