@@ -1,7 +1,6 @@
 pub use pendzl::traits::Balance;
 
 use ink::{prelude::vec::Vec, primitives::AccountId};
-use pendzl::traits::Timestamp;
 #[ink::trait_definition]
 pub trait Vesting {
     #[ink(message, payable)]
@@ -10,8 +9,8 @@ pub trait Vesting {
         receiver: AccountId,
         asset: Option<AccountId>,
         amount: Balance,
-        vesting_start: Timestamp,
-        vesting_end: Timestamp,
+        vesting_start: VestingTimeConstraint,
+        vesting_end: VestingTimeConstraint,
         data: Vec<u8>,
     ) -> Result<(), VestingError>;
     #[ink(message)]
@@ -47,8 +46,8 @@ pub trait VestingInternal {
         receiver: AccountId,
         asset: Option<AccountId>,
         amount: Balance,
-        vesting_start: Timestamp,
-        vesting_end: Timestamp,
+        vesting_start: VestingTimeConstraint,
+        vesting_end: VestingTimeConstraint,
         data: &Vec<u8>,
     ) -> Result<(), VestingError>;
 
@@ -96,8 +95,8 @@ pub trait VestingStorage {
         receiver: AccountId,
         asset: Option<AccountId>,
         amount: Balance,
-        vesting_start: Timestamp,
-        vesting_end: Timestamp,
+        vesting_start: VestingTimeConstraint,
+        vesting_end: VestingTimeConstraint,
         data: &Vec<u8>,
     ) -> Result<(), VestingError>;
 

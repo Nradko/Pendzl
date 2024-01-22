@@ -10,20 +10,6 @@ pub mod vester {
         #[storage_field]
         vesting: VestingData,
     }
-    #[ink::event]
-    #[derive(Debug)]
-    pub struct TransferMock {
-        /// The account from which the tokens are transferred.
-        #[ink(topic)]
-        pub from: AccountId,
-        /// The account to which the tokens are transferred.
-        #[ink(topic)]
-        pub to: AccountId,
-        /// The amount of tokens transferred.
-        pub amount: Balance,
-        /// The asset transferred. None for native token.
-        pub asset: Option<AccountId>,
-    }
 
     impl Vester {
         #[ink(constructor)]
@@ -43,9 +29,7 @@ pub mod tests {
         ToAccountId,
     };
     use ink_e2e::{events::ContractEmitted, ChainBackend, ContractsBackend};
-    use my_psp22_mintable::my_psp22_mintable::{
-        Contract as PSP22MintableContract, ContractRef as PSP22Ref, *,
-    };
+    use my_psp22_mintable::my_psp22_mintable::{ContractRef as PSP22Ref, *};
     use pendzl::{
         contracts::token::psp22::{PSP22Error, Transfer, PSP22},
         traits::{AccountId, Balance, Timestamp},
@@ -59,15 +43,15 @@ pub mod tests {
         vest_to: AccountId,
         asset: Option<AccountId>,
         amount: Balance,
-        vesting_start: Timestamp,
-        vesting_end: Timestamp,
+        vesting_start: VestingTimeConstraint,
+        vesting_end: VestingTimeConstraint,
     }
 
     fn create_duration_as_amount_schedule_args(
         vest_to: AccountId,
         asset: Option<AccountId>,
-        vesting_start: Timestamp,
-        vesting_end: Timestamp,
+        vesting_start: VestingTimeConstraint,
+        vesting_end: VestingTimeConstraint,
     ) -> CreateVestingScheduleArgs {
         let duration = vesting_end - vesting_start;
         CreateVestingScheduleArgs {
@@ -106,8 +90,8 @@ pub mod tests {
         expected_receiver: AccountId,
         expected_asset: Option<AccountId>,
         expected_amount: Balance,
-        expected_vesting_start: Timestamp,
-        expected_vesting_end: Timestamp,
+        expected_vesting_start: VestingTimeConstraint,
+        expected_vesting_end: VestingTimeConstraint,
     ) {
         let VestingScheduled {
             creator,
