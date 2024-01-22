@@ -5,7 +5,7 @@ use scale::{Decode, Encode};
 
 pub type SelectorBytes = [u8; 4];
 
-#[derive(Debug, Encode, Decode, Clone)]
+#[derive(Debug, Encode, PartialEq, Eq, Decode, Clone)]
 #[cfg_attr(
     feature = "std",
     derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
