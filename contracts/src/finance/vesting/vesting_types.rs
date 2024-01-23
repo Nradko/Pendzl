@@ -15,7 +15,7 @@ pub enum VestingTimeConstraint {
     External(AccountId, SelectorBytes),
 }
 
-#[derive(Debug, Encode, Decode)]
+#[derive(Debug, Encode, Decode, Clone)]
 #[cfg_attr(
     feature = "std",
     derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)

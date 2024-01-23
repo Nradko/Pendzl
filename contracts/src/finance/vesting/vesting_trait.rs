@@ -1,6 +1,9 @@
 pub use pendzl::traits::Balance;
 
+use ink::contract_ref;
 use ink::{prelude::vec::Vec, primitives::AccountId};
+
+pub type VestingRef = contract_ref!(Vesting, DefaultEnvironment);
 #[ink::trait_definition]
 pub trait Vesting {
     #[ink(message, payable)]
