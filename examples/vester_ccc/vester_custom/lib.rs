@@ -26,8 +26,8 @@ pub mod tests {
     use ink_e2e::{events::ContractEmitted, ChainBackend, ContractsBackend};
     use my_psp22_mintable::my_psp22_mintable::{ContractRef as PSP22Ref, *};
     use pendzl::{
-        contracts::token::psp22::{PSP22Error, Transfer, PSP22},
-        traits::{AccountId, Balance, Timestamp},
+        contracts::token::psp22::{Transfer, PSP22},
+        traits::{AccountId, Balance},
     };
     use test_helpers::{assert_eq_msg, keypair_to_account};
     use ts_provider::ts_provider::*;
@@ -212,21 +212,6 @@ pub mod tests {
             .await
             .expect("mint failed");
 
-        let balance_of_vester = client
-            .call(&ink_e2e::alice(), &psp22.balance_of(vester.to_account_id()))
-            .dry_run()
-            .await?
-            .return_value();
-
-        let balance_of_vester_submitter = client
-            .call(
-                &ink_e2e::alice(),
-                &psp22.balance_of(keypair_to_account(&vester_submitter)),
-            )
-            .dry_run()
-            .await?
-            .return_value();
-
         let create_vest_res = client
             .call(
                 &vester_submitter,
@@ -391,21 +376,6 @@ pub mod tests {
             .submit()
             .await
             .expect("mint failed");
-
-        let balance_of_vester = client
-            .call(&ink_e2e::alice(), &psp22.balance_of(vester.to_account_id()))
-            .dry_run()
-            .await?
-            .return_value();
-
-        let balance_of_vester_submitter = client
-            .call(
-                &ink_e2e::alice(),
-                &psp22.balance_of(keypair_to_account(&vester_submitter)),
-            )
-            .dry_run()
-            .await?
-            .return_value();
 
         let create_vest_res = client
             .call(
