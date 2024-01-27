@@ -39,7 +39,7 @@ pub trait Vesting {
         asset: Option<AccountId>,
         id: u32,
         data: Vec<u8>,
-    ) -> Option<VestingSchedule>;
+    ) -> Option<VestingScheduleData>;
     #[ink(message)]
     fn next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>, data: Vec<u8>) -> u32;
 }
@@ -90,7 +90,7 @@ pub trait VestingInternal {
         asset: Option<AccountId>,
         id: u32,
         data: &Vec<u8>,
-    ) -> Option<VestingSchedule>;
+    ) -> Option<VestingScheduleData>;
     fn _next_id_vest_of(&self, of: AccountId, asset: Option<AccountId>, data: &Vec<u8>) -> u32;
 }
 pub trait VestingStorage {
@@ -125,5 +125,5 @@ pub trait VestingStorage {
         asset: Option<AccountId>,
         id: u32,
         data: &Vec<u8>,
-    ) -> Option<VestingSchedule>;
+    ) -> Option<VestingScheduleData>;
 }

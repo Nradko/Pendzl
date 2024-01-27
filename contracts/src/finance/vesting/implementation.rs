@@ -1,22 +1,84 @@
 // SPDX-License-Identifier: MIT
-use ink::prelude::vec::*;
-use ink::{prelude::vec, storage::Mapping};
-use pendzl::traits::{AccountId, Balance, Storage};
-
-use crate::{
-    finance::vesting::VestingSchedule,
-    token::psp22::{PSP22Ref, PSP22},
+use ink::{
+    env::{
+        call::{build_call, ExecutionInput},
+        DefaultEnvironment,
+    },
+    prelude::vec,
+    prelude::vec::*,
+    storage::Mapping,
 };
+use pendzl::{
+    math::errors::MathError::Overflow,
+    traits::{AccountId, Balance, DefaultEnv, Storage, Timestamp},
+};
+
+use crate::token::psp22::{PSP22Ref, PSP22};
 
 use super::{
-    TokenReleased, VestingError, VestingInternal, VestingScheduled, VestingStorage,
-    VestingTimeConstraint,
+    TokenReleased, VestingError, VestingInternal, VestingScheduleData, VestingScheduled,
+    VestingStorage, VestingTimeConstraint, VestingTimeConstraintData,
 };
+
+impl VestingScheduleData {
+    pub fn collect_releasable_rdown(&mut self) -> Result<Balance, VestingError> {
+        let amount_releaseable = self.amount_releaseable_rdown()?;
+        self.released += amount_releaseable;
+        Ok(amount_releaseable)
+    }
+    pub fn amount_releaseable_rdown(&self) -> Result<Balance, VestingError> {
+        let now: Timestamp = Self::env().block_timestamp();
+        let start_time = self._extract_timestamp_from_constraint(&self.start)?;
+        let end_time = self._extract_timestamp_from_constraint(&self.end)?;
+        let is_overdue = self.is_overdue()?;
+        if is_overdue {
+            return Ok(self.amount - self.released);
+        }
+        if now < start_time || start_time == end_time {
+            return Ok(0);
+        }
+        let total_to_release = self.amount * u128::try_from(now - start_time).unwrap()
+            / u128::try_from(end_time - start_time).unwrap()
+            - 1; //TODO ??
+        let amount_releaseable = total_to_release - self.released;
+        Ok(amount_releaseable)
+    }
+    pub fn is_overdue(&self) -> Result<bool, VestingError> {
+        let now: Timestamp = Self::env().block_timestamp();
+        let end_time = self._extract_timestamp_from_constraint(&self.end)?;
+        Ok(now >= end_time)
+    }
+    fn _extract_timestamp_from_constraint(
+        &self,
+        constraint: &VestingTimeConstraintData,
+    ) -> Result<Timestamp, VestingError> {
+        match constraint.fetch_value_data {
+            VestingTimeConstraint::Default(timestamp) => Ok(timestamp),
+            VestingTimeConstraint::External(account_id, selector_bytes) => {
+                let call_result = build_call::<DefaultEnvironment>()
+                    .call(account_id)
+                    .exec_input(ExecutionInput::new(ink::env::call::Selector::new(
+                        selector_bytes,
+                    )))
+                    .returns::<Timestamp>()
+                    .try_invoke();
+
+                match call_result {
+                    Ok(timestamp) => match timestamp {
+                        Ok(timestamp) => Ok(timestamp),
+                        Err(_) => Ok(constraint.current_value),
+                    },
+                    Err(_) => Ok(constraint.current_value),
+                }
+            }
+        }
+    }
+}
 
 #[derive(Default, Debug)]
 #[pendzl::storage_item]
 pub struct VestingData {
-    schedules: Mapping<(AccountId, Option<AccountId>, u32), VestingSchedule>,
+    schedules: Mapping<(AccountId, Option<AccountId>, u32), VestingScheduleData>,
     next_id: Mapping<(AccountId, Option<AccountId>), u32>,
 }
 
@@ -31,16 +93,67 @@ impl VestingStorage for VestingData {
         _data: &Vec<u8>,
     ) -> Result<(), VestingError> {
         let id = self.next_id.get((to, asset)).unwrap_or(0);
+        let current_start = match vesting_start {
+            VestingTimeConstraint::Default(timestamp) => Ok(timestamp),
+            VestingTimeConstraint::External(account_id, selector_bytes) => {
+                let call_result = build_call::<DefaultEnvironment>()
+                    .call(account_id)
+                    .exec_input(ExecutionInput::new(ink::env::call::Selector::new(
+                        selector_bytes,
+                    )))
+                    .returns::<Timestamp>()
+                    .try_invoke();
+
+                match call_result {
+                    Ok(timestamp) => match timestamp {
+                        Ok(timestamp) => Ok(timestamp),
+                        Err(_) => Err(VestingError::CouldNotResolveTimeConstraint),
+                    },
+                    Err(_) => Err(VestingError::CouldNotResolveTimeConstraint),
+                }
+            }
+        }?;
+        let current_end = match vesting_end {
+            VestingTimeConstraint::Default(timestamp) => Ok(timestamp),
+            VestingTimeConstraint::External(account_id, selector_bytes) => {
+                let call_result = build_call::<DefaultEnvironment>()
+                    .call(account_id)
+                    .exec_input(ExecutionInput::new(ink::env::call::Selector::new(
+                        selector_bytes,
+                    )))
+                    .returns::<Timestamp>()
+                    .try_invoke();
+
+                match call_result {
+                    Ok(timestamp) => match timestamp {
+                        Ok(timestamp) => Ok(timestamp),
+                        Err(_) => Err(VestingError::CouldNotResolveTimeConstraint),
+                    },
+                    Err(_) => Err(VestingError::CouldNotResolveTimeConstraint),
+                }
+            }
+        }?;
+
         self.schedules.insert(
             (to, asset, id),
-            &VestingSchedule {
-                start: vesting_start,
-                end: vesting_end,
+            &VestingScheduleData {
+                start: VestingTimeConstraintData {
+                    current_value: current_start,
+                    fetch_value_data: vesting_start.clone(),
+                },
+                end: VestingTimeConstraintData {
+                    current_value: current_end,
+                    fetch_value_data: vesting_end.clone(),
+                },
                 amount,
                 released: 0,
             },
         );
-        self.next_id.insert((to, asset), &(id + 1));
+
+        self.next_id.insert(
+            (to, asset),
+            &(id.checked_add(1).ok_or(VestingError::MathError(Overflow))?),
+        );
         Ok(())
     }
 
@@ -62,7 +175,9 @@ impl VestingStorage for VestingData {
                 tail_id = tail_id.saturating_sub(1);
                 continue;
             }
-            current_id += 1;
+            current_id = current_id
+                .checked_add(1)
+                .ok_or(VestingError::MathError(Overflow))?;
         }
         Ok(total_amount)
     }
@@ -104,7 +219,7 @@ impl VestingStorage for VestingData {
         asset: Option<AccountId>,
         id: u32,
         _data: &Vec<u8>,
-    ) -> Option<VestingSchedule> {
+    ) -> Option<VestingScheduleData> {
         self.schedules.get(&(to, asset, id))
     }
 }
@@ -146,7 +261,7 @@ pub trait VestingDefaultImpl: VestingInternal + Sized {
         asset: Option<AccountId>,
         id: u32,
         data: Vec<u8>,
-    ) -> Option<VestingSchedule> {
+    ) -> Option<VestingScheduleData> {
         self._vesting_schedule_of(of, asset, id, &data)
     }
     fn next_id_vest_of_default_impl(
@@ -278,7 +393,7 @@ where
         asset: Option<AccountId>,
         id: u32,
         _data: &Vec<u8>,
-    ) -> Option<VestingSchedule> {
+    ) -> Option<VestingScheduleData> {
         self.data().schedules.get(&(of, asset, id))
     }
 

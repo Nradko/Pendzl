@@ -1063,7 +1063,7 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
                 pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_next_id_vest_of_default_impl(self, of, asset, data)
             }
 
-            fn _vesting_schedule_of(&self, of: AccountId, asset: Option<AccountId>, id: u32, data: &Vec<u8>) -> Option<VestingSchedule> {
+            fn _vesting_schedule_of(&self, of: AccountId, asset: Option<AccountId>, id: u32, data: &Vec<u8>) -> Option<VestingScheduleData> {
                 pendzl::contracts::finance::vesting::implementation::VestingInternalDefaultImpl::_vesting_schedule_of_default_impl(self, of, asset, id, data)
             }
         }
@@ -1110,7 +1110,7 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
                 pendzl::contracts::finance::vesting::implementation::VestingDefaultImpl::next_id_vest_of_default_impl(self, of, asset, data)
             }
             #[ink(message)]
-            fn vesting_schedule_of(&self, of: AccountId, asset: Option<AccountId>, id: u32, data: Vec<u8>) -> Option<VestingSchedule> {
+            fn vesting_schedule_of(&self, of: AccountId, asset: Option<AccountId>, id: u32, data: Vec<u8>) -> Option<VestingScheduleData> {
                 pendzl::contracts::finance::vesting::implementation::VestingDefaultImpl::vesting_schedule_of_default_impl(self, of, asset, id, data)
             }
         }

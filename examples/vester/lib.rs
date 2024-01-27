@@ -930,8 +930,8 @@ pub mod tests {
         let vesting_schedule = vesting_schedule.unwrap();
         assert_eq!(vesting_schedule.released, 1);
         assert_eq!(vesting_schedule.amount, create_vest_args.amount);
-        assert_eq!(vesting_schedule.end, create_vest_args.vesting_end);
-        assert_eq!(vesting_schedule.start, create_vest_args.vesting_start);
+        assert_eq!(vesting_schedule.end.current_value, vesting_end);
+        assert_eq!(vesting_schedule.start.current_value, vesting_start);
 
         // try release succeeds & does release adequate amount of tokens
         set_block_timestamp(vesting_start + ONE_DAY);
@@ -952,8 +952,8 @@ pub mod tests {
         let vesting_schedule = vesting_schedule.unwrap();
         assert_eq!(vesting_schedule.released, (ONE_DAY - 1).into());
         assert_eq!(vesting_schedule.amount, create_vest_args.amount);
-        assert_eq!(vesting_schedule.end, create_vest_args.vesting_end);
-        assert_eq!(vesting_schedule.start, create_vest_args.vesting_start);
+        assert_eq!(vesting_schedule.end.current_value, vesting_end);
+        assert_eq!(vesting_schedule.start.current_value, vesting_start);
 
         // try release succeeds & does release the rest of tokens
         // use django as caller

@@ -164,22 +164,19 @@ pub mod tests {
             .expect("set_end_time failed")
             .return_value();
 
-        let vesting_start = VestingTimeConstraint::External(
-            ts_provider.to_account_id(),
-            ink::selector_bytes!("start_xtime"),
-        );
-        let vesting_end = VestingTimeConstraint::External(
-            ts_provider.to_account_id(),
-            ink::selector_bytes!("end_time"),
-        );
-
         // create_vest args
-        let create_vest_args = CreateVestingScheduleArgs {
+        let mut create_vest_args = CreateVestingScheduleArgs {
             vest_to: keypair_to_account(&ink_e2e::charlie()),
             asset: Some(psp22.to_account_id()),
             amount: amount.into(),
-            vesting_start,
-            vesting_end,
+            vesting_start: VestingTimeConstraint::External(
+                ts_provider.to_account_id(),
+                ink::selector_bytes!("start_xtime"),
+            ),
+            vesting_end: VestingTimeConstraint::External(
+                ts_provider.to_account_id(),
+                ink::selector_bytes!("end_time"),
+            ),
         };
 
         let mut vester_constructor = VesterRef::new();
@@ -189,6 +186,30 @@ pub mod tests {
             .await
             .expect("instantiate vester failed")
             .call::<Vester>();
+
+        let create_vest_res = client
+            .call(
+                &vester_submitter,
+                &psp22.increase_allowance(vester.to_account_id(), create_vest_args.amount),
+            )
+            .dry_run()
+            .await
+            .expect("give allowance failed")
+            .return_value();
+
+        assert_eq!(
+            create_vest_res,
+            Err(VestingError::CouldNotResolveTimeConstraint)
+        );
+
+        create_vest_args.vesting_start = VestingTimeConstraint::External(
+            ts_provider.to_account_id(),
+            ink::selector_bytes!("start_time"),
+        );
+        create_vest_args.vesting_end = VestingTimeConstraint::External(
+            ts_provider.to_account_id(),
+            ink::selector_bytes!("end_time"),
+        );
 
         let _ = client
             .call(
@@ -269,10 +290,7 @@ pub mod tests {
             .await?
             .return_value();
 
-        assert_eq!(
-            release_res,
-            Err(VestingError::CouldNotResolveTimeConstraint)
-        );
+        assert_eq!(release_res, Ok(()),);
 
         Ok(())
     }
