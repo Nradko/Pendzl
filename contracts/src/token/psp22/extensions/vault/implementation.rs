@@ -324,7 +324,7 @@ pub trait PSP22VaultDefaultImpl: PSP22VaultInternal + PSP22Internal + DefaultEnv
         }
         let shares = self._preview_withdraw(&assets)?;
         self._withdraw(&Self::env().caller(), &receiver, &owner, &assets, &shares)?;
-        Ok(shares)
+        Ok(assets)
     }
 
     fn redeem_default_impl(
