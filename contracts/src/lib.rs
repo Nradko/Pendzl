@@ -4,5 +4,6 @@
 
 pub mod access;
 pub mod finance;
+pub mod governance;
 pub mod security;
 pub mod token;
