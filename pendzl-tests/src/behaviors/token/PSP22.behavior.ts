@@ -3,8 +3,8 @@ import { KeyringPair } from "@polkadot/keyring/types";
 import BN from "bn.js";
 import { expect } from "chai";
 import { SignAndSendSuccessResponse } from "wookashwackomytest-typechain-types";
-import "wookashwackomytest-polkahat-chai-matchers";
 import { PSP22 } from "../../types/PSP22.type";
+import "wookashwackomytest-polkahat-chai-matchers";
 
 type ShouldBehaveLikeERC20Params = {
   token: PSP22;
@@ -29,8 +29,8 @@ export function shouldBehaveLikeERC20(
   });
 
   it("total supply: returns the total token value", async function () {
-    expect((await ctx.token.query.totalSupply()).value.ok?.toString()).to.equal(
-      ctx.initialSupply.toString()
+    await expect(ctx.token.query.totalSupply()).to.haveOkResult(
+      ctx.initialSupply
     );
   });
 

@@ -126,8 +126,8 @@ dependencies:
     specifier: ../../pendzl-tests
     version: link:../../pendzl-tests
   wookashwackomytest-polkahat-chai-matchers:
-    specifier: 0.0.25
-    version: 0.0.25(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
+    specifier: 0.0.26
+    version: 0.0.26(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
   wookashwackomytest-typechain-compiler:
     specifier: 0.0.36
     version: 0.0.36(@types/node@20.11.19)(typescript@5.3.3)
@@ -2664,7 +2664,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001588
-      electron-to-chromium: 1.4.673
+      electron-to-chromium: 1.4.674
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.23.0)
     dev: false
@@ -2987,8 +2987,8 @@ packages:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
     dev: false
 
-  /electron-to-chromium@1.4.673:
-    resolution: {integrity: sha512-zjqzx4N7xGdl5468G+vcgzDhaHkaYgVcf9MqgexcTqsl2UHSCmOj/Bi3HAprg4BZCpC7HyD8a6nZl6QAZf72gw==}
+  /electron-to-chromium@1.4.674:
+    resolution: {integrity: sha512-jZtIZxv9FlwTLX5kVZStUtXZywhEi3vqvY6iEzJnc57cNgHFQ5JCczElTs/062v6ODTT7eX8ZOTqQcxa3nMUWQ==}
     dev: false
 
   /emoji-regex@8.0.0:
@@ -5360,8 +5360,8 @@ packages:
       isexe: 2.0.0
     dev: false
 
-  /wookashwackomytest-polkahat-chai-matchers@0.0.25(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
-    resolution: {integrity: sha512-apuY3K6zG3NhkwfqwxsnjEcufGWvDzlpsnm4UqEyUdpF4wflcWIt6Q42E5l469siWs6rXFhDzAIeSK6CVHHPgA==}
+  /wookashwackomytest-polkahat-chai-matchers@0.0.26(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
+    resolution: {integrity: sha512-m+bPoKoutp458EfEmjevL551liEuJbbTB4ViGr/j+uHpmthGUcijbd1OHZYvPTFCBp8Xif/YibGXHd9L0Dt3qw==}
     peerDependencies:
       chai: ^4.2.0
     dependencies:
