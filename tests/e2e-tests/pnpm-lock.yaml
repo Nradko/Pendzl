@@ -26,6 +26,9 @@ dependencies:
   '@polkadot/keyring':
     specifier: ^12.6.2
     version: 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
+  '@polkadot/types':
+    specifier: ^10.11.2
+    version: 10.11.2
   '@polkadot/util-crypto':
     specifier: ^12.6.2
     version: 12.6.2(@polkadot/util@12.6.2)
@@ -123,8 +126,8 @@ dependencies:
     specifier: ../../pendzl-tests
     version: link:../../pendzl-tests
   wookashwackomytest-polkahat-chai-matchers:
-    specifier: 0.0.14
-    version: 0.0.14(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
+    specifier: 0.0.15
+    version: 0.0.15(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
   wookashwackomytest-typechain-compiler:
     specifier: 0.0.36
     version: 0.0.36(@types/node@20.11.19)(typescript@5.3.3)
@@ -5357,8 +5360,8 @@ packages:
       isexe: 2.0.0
     dev: false
 
-  /wookashwackomytest-polkahat-chai-matchers@0.0.14(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
-    resolution: {integrity: sha512-LaxFPCpGB+1ArCP5pceiF+Y+6mrgmZAuuDmiYz4+ybn7qfTWrRG5IotEBLgoFuqvSGmtzrGE5Awl9PXVoLGxXQ==}
+  /wookashwackomytest-polkahat-chai-matchers@0.0.15(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
+    resolution: {integrity: sha512-U2/7zMnPEkZ+MvTJllWmjiqBh7uErwTEGbaF3v1locT/udcWg76zOzi87sptdbpuN93ByuryBTVFG5Eq3lBi0w==}
     peerDependencies:
       chai: ^4.2.0
     dependencies:

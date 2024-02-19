@@ -1,7 +1,12 @@
 [workspace]
 members = ["contracts", "lang"]
 
-exclude = ["examples", "example_project_structure", "mocks"]
+exclude = [
+    "examples",
+    "example_project_structure",
+    "mocks",
+    "tests/e2e-tests/contracts",
+]
 
 [package]
 name = "pendzl"

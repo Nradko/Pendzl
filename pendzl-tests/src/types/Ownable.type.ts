@@ -8,12 +8,10 @@ import type {
   SignAndSendSuccessResponse,
 } from "wookashwackomytest-typechain-types";
 import type { QueryReturnType } from "wookashwackomytest-typechain-types";
-import type BN from "bn.js";
 import type { KeyringPair } from "@polkadot/keyring/types";
 import {
   AccountId,
   LangError,
-  PSP22Error,
 } from "wookashwackomytest-polkahat-chai-matchers";
 
 export enum OwnableError {
@@ -22,56 +20,6 @@ export enum OwnableError {
 }
 
 interface OwnableQuery {
-  burn(
-    account: AccountId,
-    amount: string | number | BN,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<Result<null, PSP22Error>, LangError>>>;
-  mint(
-    account: AccountId,
-    amount: string | number | BN,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<Result<null, PSP22Error>, LangError>>>;
-  totalSupply(
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<ReturnNumber, LangError>>>;
-  balanceOf(
-    owner: AccountId,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<ReturnNumber, LangError>>>;
-  allowance(
-    owner: AccountId,
-    spender: AccountId,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<ReturnNumber, LangError>>>;
-  transfer(
-    to: AccountId,
-    value: string | number | BN,
-    data: Array<string | number | BN>,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<Result<null, PSP22Error>, LangError>>>;
-  transferFrom(
-    from: AccountId,
-    to: AccountId,
-    value: string | number | BN,
-    data: Array<string | number | BN>,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<Result<null, PSP22Error>, LangError>>>;
-  approve(
-    spender: AccountId,
-    value: string | number | BN,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<Result<null, PSP22Error>, LangError>>>;
-  increaseAllowance(
-    spender: AccountId,
-    deltaValue: string | number | BN,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<Result<null, PSP22Error>, LangError>>>;
-  decreaseAllowance(
-    spender: AccountId,
-    deltaValue: string | number | BN,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<Result<null, PSP22Error>, LangError>>>;
   owner(
     __options?: GasLimit
   ): Promise<QueryReturnType<Result<AccountId | null, LangError>>>;
@@ -85,54 +33,6 @@ interface OwnableQuery {
 }
 
 interface OwnableTx {
-  burn(
-    account: AccountId,
-    amount: string | number | BN,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  mint(
-    account: AccountId,
-    amount: string | number | BN,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  totalSupply(__options?: GasLimit): Promise<SignAndSendSuccessResponse>;
-  balanceOf(
-    owner: AccountId,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  allowance(
-    owner: AccountId,
-    spender: AccountId,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  transfer(
-    to: AccountId,
-    value: string | number | BN,
-    data: Array<string | number | BN>,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  transferFrom(
-    from: AccountId,
-    to: AccountId,
-    value: string | number | BN,
-    data: Array<string | number | BN>,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  approve(
-    spender: AccountId,
-    value: string | number | BN,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  increaseAllowance(
-    spender: AccountId,
-    deltaValue: string | number | BN,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  decreaseAllowance(
-    spender: AccountId,
-    deltaValue: string | number | BN,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
   owner(__options?: GasLimit): Promise<SignAndSendSuccessResponse>;
   renounceOwnership(__options?: GasLimit): Promise<SignAndSendSuccessResponse>;
   transferOwnership(
