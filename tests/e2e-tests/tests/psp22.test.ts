@@ -8,6 +8,7 @@ import type { KeyringPair } from '@polkadot/keyring/types';
 import { MAX_U128 } from 'wookashwackomytest-polkahat-chai-matchers';
 import 'wookashwackomytest-polkahat-chai-matchers';
 import { expect } from 'chai';
+import { SignAndSendSuccessResponse } from 'wookashwackomytest-typechain-types';
 
 const [owner, ...others] = getSigners();
 const initialSupply = new BN(1000);
@@ -20,7 +21,7 @@ async function prepareEnvBase(api: ApiPromise) {
   return { tPSP22: deployRet.contract };
 }
 describe('PSP 22', () => {
-  const ctx: { token: TPsp22Contract; recipient: KeyringPair } = {} as any;
+  const ctx: { token: TPsp22Contract; recipient: KeyringPair; tx: SignAndSendSuccessResponse } = {} as any;
   const apiProviderWrapper = getLocalApiProviderWrapper(9944);
 
   beforeEach(async () => {
@@ -45,36 +46,31 @@ describe('PSP 22', () => {
       expect(await ctx.token.query.tokenDecimals()).to.haveOkResult(18);
     });
   });
-  // describe('_mint', function () {
-  //   const value = 50;
-  //   // it('rejects a null account', async function () {
-  //   //   await expect(ctx.token.tMint(ethers.ZeroAddress, value))
-  //   //     .to.be.revertedWithCustomError(ctx.token, 'ERC20InvalidReceiver')
-  //   //     .withArgs(ethers.ZeroAddress);
-  //   // });
+  describe('_mint', function () {
+    const value = new BN(50);
 
-  //   it('rejects overflow', async function () {
-  //     await expect(ctx.token.query.tMint(ctx.recipient.address, MAX_U128)).to.be.revertedWithPanic(PANIC_CODES.ARITHMETIC_UNDER_OR_OVERFLOW);
-  //   });
+    it('rejects overflow', async function () {
+      await expect(ctx.token.query.tMint(ctx.recipient.address, MAX_U128)).to.be.revertedWithError({ custom: 'Overflow' });
+    });
 
-  //   describe('for a non zero account', function () {
-  //     beforeEach('minting', async function () {
-  //       ctx.tx = await ctx.token.tMint(ctx.recipient, value);
-  //     });
+    describe('for a non zero account', function () {
+      beforeEach('minting', async function () {
+        ctx.tx = await ctx.token.tx.tMint(ctx.recipient.address, value);
+      });
 
-  //     it('increments totalSupply', async function () {
-  //       await expect(await ctx.token.totalSupply()).to.equal(initialSupply + value);
-  //     });
+      it('increments totalSupply', async function () {
+        await expect(await ctx.token.query.totalSupply()).to.haveOkResult(initialSupply.add(value));
+      });
 
-  //     it('increments recipient balance', async function () {
-  //       await expect(ctx.tx).to.changeTokenBalance(ctx.token, ctx.recipient, value);
-  //     });
+      it('increments recipient balance', async function () {
+        await expect(ctx.tx).to.changeTokenBalances(ctx.token, [ctx.recipient.address], [value]);
+      });
 
-  //     it('emits Transfer event', async function () {
-  //       await expect(ctx.tx).to.emit(ctx.token, 'Transfer').withArgs(ethers.ZeroAddress, ctx.recipient, value);
-  //     });
-  //   });
-  // });
+      it('emits Transfer event', async function () {
+        await expect(ctx.tx).to.emitEvent(ctx.token, 'Transfer', { from: null, to: ctx.recipient.address, value });
+      });
+    });
+  });
 
   // describe('_burn', function () {
   //   it('rejects a null account', async function () {
