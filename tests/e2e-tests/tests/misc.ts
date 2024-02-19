@@ -1,9 +1,6 @@
-import { handleEventReturn } from 'wookashwackomytest-typechain-types';
 import { ApiPromise } from '@polkadot/api';
 import { getSigners } from 'tests/setup/helpers';
-import PSP22Constructor from 'typechain/constructors/my_psp22';
-import { KeyringPair } from '@polkadot/keyring/types';
-import { getContractObject } from 'wookashwackomytest-polkahat-chai-matchers';
+import MyPsp22Deployer from 'typechain/deployers/my_psp22';
 
 export async function getApiAt(api: ApiPromise, blockNumber: number) {
   const blockHash = await api.rpc.chain.getBlockHash(blockNumber);
@@ -29,17 +26,10 @@ export async function increaseBlockTimestamp(api: ApiPromise, deltaTimestamp: nu
   return timestampToSet;
 }
 
-export const getContractObjectWrapper = <T>(
-  api: ApiPromise,
-  constructor: new (address: string, signer: KeyringPair, apiP: ApiPromise) => T,
-  contractAddress: string,
-  signerPair: KeyringPair,
-) => getContractObject(constructor, contractAddress, signerPair, api);
-
 /// makes an operation just to force new block production.
 export async function transferNoop(api: ApiPromise) {
   const signer = getSigners()[0];
-  await new PSP22Constructor(api, signer).new(0); //TODO
+  await new MyPsp22Deployer(api, signer).new(0); //TODO
   return;
   await new Promise((resolve, reject) => {
     api.tx.balances

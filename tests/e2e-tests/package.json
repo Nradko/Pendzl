@@ -57,10 +57,10 @@
     "tsx": "^4.6.2",
     "typescript": "^5.1.6",
     "wookashwackomytest-pendzl-tests": "../../pendzl-tests",
-    "wookashwackomytest-polkahat-chai-matchers": "0.0.10",
-    "wookashwackomytest-typechain-compiler": "^0.0.24",
-    "wookashwackomytest-typechain-polkadot": "^0.0.24",
-    "wookashwackomytest-typechain-types": "^0.0.24"
+    "wookashwackomytest-polkahat-chai-matchers": "0.0.13",
+    "wookashwackomytest-typechain-compiler": "0.0.36",
+    "wookashwackomytest-typechain-polkadot": "0.0.36",
+    "wookashwackomytest-typechain-types": "0.0.36"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.1",

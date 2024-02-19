@@ -1,12 +1,11 @@
 import { ApiPromise } from '@polkadot/api';
 import { BN } from 'bn.js';
-import { expect } from 'chai';
-import { getContractObjectWrapper, increaseBlockTimestamp, transferNoop } from 'tests/misc';
+import { increaseBlockTimestamp, transferNoop } from 'tests/misc';
 import { getLocalApiProviderWrapper, getSigners } from 'tests/setup/helpers';
-import PSP22Constructor from 'typechain/constructors/my_psp22';
-import PSP22 from 'typechain/contracts/my_psp22';
 import 'wookashwackomytest-polkahat-chai-matchers';
 import { shouldBehaveLikeERC20 } from 'wookashwackomytest-pendzl-tests';
+import MyPsp22Deployer from 'typechain/deployers/my_psp22';
+import MyPsp22Contract from 'typechain/contracts/my_psp22';
 
 const [owner, ...others] = getSigners();
 const initialSupply = new BN(1000);
@@ -15,13 +14,12 @@ async function prepareEnvBase(api: ApiPromise) {
   // to force using fake_time
   await increaseBlockTimestamp(api, 0);
 
-  const deployRet = await new PSP22Constructor(api, owner).new(initialSupply);
-  const myPSP22 = await getContractObjectWrapper(api, PSP22, deployRet.address, owner);
+  const deployRet = await new MyPsp22Deployer(api, owner).new(initialSupply);
 
-  return { myPSP22 };
+  return { myPSP22: deployRet.contract };
 }
 describe.only('PSP 22', () => {
-  let myPSP22: PSP22;
+  let myPSP22: MyPsp22Contract;
   const apiProviderWrapper = getLocalApiProviderWrapper(9944);
   beforeEach(async () => {
     const api = await apiProviderWrapper.getAndWaitForReady();

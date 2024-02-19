@@ -50,10 +50,10 @@
     "rimraf": "^3.0.2",
     "ts-node": "^10.8.0",
     "typescript": "~5.0.0",
-    "wookashwackomytest-polkahat-chai-matchers": "0.0.12"
+    "wookashwackomytest-polkahat-chai-matchers": "0.0.13"
   },
   "peerDependencies": {
-    "wookashwackomytest-polkahat-chai-matchers": "0.0.12",
+    "wookashwackomytest-polkahat-chai-matchers": "0.0.13",
     "chai": "^4.2.0"
   },
   "dependencies": {
@@ -68,6 +68,6 @@
     "deep-eql": "^4.0.1",
     "ordinal": "^1.0.3",
     "rxjs": "^7.8.1",
-    "wookashwackomytest-typechain-types": "^0.0.24"
+    "wookashwackomytest-typechain-types": "0.0.36"
   }
 }
