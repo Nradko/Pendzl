@@ -3,8 +3,8 @@ import { KeyringPair } from "@polkadot/keyring/types";
 import BN from "bn.js";
 import { expect } from "chai";
 import { SignAndSendSuccessResponse } from "wookashwackomytest-typechain-types";
-import { PSP22 } from "wookashwackomytest-polkahat-chai-matchers";
 import "wookashwackomytest-polkahat-chai-matchers";
+import { PSP22 } from "wookashwackomytest-polkahat-chai-matchers";
 
 type ShouldBehaveLikeERC20Params = {
   token: PSP22;
