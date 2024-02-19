@@ -7,7 +7,7 @@ import 'wookashwackomytest-polkahat-chai-matchers';
 
 const [defaultAdmin, ...others] = getSigners();
 
-describe.only('AccessControl', () => {
+describe('AccessControl', () => {
   let api: ApiPromise;
   let accessControlMock: TAccessControlContract;
   const apiProviderWrapper = getLocalApiProviderWrapper(9944);

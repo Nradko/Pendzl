@@ -18,7 +18,7 @@ scale-info = { version = "2.10", default-features = false, features = [
 ], optional = true }
 
 # These dependencies
-pendzl = { path = "../../../..", default-features = false, features = ["psp22_impl"] }
+pendzl = { path = "../../../..", default-features = false, features = ["psp22_impl", "psp22_metadata_impl"] }
 
 [dev-dependencies]
 ink_e2e = "=5.0.0-rc"

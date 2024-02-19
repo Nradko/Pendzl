@@ -126,8 +126,8 @@ dependencies:
     specifier: ../../pendzl-tests
     version: link:../../pendzl-tests
   wookashwackomytest-polkahat-chai-matchers:
-    specifier: 0.0.18
-    version: 0.0.18(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
+    specifier: 0.0.25
+    version: 0.0.25(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
   wookashwackomytest-typechain-compiler:
     specifier: 0.0.36
     version: 0.0.36(@types/node@20.11.19)(typescript@5.3.3)
@@ -2203,7 +2203,7 @@ packages:
   /@types/fs-extra@9.0.13:
     resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}
     dependencies:
-      '@types/node': 20.11.19
+      '@types/node': 18.19.17
     dev: false
 
   /@types/glob@8.1.0:
@@ -5360,8 +5360,8 @@ packages:
       isexe: 2.0.0
     dev: false
 
-  /wookashwackomytest-polkahat-chai-matchers@0.0.18(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
-    resolution: {integrity: sha512-LklTQvKkzutRvBjg/QfdBI+IqjJnTE/uFkfP3cioxOpeVJqooJIUrhdGxzOs1gr017AcPmHH4mw5SkZLBmE7Rg==, tarball: https://registry.npmjs.org/wookashwackomytest-polkahat-chai-matchers/-/wookashwackomytest-polkahat-chai-matchers-0.0.18.tgz}
+  /wookashwackomytest-polkahat-chai-matchers@0.0.25(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
+    resolution: {integrity: sha512-apuY3K6zG3NhkwfqwxsnjEcufGWvDzlpsnm4UqEyUdpF4wflcWIt6Q42E5l469siWs6rXFhDzAIeSK6CVHHPgA==}
     peerDependencies:
       chai: ^4.2.0
     dependencies:
