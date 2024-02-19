@@ -8,7 +8,7 @@ import TOwnableContract from 'typechain/contracts/t_ownable';
 import { expect } from 'chai';
 
 const [deployer, owner, ...others] = getSigners();
-describe.only('Ownable', () => {
+describe('Ownable', () => {
   let tOwnable: TOwnableContract;
   let api;
   const apiProviderWrapper = getLocalApiProviderWrapper(9944);
