@@ -86,8 +86,8 @@ devDependencies:
     specifier: ~5.0.0
     version: 5.0.4
   wookashwackomytest-polkahat-chai-matchers:
-    specifier: 0.0.15
-    version: 0.0.15(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
+    specifier: 0.0.17
+    version: 0.0.17(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
 
 packages:
 
@@ -1908,8 +1908,8 @@ packages:
       isexe: 2.0.0
     dev: true
 
-  /wookashwackomytest-polkahat-chai-matchers@0.0.15(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
-    resolution: {integrity: sha512-U2/7zMnPEkZ+MvTJllWmjiqBh7uErwTEGbaF3v1locT/udcWg76zOzi87sptdbpuN93ByuryBTVFG5Eq3lBi0w==}
+  /wookashwackomytest-polkahat-chai-matchers@0.0.17(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
+    resolution: {integrity: sha512-LklTQvKkzutRvBjg/QfdBI+IqjJnTE/uFkfP3cioxOpeVJqooJIUrhdGxzOs1gr017AcPmHH4mw5SkZLBmE7Rg==}
     peerDependencies:
       chai: ^4.2.0
     dependencies:

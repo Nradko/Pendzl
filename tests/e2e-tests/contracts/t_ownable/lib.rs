@@ -23,5 +23,10 @@ pub mod t_ownable {
         pub fn t_update_owner(&mut self, owner: Option<AccountId>) {
             self._update_owner(&owner)
         }
+
+        #[ink(message)]
+        pub fn t_only_owner(&mut self) -> Result<(), OwnableError> {
+            self._only_owner()
+        }
     }
 }

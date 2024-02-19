@@ -31,7 +31,9 @@ export function shouldBehaveLikeOwnable(
     describe("On deployment", function () {
       beforeEach(async function () {
         Object.assign(ctx, getParams());
-        ctx.tx = (await ctx.ownableDeployerCall()).result;
+        const promise = await ctx.ownableDeployerCall();
+        ctx.tx = promise.result;
+        ctx.ownable = promise.contract;
       });
       it("emits ownership transfer events during construction", async function () {
         await expect(ctx.tx).to.emitEvent(ctx.ownable, "OwnershipTransferred", {
@@ -73,7 +75,7 @@ export function shouldBehaveLikeOwnable(
           ctx.ownable
             .withSigner(ctx.other)
             .query.transferOwnership(ctx.other.address)
-        ).to.be.revertedWithError({ callerIsNotOwner: null });
+        ).to.be.revertedWithError("CallerIsNotOwner");
       });
     });
 
@@ -83,13 +85,13 @@ export function shouldBehaveLikeOwnable(
           ctx.ownable.withSigner(ctx.owner).tx.renounceOwnership()
         ).to.emitEvent(ctx.ownable, "OwnershipTransferred", { new: null });
 
-        expect(await ctx.ownable.query.owner()).to.equal(null);
+        expect((await ctx.ownable.query.owner()).value.ok!).to.equal(null);
       });
 
       it("prevents non-owners from renouncement", async function () {
         await expect(
           ctx.ownable.withSigner(ctx.other).query.renounceOwnership()
-        ).to.be.revertedWithError({ callerIsNotOwner: null });
+        ).to.be.revertedWithError("CallerIsNotOwner");
       });
 
       // add elsewehre
