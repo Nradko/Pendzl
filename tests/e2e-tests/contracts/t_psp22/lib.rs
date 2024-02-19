@@ -47,7 +47,7 @@ pub mod t_psp22 {
             PSP22InternalDefaultImpl::_mint_to_default_impl(self, &to, &amount)
         }
         #[ink(message)]
-        pub fn _burn(
+        pub fn t_burn(
             &mut self,
             from: AccountId,
             amount: Balance,

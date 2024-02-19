@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
-import { BN } from 'bn.js';
+import BN from 'bn.js';
 import { getLocalApiProviderWrapper } from 'tests/setup/helpers';
-import { getSigners, shouldBehaveLikeERC20 } from 'wookashwackomytest-pendzl-tests';
+import { getSigners, shouldBehaveLikeERC20, shouldBehaveLikeERC20Approve, shouldBehaveLikeERC20Transfer } from 'wookashwackomytest-pendzl-tests';
 import TPsp22Deployer from 'typechain/deployers/t_psp22';
 import TPsp22Contract from 'typechain/contracts/t_psp22';
 import type { KeyringPair } from '@polkadot/keyring/types';
@@ -20,18 +20,31 @@ async function prepareEnvBase(api: ApiPromise) {
 
   return { tPSP22: deployRet.contract };
 }
-describe('PSP 22', () => {
-  const ctx: { token: TPsp22Contract; recipient: KeyringPair; tx: SignAndSendSuccessResponse } = {} as any;
+describe.only('PSP 22', () => {
+  const ctx: {
+    token: TPsp22Contract;
+    holder: KeyringPair;
+    other: KeyringPair;
+    recipient: KeyringPair;
+    tx: SignAndSendSuccessResponse;
+    initialSupply: BN;
+    totalSupply: BN;
+    transfer: (from: KeyringPair, to: KeyringPair, value: BN) => Promise<SignAndSendSuccessResponse>;
+    approve: (holder: KeyringPair, spender: KeyringPair, value: BN) => Promise<SignAndSendSuccessResponse>;
+  } = {} as any;
   const apiProviderWrapper = getLocalApiProviderWrapper(9944);
 
   beforeEach(async () => {
     const api = await apiProviderWrapper.getAndWaitForReady();
     const contracts = await prepareEnvBase(api);
+    ctx.initialSupply = initialSupply;
     ctx.token = contracts.tPSP22;
+    ctx.holder = owner;
     ctx.recipient = others[0];
+    ctx.other = others[1];
   });
 
-  shouldBehaveLikeERC20(() => ({ initialSupply, holder: owner, recipient: others[0], other: others[1], token: ctx.token }));
+  shouldBehaveLikeERC20(() => ctx);
 
   describe('metadata', () => {
     it('has a name', async function () {
@@ -72,118 +85,95 @@ describe('PSP 22', () => {
     });
   });
 
-  // describe('_burn', function () {
-  //   it('rejects a null account', async function () {
-  //     await expect(ctx.token.$_burn(ethers.ZeroAddress, 1n))
-  //       .to.be.revertedWithCustomError(ctx.token, 'ERC20InvalidSender')
-  //       .withArgs(ethers.ZeroAddress);
-  //   });
+  describe('_burn', function () {
+    it('rejects burning more than balance', async function () {
+      await expect(ctx.token.query.tBurn(ctx.holder.address, initialSupply.addn(1))).to.be.revertedWithError({ insufficientBalance: null });
+    });
 
-  //   describe('for a non zero account', function () {
-  //     it('rejects burning more than balance', async function () {
-  //       await expect(ctx.token.$_burn(ctx.holder, initialSupply + 1n))
-  //         .to.be.revertedWithCustomError(ctx.token, 'ERC20InsufficientBalance')
-  //         .withArgs(ctx.holder, initialSupply, initialSupply + 1n);
-  //     });
+    const describeBurn = function (description: string, value: BN) {
+      describe(description, function () {
+        beforeEach('burning', async function () {
+          ctx.tx = await ctx.token.tx.tBurn(ctx.holder.address, value);
+        });
 
-  //     const describeBurn = function (description, value) {
-  //       describe(description, function () {
-  //         beforeEach('burning', async function () {
-  //           ctx.tx = await ctx.token.$_burn(ctx.holder, value);
-  //         });
+        it('decrements totalSupply', async function () {
+          expect(await ctx.token.query.totalSupply()).to.haveOkResult(initialSupply.sub(value));
+        });
 
-  //         it('decrements totalSupply', async function () {
-  //           expect(await ctx.token.totalSupply()).to.equal(initialSupply - value);
-  //         });
+        it('decrements holder balance', async function () {
+          await expect(ctx.tx).to.changeTokenBalances(ctx.token, [ctx.holder.address], [value.neg()]);
+        });
 
-  //         it('decrements holder balance', async function () {
-  //           await expect(ctx.tx).to.changeTokenBalance(ctx.token, ctx.holder, -value);
-  //         });
+        it('emits Transfer event', async function () {
+          await expect(ctx.tx).to.emitEvent(ctx.token, 'Transfer', { from: ctx.holder.address, to: null, value });
+        });
+      });
+    };
 
-  //         it('emits Transfer event', async function () {
-  //           await expect(ctx.tx).to.emit(ctx.token, 'Transfer').withArgs(ctx.holder, ethers.ZeroAddress, value);
-  //         });
-  //       });
-  //     };
+    describeBurn('for entire balance', initialSupply);
+    describeBurn('for less value than balance', initialSupply.subn(1));
+  });
 
-  //     describeBurn('for entire balance', initialSupply);
-  //     describeBurn('for less value than balance', initialSupply - 1n);
-  //   });
-  // });
+  describe('_update', function () {
+    const value = new BN(1);
 
-  // describe('_update', function () {
-  //   const value = 1n;
+    beforeEach(async function () {
+      ctx.totalSupply = (await ctx.token.query.totalSupply()).value.unwrap().rawNumber;
+    });
 
-  //   beforeEach(async function () {
-  //     ctx.totalSupply = await ctx.token.totalSupply();
-  //   });
+    it('from is none', async function () {
+      const tx = await ctx.token.tx.tUpdate(null, ctx.holder.address, value);
+      await expect(tx).to.emitEvent(ctx.token, 'Transfer', { from: null, to: ctx.holder.address, value });
 
-  //   it('from is the zero address', async function () {
-  //     const tx = await ctx.token.$_update(ethers.ZeroAddress, ctx.holder, value);
-  //     await expect(tx).to.emit(ctx.token, 'Transfer').withArgs(ethers.ZeroAddress, ctx.holder, value);
+      expect(await ctx.token.query.totalSupply()).to.haveOkResult(ctx.totalSupply.add(value));
+      await expect(tx).to.changeTokenBalances(ctx.token, [ctx.holder.address], [value]);
+    });
 
-  //     expect(await ctx.token.totalSupply()).to.equal(ctx.totalSupply + value);
-  //     await expect(tx).to.changeTokenBalance(ctx.token, ctx.holder, value);
-  //   });
+    it('to is none', async function () {
+      const tx = await ctx.token.tx.tUpdate(ctx.holder.address, null, value);
+      await expect(tx).to.emitEvent(ctx.token, 'Transfer', { from: ctx.holder.address, to: null, value });
 
-  //   it('to is the zero address', async function () {
-  //     const tx = await ctx.token.$_update(ctx.holder, ethers.ZeroAddress, value);
-  //     await expect(tx).to.emit(ctx.token, 'Transfer').withArgs(ctx.holder, ethers.ZeroAddress, value);
+      expect(await ctx.token.query.totalSupply()).to.haveOkResult(ctx.totalSupply.sub(value));
+      await expect(tx).to.changeTokenBalances(ctx.token, [ctx.holder.address], [value.neg()]);
+    });
 
-  //     expect(await ctx.token.totalSupply()).to.equal(ctx.totalSupply - value);
-  //     await expect(tx).to.changeTokenBalance(ctx.token, ctx.holder, -value);
-  //   });
+    describe('from and to are the same address', function () {
+      it('null address', async function () {
+        const tx = await ctx.token.tx.tUpdate(null, null, value);
+        await expect(tx).to.emitEvent(ctx.token, 'Transfer', { from: null, to: null, value });
 
-  //   describe('from and to are the same address', function () {
-  //     it('zero address', async function () {
-  //       const tx = await ctx.token.$_update(ethers.ZeroAddress, ethers.ZeroAddress, value);
-  //       await expect(tx).to.emit(ctx.token, 'Transfer').withArgs(ethers.ZeroAddress, ethers.ZeroAddress, value);
+        expect(await ctx.token.query.totalSupply()).to.haveOkResult(ctx.totalSupply);
+      });
 
-  //       expect(await ctx.token.totalSupply()).to.equal(ctx.totalSupply);
-  //       await expect(tx).to.changeTokenBalance(ctx.token, ethers.ZeroAddress, 0n);
-  //     });
+      describe('non null address', function () {
+        it('reverts without balance', async function () {
+          await expect(ctx.token.query.tUpdate(ctx.recipient.address, ctx.recipient.address, value)).to.be.revertedWithError({
+            insufficientBalance: null,
+          });
+        });
 
-  //     describe('non zero address', function () {
-  //       it('reverts without balance', async function () {
-  //         await expect(ctx.token.$_update(ctx.recipient, ctx.recipient, value))
-  //           .to.be.revertedWithCustomError(ctx.token, 'ERC20InsufficientBalance')
-  //           .withArgs(ctx.recipient, 0n, value);
-  //       });
+        it('executes with balance', async function () {
+          const tx = await ctx.token.tx.tUpdate(ctx.holder.address, ctx.holder.address, value);
+          await expect(tx).to.changeTokenBalances(ctx.token, [ctx.holder.address], [new BN(0)]);
+          await expect(tx).to.emitEvent(ctx.token, 'Transfer', { from: ctx.holder.address, to: ctx.holder.address, value });
+        });
+      });
+    });
+  });
 
-  //       it('executes with balance', async function () {
-  //         const tx = await ctx.token.$_update(ctx.holder, ctx.holder, value);
-  //         await expect(tx).to.changeTokenBalance(ctx.token, ctx.holder, 0n);
-  //         await expect(tx).to.emit(ctx.token, 'Transfer').withArgs(ctx.holder, ctx.holder, value);
-  //       });
-  //     });
-  //   });
-  // });
+  describe('_transfer', function () {
+    beforeEach(function () {
+      ctx.transfer = (from: KeyringPair, to: KeyringPair, value: BN) => ctx.token.tx.tTransfer(from.address, to.address, value);
+    });
 
-  // describe('_transfer', function () {
-  //   beforeEach(function () {
-  //     ctx.transfer = ctx.token.$_transfer;
-  //   });
+    shouldBehaveLikeERC20Transfer(() => ctx);
+  });
 
-  //   shouldBehaveLikeERC20Transfer(initialSupply);
+  describe('_approve', function () {
+    beforeEach(function () {
+      ctx.approve = (holder: KeyringPair, spender: KeyringPair, value: BN) => ctx.token.tx.tApprove(holder.address, spender.address, value);
+    });
 
-  //   // it('reverts when the sender is the zero address', async function () {
-  //   //   await expect(ctx.token.$_transfer(ethers.ZeroAddress, ctx.recipient, initialSupply))
-  //   //     .to.be.revertedWithCustomError(ctx.token, 'ERC20InvalidSender')
-  //   //     .withArgs(ethers.ZeroAddress);
-  //   // });
-  // });
-
-  // describe('_approve', function () {
-  //   beforeEach(function () {
-  //     ctx.approve = ctx.token.$_approve;
-  //   });
-
-  //   shouldBehaveLikeERC20Approve(initialSupply);
-
-  //   it('reverts when the owner is the zero address', async function () {
-  //     await expect(ctx.token.$_approve(ethers.ZeroAddress, ctx.recipient, initialSupply))
-  //       .to.be.revertedWithCustomError(ctx.token, 'ERC20InvalidApprover')
-  //       .withArgs(ethers.ZeroAddress);
-  //   });
-  // });
+    shouldBehaveLikeERC20Approve(() => ctx);
+  });
 });
