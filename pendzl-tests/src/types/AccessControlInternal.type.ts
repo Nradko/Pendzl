@@ -14,95 +14,73 @@ import {
   AccountId,
   LangError,
 } from "wookashwackomytest-polkahat-chai-matchers";
+import { AccessControlError } from "./AccessControl.type";
 
-export enum AccessControlError {
-  invalidCaller = "InvalidCaller",
-  missingRole = "MissingRole",
-  roleRedundant = "RoleRedundant",
-}
-
-interface AccessControlQuery {
+interface AccessControlInternalQuery {
   hasRole(
     role: number | string | BN,
     address: AccountId | null,
     __options?: GasLimit
   ): Promise<QueryReturnType<Result<boolean, LangError>>>;
-  getRoleAdmin(
-    role: number | string | BN,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<ReturnNumber, LangError>>>;
-  grantRole(
-    role: number | string | BN,
-    account: AccountId | null,
-    __options?: GasLimit
-  ): Promise<
-    QueryReturnType<Result<Result<null, AccessControlError>, LangError>>
-  >;
-  revokeRole(
-    role: number | string | BN,
-    account: AccountId | null,
-    __options?: GasLimit
-  ): Promise<
-    QueryReturnType<Result<Result<null, AccessControlError>, LangError>>
-  >;
-  renounceRole(
-    role: number | string | BN,
-    account: AccountId | null,
-    __options?: GasLimit
-  ): Promise<
-    QueryReturnType<Result<Result<null, AccessControlError>, LangError>>
-  >;
+  // based on
+  // ctx.mock.tx.tGrantRole(ROLE, ctx.authorized.address)
+  // ctx.mock.tx.tRevokeRole(ROLE, ctx.authorized)
+  // ctx.mock.withSigner(ctx.authorized).query.tEnsureHasRole(ROLE)
 
-  setRoleAdmin(
+  tGrantRole(
     role: number | string | BN,
-    newRole: number | string | BN,
+    account: AccountId | null,
+    __options?: GasLimit
+  ): Promise<
+    QueryReturnType<Result<Result<null, AccessControlError>, LangError>>
+  >;
+  tRevokeRole(
+    role: number | string | BN,
+    account: AccountId | null,
+    __options?: GasLimit
+  ): Promise<
+    QueryReturnType<Result<Result<null, AccessControlError>, LangError>>
+  >;
+  tEnsureHasRole(
+    role: number | string | BN,
     __options?: GasLimit
   ): Promise<
     QueryReturnType<Result<Result<null, AccessControlError>, LangError>>
   >;
 }
 
-interface AccessControlTx {
+interface AccessControlInternalTx {
   hasRole(
     role: number | string | BN,
     address: AccountId | null,
     __options?: GasLimit
   ): Promise<SignAndSendSuccessResponse>;
-  getRoleAdmin(
-    role: number | string | BN,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  grantRole(
+
+  tGrantRole(
     role: number | string | BN,
     account: AccountId | null,
     __options?: GasLimit
   ): Promise<SignAndSendSuccessResponse>;
-  revokeRole(
+  tRevokeRole(
     role: number | string | BN,
     account: AccountId | null,
     __options?: GasLimit
   ): Promise<SignAndSendSuccessResponse>;
-  renounceRole(
+  tEnsureHasRole(
     role: number | string | BN,
-    account: AccountId | null,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  setRoleAdmin(
-    role: number | string | BN,
-    newRole: number | string | BN,
     __options?: GasLimit
   ): Promise<SignAndSendSuccessResponse>;
 }
 
-export interface AccessControl {
-  readonly query: AccessControlQuery;
-  readonly tx: AccessControlTx;
+export interface AccessControlInternal {
+  readonly query: AccessControlInternalQuery;
+  readonly tx: AccessControlInternalTx;
   readonly nativeContract: ContractPromise;
   readonly address: string;
   readonly nativeAPI: ApiPromise;
   readonly contractAbi: Abi;
   readonly eventDataTypeDescriptions: EventDataTypeDescriptions;
-  withSigner: (signer: KeyringPair) => AccessControl;
-  withAddress: (address: string) => AccessControl;
-  withAPI: (api: ApiPromise) => AccessControl;
+  withSigner: (signer: KeyringPair) => AccessControlInternal;
+  withAddress: (address: string) => AccessControlInternal;
+  withAPI: (api: ApiPromise) => AccessControlInternal;
 }

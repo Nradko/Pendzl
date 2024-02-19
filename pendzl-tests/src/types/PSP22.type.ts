@@ -57,20 +57,6 @@ export interface PSP22Query {
     deltaValue: string | number | BN,
     __options?: GasLimit
   ): Promise<QueryReturnType<Result<Result<null, PSP22Error>, LangError>>>;
-  tokenName(
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<string | null, LangError>>>;
-  tokenSymbol(
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<string | null, LangError>>>;
-  tokenDecimals(
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<ReturnNumber, LangError>>>;
-  mint(
-    to: AccountId,
-    amount: string | number | BN,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<Result<null, PSP22Error>, LangError>>>;
 }
 
 export interface PSP22Tx {
@@ -110,14 +96,6 @@ export interface PSP22Tx {
   decreaseAllowance(
     spender: AccountId,
     deltaValue: string | number | BN,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-  tokenName(__options?: GasLimit): Promise<SignAndSendSuccessResponse>;
-  tokenSymbol(__options?: GasLimit): Promise<SignAndSendSuccessResponse>;
-  tokenDecimals(__options?: GasLimit): Promise<SignAndSendSuccessResponse>;
-  mint(
-    to: AccountId,
-    amount: string | number | BN,
     __options?: GasLimit
   ): Promise<SignAndSendSuccessResponse>;
 }

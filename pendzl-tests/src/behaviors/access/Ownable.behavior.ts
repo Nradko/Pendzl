@@ -1,9 +1,7 @@
-import { SubmittableExtrinsic } from "@polkadot/api/types";
 import { KeyringPair } from "@polkadot/keyring/types";
-import BN from "bn.js";
 import { expect } from "chai";
-import { SignAndSendSuccessResponse } from "wookashwackomytest-typechain-types";
 import "wookashwackomytest-polkahat-chai-matchers";
+import { SignAndSendSuccessResponse } from "wookashwackomytest-typechain-types";
 import { Ownable } from "../../types/Ownable.type";
 
 export type ShouldBehaveLikeOwnableParams = {

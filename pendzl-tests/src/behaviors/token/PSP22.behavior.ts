@@ -4,7 +4,7 @@ import BN from "bn.js";
 import { expect } from "chai";
 import { SignAndSendSuccessResponse } from "wookashwackomytest-typechain-types";
 import "wookashwackomytest-polkahat-chai-matchers";
-import { PSP22 } from "wookashwackomytest-polkahat-chai-matchers";
+import { PSP22 } from "../../types/PSP22.type";
 
 type ShouldBehaveLikeERC20Params = {
   token: PSP22;
