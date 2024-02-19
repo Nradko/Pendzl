@@ -67,7 +67,7 @@
 //         .grantRole(ROLE, ctx.authorized);
 //       expect(
 //         ctx.mock.tx.withSigner(ctx.defaultAdmin).grantRole(ROLE, ctx.authorized)
-//       ).to.not.emit(ctx.mock, "RoleGranted");
+//       ).to.not.emitEvent(ctx.mock, "RoleGranted");
 //     });
 //   });
 
@@ -77,7 +77,7 @@
 
 //       await expect(
 //         ctx.mock.tx.withSigner(ctx.defaultAdmin).revokeRole(ROLE, ctx.authorized)
-//       ).to.not.emit(ctx.mock, "RoleRevoked");
+//       ).to.not.emitEvent(ctx.mock, "RoleRevoked");
 //     });
 
 //     describe("with granted role", function () {
@@ -91,7 +91,7 @@
 //         await expect(
 //           ctx.mock.tx.withSigner(ctx.defaultAdmin).revokeRole(ROLE, ctx.authorized)
 //         )
-//           .to.emit(ctx.mock, "RoleRevoked")
+//           .to.emitEvent(ctx.mock, "RoleRevoked")
 //           .withArgs(ROLE, ctx.authorized, ctx.defaultAdmin);
 
 //         expect(await ctx.mock.tx.hasRole(ROLE, ctx.authorized)).to.be.false;
@@ -115,7 +115,7 @@
 
 //         expect(
 //           ctx.mock.tx.withSigner(ctx.defaultAdmin).revokeRole(ROLE, ctx.authorized)
-//         ).to.not.emit(ctx.mock, "RoleRevoked");
+//         ).to.not.emitEvent(ctx.mock, "RoleRevoked");
 //       });
 //     });
 //   });
@@ -124,7 +124,7 @@
 //     it("roles that are not had can be renounced", async function () {
 //       await expect(
 //         ctx.mock.tx.withSigner(ctx.authorized).renounceRole(ROLE, ctx.authorized)
-//       ).to.not.emit(ctx.mock, "RoleRevoked");
+//       ).to.not.emitEvent(ctx.mock, "RoleRevoked");
 //     });
 
 //     describe("with granted role", function () {
@@ -138,7 +138,7 @@
 //         await expect(
 //           ctx.mock.tx.withSigner(ctx.authorized).renounceRole(ROLE, ctx.authorized)
 //         )
-//           .to.emit(ctx.mock, "RoleRevoked")
+//           .to.emitEvent(ctx.mock, "RoleRevoked")
 //           .withArgs(ROLE, ctx.authorized, ctx.authorized);
 
 //         expect(await ctx.mock.tx.hasRole(ROLE, ctx.authorized)).to.be.false;
@@ -159,7 +159,7 @@
 
 //         await expect(
 //           ctx.mock.tx.withSigner(ctx.authorized).renounceRole(ROLE, ctx.authorized)
-//         ).not.to.emit(ctx.mock, "RoleRevoked");
+//         ).not.to.emitEvent(ctx.mock, "RoleRevoked");
 //       });
 //     });
 //   });
@@ -167,7 +167,7 @@
 //   describe("setting role admin", function () {
 //     beforeEach(async function () {
 //       await expect(ctx.mock.tx.$_setRoleAdmin(ROLE, OTHER_ROLE))
-//         .to.emit(ctx.mock, "RoleAdminChanged")
+//         .to.emitEvent(ctx.mock, "RoleAdminChanged")
 //         .withArgs(ROLE, DEFAULT_ADMIN_ROLE, OTHER_ROLE);
 
 //       await ctx.mock
@@ -183,7 +183,7 @@
 //       await expect(
 //         ctx.mock.tx.withSigner(ctx.otherAdmin).grantRole(ROLE, ctx.authorized)
 //       )
-//         .to.emit(ctx.mock, "RoleGranted")
+//         .to.emitEvent(ctx.mock, "RoleGranted")
 //         .withArgs(ROLE, ctx.authorized, ctx.otherAdmin);
 //     });
 
@@ -192,7 +192,7 @@
 //       await expect(
 //         ctx.mock.tx.withSigner(ctx.otherAdmin).revokeRole(ROLE, ctx.authorized)
 //       )
-//         .to.emit(ctx.mock, "RoleRevoked")
+//         .to.emitEvent(ctx.mock, "RoleRevoked")
 //         .withArgs(ROLE, ctx.authorized, ctx.otherAdmin);
 //     });
 
@@ -253,7 +253,7 @@
 //     describe("_grantRole", function () {
 //       it("return true if the account does not have the role", async function () {
 //         await expect(ctx.mock.tx.$_grantRole(ROLE, ctx.authorized))
-//           .to.emit(ctx.mock, "return$_grantRole")
+//           .to.emitEvent(ctx.mock, "return$_grantRole")
 //           .withArgs(true);
 //       });
 
@@ -261,7 +261,7 @@
 //         await ctx.mock.tx.$_grantRole(ROLE, ctx.authorized);
 
 //         await expect(ctx.mock.tx.$_grantRole(ROLE, ctx.authorized))
-//           .to.emit(ctx.mock, "return$_grantRole")
+//           .to.emitEvent(ctx.mock, "return$_grantRole")
 //           .withArgs(false);
 //       });
 //     });
@@ -271,13 +271,13 @@
 //         await ctx.mock.tx.$_grantRole(ROLE, ctx.authorized);
 
 //         await expect(ctx.mock.tx.$_revokeRole(ROLE, ctx.authorized))
-//           .to.emit(ctx.mock, "return$_revokeRole")
+//           .to.emitEvent(ctx.mock, "return$_revokeRole")
 //           .withArgs(true);
 //       });
 
 //       it("return false if the account does not have the role", async function () {
 //         await expect(ctx.mock.tx.$_revokeRole(ROLE, ctx.authorized))
-//           .to.emit(ctx.mock, "return$_revokeRole")
+//           .to.emitEvent(ctx.mock, "return$_revokeRole")
 //           .withArgs(false);
 //       });
 //     });
@@ -390,9 +390,9 @@
 //         await expect(
 //           ctx.mock.tx.withSigner(ctx.newDefaultAdmin).acceptDefaultAdminTransfer()
 //         )
-//           .to.emit(ctx.mock, "RoleRevoked")
+//           .to.emitEvent(ctx.mock, "RoleRevoked")
 //           .withArgs(DEFAULT_ADMIN_ROLE, ctx.defaultAdmin, ctx.newDefaultAdmin)
-//           .to.emit(ctx.mock, "RoleGranted")
+//           .to.emitEvent(ctx.mock, "RoleGranted")
 //           .withArgs(
 //             DEFAULT_ADMIN_ROLE,
 //             ctx.newDefaultAdmin,
@@ -446,7 +446,7 @@
 
 //           await expect(
 //             ctx.mock.tx.withSigner(ctx.defaultAdmin).cancelDefaultAdminTransfer()
-//           ).to.emit(ctx.mock, "DefaultAdminTransferCanceled");
+//           ).to.emitEvent(ctx.mock, "DefaultAdminTransferCanceled");
 
 //           const { newAdmin, schedule } = await ctx.mock.tx.pendingDefaultAdmin();
 //           expect(newAdmin).to.equal(ethers.ZeroAddress);
@@ -475,7 +475,7 @@
 //       it("should succeed without changes", async function () {
 //         await expect(
 //           ctx.mock.tx.withSigner(ctx.defaultAdmin).cancelDefaultAdminTransfer()
-//         ).to.not.emit(ctx.mock, "DefaultAdminTransferCanceled");
+//         ).to.not.emitEvent(ctx.mock, "DefaultAdminTransferCanceled");
 
 //         const { newAdmin, schedule } = await ctx.mock.tx.pendingDefaultAdmin();
 //         expect(newAdmin).to.equal(ethers.ZeroAddress);
@@ -532,7 +532,7 @@
 //           .withSigner(ctx.defaultAdmin)
 //           .renounceRole(DEFAULT_ADMIN_ROLE, ctx.defaultAdmin)
 //       )
-//         .to.emit(ctx.mock, "RoleRevoked")
+//         .to.emitEvent(ctx.mock, "RoleRevoked")
 //         .withArgs(DEFAULT_ADMIN_ROLE, ctx.defaultAdmin, ctx.defaultAdmin);
 
 //       expect(await ctx.mock.tx.hasRole(DEFAULT_ADMIN_ROLE, ctx.defaultAdmin)).to.be
@@ -556,29 +556,8 @@
 //           .withSigner(ctx.defaultAdmin)
 //           .$_grantRole(DEFAULT_ADMIN_ROLE, ctx.other)
 //       )
-//         .to.emit(ctx.mock, "RoleGranted")
+//         .to.emitEvent(ctx.mock, "RoleGranted")
 //         .withArgs(DEFAULT_ADMIN_ROLE, ctx.other, ctx.defaultAdmin);
-//     });
-
-//     describe("schedule not passed", function () {
-//       for (const [fromSchedule, tag] of [
-//         [-1n, "less"],
-//         [0n, "equal"],
-//       ]) {
-//         it(`reverts if block.timestamp is ${tag} to schedule`, async function () {
-//           await time.increaseBy.timestamp(ctx.delay + fromSchedule, false);
-//           await expect(
-//             ctx.mock
-//               .withSigner(ctx.defaultAdmin)
-//               .renounceRole(DEFAULT_ADMIN_ROLE, ctx.defaultAdmin)
-//           )
-//             .to.be.revertedWithError(
-//               ctx.mock,
-//               "AccessControlEnforcedDefaultAdminDelay"
-//             )
-//             .withArgs(ctx.expectedSchedule);
-//         });
-//       }
 //     });
 //   });
 // }
