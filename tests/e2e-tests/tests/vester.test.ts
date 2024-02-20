@@ -20,6 +20,7 @@ describe('Vester', () => {
   const apiProviderWrapper = getLocalApiProviderWrapper(9944);
   beforeEach(async () => {
     api = await apiProviderWrapper.getAndWaitForReady();
+    await transferNoop(api);
     await increaseBlockTimestamp(api, 0);
     const mock = await new TVesterDeployer(api, deployer).new();
     ctx.mock = mock.contract;
