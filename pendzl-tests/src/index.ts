@@ -1,4 +1,5 @@
 export * from "./behaviors/token/PSP22.behavior";
+export * from "./behaviors/token/PSP34.behavior";
 export * from "./behaviors/access/Ownable.behavior";
 export * from "./behaviors/access/AccessControl.behavior";
 

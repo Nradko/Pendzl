@@ -11,7 +11,7 @@ import { getSigners, increaseBlockTimestamp, time, transferNoop } from 'wookashw
 import 'wookashwackomytest-polkahat-chai-matchers';
 
 const [deployer, alice, bob, charlie] = getSigners();
-describe.only('Vester', () => {
+describe('Vester', () => {
   const ctx: {
     mock: TVesterContract;
   } = {} as any;

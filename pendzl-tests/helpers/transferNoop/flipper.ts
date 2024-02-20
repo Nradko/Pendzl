@@ -46,8 +46,8 @@ export default class FlipperDeployer {
     const storageDepositLimit = __options?.storageDepositLimit;
     const tx = codePromise.tx["default"]!({
       gasLimit,
-      storageDepositLimit,
-      value: __options?.value,
+      storageDepositLimit: storageDepositLimit as any,
+      value: __options?.value as any,
     });
     let response;
 

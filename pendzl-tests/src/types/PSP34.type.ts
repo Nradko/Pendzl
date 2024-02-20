@@ -17,12 +17,12 @@ import {
 } from "wookashwackomytest-polkahat-chai-matchers";
 
 export interface Id {
-  u8?: ReturnNumber;
-  u16?: ReturnNumber;
-  u32?: ReturnNumber;
-  u64?: ReturnNumber;
-  u128?: ReturnNumber;
-  bytes?: Array<ReturnNumber>;
+  u8?: BN;
+  u16?: BN;
+  u32?: BN;
+  u64?: BN;
+  u128?: BN;
+  bytes?: Array<BN>;
 }
 
 export interface PSP34Error {

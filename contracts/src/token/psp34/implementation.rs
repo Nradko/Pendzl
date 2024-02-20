@@ -199,8 +199,8 @@ where
             .set_operator_approval(owner, operator, id, approved);
 
         Self::env().emit_event(Approval {
-            from: *owner,
-            to: *operator,
+            owner: *owner,
+            operator: *operator,
             id: id.as_ref().map(|v| v.clone()),
             approved: *approved,
         });
