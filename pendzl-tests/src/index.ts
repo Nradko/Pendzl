@@ -12,3 +12,5 @@ export * from "./types/PSP22.type";
 export * from "./types/PSP22Burnable.type";
 export * from "./types/PSP22Metadata.type";
 export * from "./types/PSP22Mintable.type";
+export * from "./types/PSP34.type";
+export * from "./types/PSP34Metadata.type";

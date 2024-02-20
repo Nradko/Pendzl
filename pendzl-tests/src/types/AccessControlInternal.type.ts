@@ -17,16 +17,6 @@ import {
 import { AccessControlError } from "./AccessControl.type";
 
 interface AccessControlInternalQuery {
-  hasRole(
-    role: number | string | BN,
-    address: AccountId | null,
-    __options?: GasLimit
-  ): Promise<QueryReturnType<Result<boolean, LangError>>>;
-  // based on
-  // ctx.mock.tx.tGrantRole(ROLE, ctx.authorized.address)
-  // ctx.mock.tx.tRevokeRole(ROLE, ctx.authorized)
-  // ctx.mock.withSigner(ctx.authorized).query.tEnsureHasRole(ROLE)
-
   tGrantRole(
     role: number | string | BN,
     account: AccountId | null,
@@ -50,12 +40,6 @@ interface AccessControlInternalQuery {
 }
 
 interface AccessControlInternalTx {
-  hasRole(
-    role: number | string | BN,
-    address: AccountId | null,
-    __options?: GasLimit
-  ): Promise<SignAndSendSuccessResponse>;
-
   tGrantRole(
     role: number | string | BN,
     account: AccountId | null,
