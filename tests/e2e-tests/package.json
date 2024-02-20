@@ -14,7 +14,7 @@
     "lint": "pnpm lint:format && pnpm lint:fix",
     "lint:fix": "eslint . --ext .js,.ts --fix --ignore-path ./.gitignore",
     "lint:format": "pretty-quick  --loglevel warn --write \"./**/*.{js,ts,md,json}\" ",
-    "build-pendzl-tests": "cd ../../pendzl-tests && pnpm build",
+    "build-pendzl-tests": "cd ../../pendzl-tests && pnpm i && && pnpm build",
     "prepare": "pnpm build-pendzl-tests && husky install"
   },
   "dependencies": {
