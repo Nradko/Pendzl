@@ -20,9 +20,9 @@
     "prettier": "prettier \"**/*.{js,md,json}\"",
     "pretest": "cd ../.. && pnpm build",
     "test": "mocha --recursive \"test/**/*.ts\" --exit",
-    "build": "tsc --build . && cp src/helpers/transferNoop/flipper.* helpers/transferNoop",
+    "build": "tsc --build .",
     "prepublishOnly": "pnpm build",
-    "clean": "rimraf dist internal types ./src/**.{d.ts,js}{,.map} build-test tsconfig.tsbuildinfo"
+    "clean": "rimraf dist internal types ./**/*.{d.ts,js}{,.map} build-test tsconfig.tsbuildinfo"
   },
   "files": [
     "src/",

@@ -1,6 +1,5 @@
 import { ApiPromise } from "@polkadot/api";
 import { getSigners } from "./signers";
-import { transferNoop } from "./transferNoop/transferNoop";
 import { ApiProviderWrapper } from "wookashwackomytest-polkahat-chai-matchers";
 import "@polkadot/api-augment"; //https://github.com/polkadot-js/api/issues/4450
 import { SignAndSendSuccessResponse } from "wookashwackomytest-typechain-types";
@@ -16,14 +15,21 @@ export async function getApiAt(api: ApiPromise, blockNumber: number) {
 async function setBlockTimestamp(api: ApiPromise, timestamp: number) {
   const signer = getSigners()[0];
   if (process.env.DEBUG) console.log(`setting timestamp to: ${timestamp}`);
-  await transferNoop(api);
-  await api.tx.timestamp.setTime(timestamp).signAndSend(signer, {});
-  await transferNoop(api);
-  const timestampNowPostChange = parseInt(
-    (await api.query.timestamp.now()).toString()
-  );
-  if (timestampNowPostChange !== timestamp)
-    throw new Error("Failed to set custom timestamp");
+  let retryCount = 0;
+  while (retryCount < 2) {
+    try {
+      await api.tx.timestamp.setTime(timestamp).signAndSend(signer, {});
+      const timestampNowPostChange = parseInt(
+        (await api.query.timestamp.now()).toString()
+      );
+      if (timestampNowPostChange === timestamp) return;
+    } catch (error) {
+      retryCount++;
+      if (process.env.DEBUG)
+        console.log(`Retry ${retryCount} failed: ${error}`);
+    }
+  }
+  throw new Error("Failed to set custom timestamp");
 }
 async function increaseBlockTimestamp(
   api: ApiPromise,
@@ -38,7 +44,7 @@ async function increaseBlockTimestamp(
     (await api.query.timestamp.now()).toString()
   );
   if (timestampNowPostChange !== timestampToSet)
-    throw new Error("Failed to set custom timestamp");
+    throw new Error("Failed to increase timestamp");
   return timestampToSet;
 }
 

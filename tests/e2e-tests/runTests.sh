@@ -23,6 +23,7 @@ end_time=$(date +%s.%3N)
 elapsed=$(echo "scale=3; $end_time - $start_time" | bc)
 echo "Test execution took $elapsed seconds"
 npx tsx $SCRIPT_DIR/scripts/fixupNodeLog.ts $SCRIPT_DIR/substrate-contracts-node.testrun.log
+pnpm ansiToHtml $SCRIPT_DIR/mocha.testrun.log  $SCRIPT_DIR/mocha.testrun.log.html
 kill $NODE_PID
 
 rm -rf test-chain-state-tmp

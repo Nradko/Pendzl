@@ -1,18 +1,17 @@
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
-import chai, { expect } from 'chai';
+import { expect } from 'chai';
 import { getLocalApiProviderWrapper } from 'tests/setup/helpers';
 import TPsp22Contract from 'typechain/contracts/t_psp22';
 import TVesterContract from 'typechain/contracts/t_vester';
 import TPsp22Deployer from 'typechain/deployers/t_psp22';
 import TVesterDeployer from 'typechain/deployers/t_vester';
 import { VestingData, VestingSchedule } from 'typechain/types-arguments/t_vester';
-import { clock, duration, getRandomSigner, getSigners, time } from 'wookashwackomytest-pendzl-tests';
+import { clock, duration, getSigners, time } from 'wookashwackomytest-pendzl-tests';
 import 'wookashwackomytest-polkahat-chai-matchers';
-chai.config.includeStack = true;
 
 const [deployer, alice, bob, charlie, dave] = getSigners();
-describe.only('Vester', () => {
+describe('Vester', () => {
   const ctx: {
     mock: TVesterContract;
   } = {} as any;
@@ -385,7 +384,7 @@ describe.only('Vester', () => {
     });
   });
 
-  describe.only('release when multiple schedules created', () => {
+  describe('release when multiple schedules created', () => {
     const vestTo = charlie;
     const vesterSubmitter = bob;
     const releaseCaller = dave;

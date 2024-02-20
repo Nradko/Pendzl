@@ -5,7 +5,6 @@ export * from "./behaviors/access/AccessControl.behavior";
 
 export * from "./helpers/signers";
 export * from "./helpers/time";
-export * from "./helpers/transferNoop/transferNoop";
 export * from "./types/Ownable.type";
 export * from "./types/AccessControl.type";
 export * from "./types/AccessControlInternal.type";
