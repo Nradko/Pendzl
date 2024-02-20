@@ -7,7 +7,9 @@ import { BN } from "bn.js";
 import { Id, PSP34 } from "../../types/PSP34.type";
 
 export const firstTokenId: Id = { u128: new BN(79216) };
-export const secondTokenId = { u128: new BN(79217) };
+export const secondTokenId = { u64: new BN(19235217) };
+export const thirdTokenId = { u32: new BN(51345) };
+
 export const nonExistentTokenId = { u8: new BN(13) };
 
 export type ShouldBehaveLikePSP34Params = {
@@ -55,16 +57,16 @@ export function shouldBehaveLikePSP34(
     describe("balanceOf", function () {
       describe(`when the given address owns ${firstTokenId} and ${secondTokenId} tokens`, function () {
         it("returns the amount of tokens owned by the given address", async function () {
-          expect(
-            await ctx.token.query.balanceOf(ctx.owner.address)
+          await expect(
+            ctx.token.query.balanceOf(ctx.owner.address)
           ).to.haveOkResult(2);
         });
       });
 
       describe("when the given address does not own any tokens", function () {
         it("returns 0", async function () {
-          expect(
-            await ctx.token.query.balanceOf(ctx.other.address)
+          await expect(
+            ctx.token.query.balanceOf(ctx.other.address)
           ).to.haveOkResult(0);
         });
       });
@@ -74,7 +76,7 @@ export function shouldBehaveLikePSP34(
         const tokenId = firstTokenId;
 
         it("returns the owner of the given token ID", async function () {
-          expect(await ctx.token.query.ownerOf(tokenId)).to.haveOkResult(
+          await expect(ctx.token.query.ownerOf(tokenId)).to.haveOkResult(
             ctx.owner.address
           );
         });
@@ -100,109 +102,18 @@ export function shouldBehaveLikePSP34(
         await ctx.token
           .withSigner(ctx.owner)
           .tx.approve(ctx.operator.address, null, true);
-        ctx.tx = () =>
-          ctx.token
-            .withSigner(ctx.owner)
-            .tx.transfer(ctx.to.address, tokenId, []);
       });
-      describe("when called by the owner", function () {
-        beforeEach(function () {
-          tx = ctx.token
-            .withSigner(ctx.owner)
-            .tx.transfer(ctx.to.address, tokenId, []);
-        });
-        transferWasSuccessful(() => ({
-          tx: tx,
-          token: ctx.token,
-          from: ctx.owner.address,
-          to: ctx.to.address,
-          tokenId: tokenId,
-        }));
-      });
-
-      describe("when called by the approved individual", function () {
-        beforeEach(function () {
-          tx = ctx.token
-            .withSigner(ctx.approved)
-            .tx.transfer(ctx.to.address, tokenId, []);
-        });
-        transferWasSuccessful(() => ({
-          tx: tx,
-          from: ctx.owner.address,
-          to: ctx.to.address,
-          tokenId: tokenId,
-          token: ctx.token,
-        }));
-      });
-
-      describe("when called by the operator", function () {
-        beforeEach(function () {
-          tx = ctx.token
-            .withSigner(ctx.operator)
-            .tx.transfer(ctx.to.address, tokenId, []);
-        });
-        transferWasSuccessful(() => ({
-          tx: tx,
-          from: ctx.owner.address,
-          to: ctx.to.address,
-          tokenId: tokenId,
-          token: ctx.token,
-        }));
-      });
-
-      describe("when sent to the owner", function () {
-        beforeEach(function () {
-          tx = ctx.token
-            .withSigner(ctx.owner)
-            .tx.transfer(ctx.owner.address, tokenId, []);
-        });
-
-        it("keeps ownership of the token", async function () {
-          await tx;
-          expect(await ctx.token.query.ownerOf(tokenId)).to.equal(
-            ctx.owner.address
-          );
-        });
-
-        it("emits only a transfer event", async function () {
-          await expect(tx).to.emitEvent(ctx.token, "Transfer", {
-            from: ctx.owner.address,
-            to: ctx.owner.address,
-            id: tokenId as any,
-          });
-        });
-
-        it("keeps the owner balance", async function () {
-          expect(tx).to.changeTokenBalances(
-            ctx.token,
-            [ctx.owner.address],
-            [new BN(0)]
-          );
-        });
-      });
-
-      describe("when the sender is not authorized for the token id", function () {
-        beforeEach(function () {
-          tx = ctx.token
-            .withSigner(ctx.other)
-            .tx.transfer(ctx.other.address, tokenId, []);
-        });
-        it("reverts", async function () {
-          await expect(tx).to.be.revertedWithError({ notApproved: null });
-        });
-      });
-
-      describe("when the given token ID does not exist", function () {
-        beforeEach(function () {
-          tx = ctx.token
-            .withSigner(ctx.owner)
-            .tx.transfer(ctx.owner.address, nonExistentTokenId, []);
-        });
-
-        it("reverts", async function () {
-          await expect(tx).to.be.revertedWithError({ tokenNotExists: null });
-        });
-      });
+      shouldTransferTokenByUser(() => ({
+        token: ctx.token,
+        fnName: "transfer",
+        owner: ctx.owner,
+        approved: ctx.approved,
+        operator: ctx.operator,
+        other: ctx.other,
+        to: ctx.to,
+        tokenId: tokenId,
+        nonExistentTokenId: nonExistentTokenId,
+      }));
     });
 
     describe("approve", function () {
@@ -218,20 +129,17 @@ export function shouldBehaveLikePSP34(
 
           it("is stays unapproved", async function () {
             await ctx.tx;
-            expect(
-              await ctx.token.query.allowance(
+            await expect(
+              ctx.token.query.allowance(
                 ctx.owner.address,
                 ctx.approved!.address,
                 tokenId
               )
             ).to.haveOkResult(false);
           });
-          it("emits an Approval event", async function () {
-            await expect(ctx.tx).to.emitEvent(ctx.token, "Approval", {
-              owner: ctx.owner.address,
-              operator: ctx.approved!.address,
-              approved: false,
-            });
+          it("emits no Approval event", async function () {
+            const tx = await ctx.tx;
+            await expect(ctx.tx).to.emitEvent(ctx.token, "Approval");
           });
         });
 
@@ -247,8 +155,8 @@ export function shouldBehaveLikePSP34(
 
           it("is clears approval", async function () {
             await ctx.tx;
-            expect(
-              await ctx.token.query.allowance(
+            await expect(
+              ctx.token.query.allowance(
                 ctx.owner.address,
                 ctx.approved.address,
                 tokenId
@@ -259,6 +167,7 @@ export function shouldBehaveLikePSP34(
             await expect(ctx.tx).to.emitEvent(ctx.token, "Approval", {
               owner: ctx.owner.address,
               operator: ctx.approved!.address,
+              id: tokenId as any,
               approved: false,
             });
           });
@@ -278,8 +187,8 @@ export function shouldBehaveLikePSP34(
 
           it("is stays approved", async function () {
             await ctx.tx;
-            expect(
-              await ctx.token.query.allowance(
+            await expect(
+              ctx.token.query.allowance(
                 ctx.owner.address,
                 ctx.approved.address,
                 tokenId
@@ -290,6 +199,7 @@ export function shouldBehaveLikePSP34(
             await expect(ctx.tx).to.emitEvent(ctx.token, "Approval", {
               owner: ctx.owner.address,
               operator: ctx.approved!.address,
+              id: tokenId as any,
               approved: true,
             });
           });
@@ -340,6 +250,142 @@ export function shouldBehaveLikePSP34(
   });
 }
 
+export type shouldTransferTokenByUserParams = {
+  fnName: string;
+  token: any;
+  owner: KeyringPair;
+  approved: KeyringPair;
+  operator: KeyringPair;
+  to: KeyringPair;
+  other: KeyringPair;
+  tokenId: Id;
+  nonExistentTokenId: Id;
+};
+
+export function shouldTransferTokenByUser(
+  getCtx: () => shouldTransferTokenByUserParams
+) {
+  describe("when called by the owner", function () {
+    let ctx: shouldTransferTokenByUserParams;
+    let tx: Promise<SignAndSendSuccessResponse>;
+    beforeEach(function () {
+      ctx = getCtx();
+      tx = ctx.token
+        .withSigner(ctx.owner)
+        .tx[ctx.fnName](ctx.to.address, ctx.tokenId, []);
+    });
+    transferWasSuccessful(() => ({
+      tx: tx,
+      token: ctx.token,
+      from: ctx.owner.address,
+      to: ctx.to.address,
+      tokenId: ctx.tokenId,
+    }));
+  });
+
+  describe("when called by the approved individual", function () {
+    let ctx: shouldTransferTokenByUserParams;
+    let tx: Promise<SignAndSendSuccessResponse>;
+    beforeEach(function () {
+      ctx = getCtx();
+      tx = ctx.token
+        .withSigner(ctx.approved)
+        .tx[ctx.fnName](ctx.to.address, ctx.tokenId, []);
+    });
+    transferWasSuccessful(() => ({
+      tx: tx,
+      from: ctx.owner.address,
+      to: ctx.to.address,
+      tokenId: ctx.tokenId,
+      token: ctx.token,
+    }));
+  });
+
+  describe("when called by the operator", function () {
+    let ctx: shouldTransferTokenByUserParams;
+    let tx: Promise<SignAndSendSuccessResponse>;
+    beforeEach(function () {
+      ctx = getCtx();
+      tx = ctx.token
+        .withSigner(ctx.operator)
+        .tx[ctx.fnName](ctx.to.address, ctx.tokenId, []);
+    });
+    transferWasSuccessful(() => ({
+      tx: tx,
+      from: ctx.owner.address,
+      to: ctx.to.address,
+      tokenId: ctx.tokenId,
+      token: ctx.token,
+    }));
+  });
+
+  describe("when sent to the owner", function () {
+    let ctx: shouldTransferTokenByUserParams;
+    let tx: Promise<SignAndSendSuccessResponse>;
+    beforeEach(function () {
+      ctx = getCtx();
+      tx = ctx.token
+        .withSigner(ctx.owner)
+        .tx[ctx.fnName](ctx.owner.address, ctx.tokenId, []);
+    });
+
+    it("keeps ownership of the token", async function () {
+      await tx;
+      expect(await ctx.token.query.ownerOf(ctx.tokenId)).to.equal(
+        ctx.owner.address
+      );
+    });
+
+    it("emits only a transfer event", async function () {
+      await expect(tx).to.emitEvent(ctx.token, "Transfer", {
+        from: ctx.owner.address,
+        to: ctx.owner.address,
+        id: ctx.tokenId as any,
+      });
+    });
+
+    it("keeps the owner balance", async function () {
+      expect(tx).to.changePSP34Balances(
+        ctx.token,
+        [ctx.owner.address],
+        [new BN(0)]
+      );
+    });
+  });
+
+  describe("when the sender is not authorized for the token id", function () {
+    let ctx: shouldTransferTokenByUserParams;
+    let query;
+    beforeEach(function () {
+      ctx = getCtx();
+      query = ctx.token
+        .withSigner(ctx.to)
+        .query[ctx.fnName](ctx.to.address, ctx.tokenId, []);
+    });
+    it("reverts", async function () {
+      await expect(
+        ctx.token
+          .withSigner(ctx.other)
+          .query.transfer(ctx.other.address, ctx.tokenId, [])
+      ).to.be.revertedWithError({ notApproved: null });
+    });
+  });
+
+  describe("when the given token ID does not exist", function () {
+    let ctx: shouldTransferTokenByUserParams;
+    let query: any;
+    beforeEach(function () {
+      ctx = getCtx();
+      query = ctx.token
+        .withSigner(ctx.to)
+        .query[ctx.fnName](ctx.to.address, nonExistentTokenId, []);
+    });
+    it("reverts", async function () {
+      await expect(query).to.be.revertedWithError({ tokenNotExists: null });
+    });
+  });
+}
+
 export type transferWasSuccesfulParams = {
   tx: Promise<SignAndSendSuccessResponse>;
   token: any;
@@ -348,10 +394,12 @@ export type transferWasSuccesfulParams = {
   tokenId: Id;
 };
 
-function transferWasSuccessful(ctx: () => transferWasSuccesfulParams) {
+export function transferWasSuccessful(ctx: () => transferWasSuccesfulParams) {
   it("transfers the ownership of the given token ID to the given address", async function () {
     await ctx().tx;
-    expect(await ctx().token.query.ownerOf(ctx().tokenId)).to.equal(ctx().to);
+    await expect(ctx().token.query.ownerOf(ctx().tokenId)).to.haveOkResult(
+      ctx().to
+    );
   });
 
   it("emits a Transfer event", async function () {
@@ -365,20 +413,20 @@ function transferWasSuccessful(ctx: () => transferWasSuccesfulParams) {
   it("clears the approval for the token ID with no event", async function () {
     await expect(ctx().tx).not.to.emitEvent(ctx().token, "Approval");
 
-    expect(
-      await ctx().token.query.allowance(ctx().from, ctx().to, ctx().tokenId)
-    ).to.equal(null);
+    await expect(
+      ctx().token.query.allowance(ctx().from, ctx().to, ctx().tokenId)
+    ).to.haveOkResult(false);
   });
 
-  it.only("adjusts owners and receiver balances", async function () {
+  it("adjusts owners and receiver balances", async function () {
     if (ctx().from === ctx().to) {
-      await expect(ctx().tx).to.changeTokenBalances(
+      await expect(ctx().tx).to.changePSP34Balances(
         ctx().token,
         [ctx().from],
         [new BN(0)]
       );
     } else {
-      await expect(ctx().tx).to.changeTokenBalances(
+      await expect(ctx().tx).to.changePSP34Balances(
         ctx().token,
         [ctx().from, ctx().to],
         [new BN(-1), new BN(1)]
@@ -386,216 +434,3 @@ function transferWasSuccessful(ctx: () => transferWasSuccesfulParams) {
     }
   });
 }
-
-// export type shouldTransferTokensByUsersParams = {
-//   token: any;
-//   fnName: string;
-//   owner: KeyringPair;
-//   approved: KeyringPair;
-//   operator: KeyringPair;
-//   notApproved: KeyringPair;
-//   to: string;
-//   tokenId: Id;
-//   nonExistentTokenId: Id;
-//   opts: any;
-// };
-// export async function shouldTransferTokensByUsers(
-//   getParams: () => shouldTransferTokensByUsersParams
-// ) {}
-
-// export type transferWasSuccessfulParams = {
-//   tx: () => Promise<SignAndSendSuccessResponse>;
-//   token: any;
-//   from: string;
-//   to: string;
-//   tokenId: Id;
-// };
-
-// export async function transferWasSuccessful(
-//   getParams: () => transferWasSuccessfulParams
-// ) {
-//   it("transfers the ownership of the given token ID to the given address", async function () {
-//     const ctx = getParams();
-//     const res = await ctx.tx();
-//     expect(await ctx.token.query.ownerOf(ctx.tokenId)).to.equal(ctx.to);
-//   });
-
-//   it("emits a Transfer event", async function () {
-//     const ctx = getParams();
-//     const res = await ctx.tx();
-
-//     await expect(ctx.tx()).to.emitEvent(ctx.token, "Transfer", {
-//       from: ctx.from,
-//       to: ctx.to,
-//       id: ctx.tokenId as any,
-//     });
-//   });
-
-//   it("clears the approval for the token ID with no event", async function () {
-//     const ctx = getParams();
-//     await expect(ctx.tx()).not.to.emitEvent(ctx.token, "Approval");
-
-//     expect(
-//       await ctx.token.query.allowance(ctx.from, ctx.to, ctx.tokenId)
-//     ).to.equal(null);
-//   });
-
-//   it("adjusts owners and receiver balances", async function () {
-//     const ctx = getParams();
-//     if (ctx.from === ctx.to) {
-//       expect(ctx.tx).to.changeTokenBalances(ctx.token, [ctx.from], [new BN(0)]);
-//     } else {
-//       await expect(ctx.tx).to.changeTokenBalances(
-//         ctx.token,
-//         [ctx.from, ctx.to],
-//         [new BN(-1), new BN(1)]
-//       );
-//     }
-//   });
-// }
-
-// describe("_mint(address, uint256)", function () {
-//   it("reverts with a null destination address", async function () {
-//     await expect(ctx.token.$_mint(ethers.ZeroAddress, firstTokenId))
-//       .to.be.revertedWithCustomError(ctx.token, "ERC721InvalidReceiver")
-//       .withArgs(ethers.ZeroAddress);
-//   });
-
-//   describe("with minted token", async function () {
-//     beforeEach(async function () {
-//       ctx.tx = await ctx.token.$_mint(ctx.owner, firstTokenId);
-//     });
-
-//     it("emits a Transfer event", async function () {
-//       await expect(ctx.tx)
-//         .to.emit(ctx.token, "Transfer")
-//         .withArgs(ethers.ZeroAddress, ctx.owner, firstTokenId);
-//     });
-
-//     it("creates the token", async function () {
-//       expect(await ctx.token.balanceOf(ctx.owner)).to.equal(1n);
-//       expect(await ctx.token.ownerOf(firstTokenId)).to.equal(ctx.owner);
-//     });
-
-//     it("reverts when adding a token id that already exists", async function () {
-//       await expect(ctx.token.$_mint(ctx.owner, firstTokenId))
-//         .to.be.revertedWithCustomError(ctx.token, "ERC721InvalidSender")
-//         .withArgs(ethers.ZeroAddress);
-//     });
-//   });
-// });
-
-// describe("_burn", function () {
-//   it("reverts when burning a non-existent token id", async function () {
-//     await expect(ctx.token.$_burn(nonExistentTokenId))
-//       .to.be.revertedWithCustomError(ctx.token, "ERC721NonexistentToken")
-//       .withArgs(nonExistentTokenId);
-//   });
-
-//   describe("with minted tokens", function () {
-//     beforeEach(async function () {
-//       await ctx.token.$_mint(ctx.owner, firstTokenId);
-//       await ctx.token.$_mint(ctx.owner, secondTokenId);
-//     });
-
-//     describe("with burnt token", function () {
-//       beforeEach(async function () {
-//         ctx.tx = await ctx.token.$_burn(firstTokenId);
-//       });
-
-//       it("emits a Transfer event", async function () {
-//         await expect(ctx.tx)
-//           .to.emit(ctx.token, "Transfer")
-//           .withArgs(ctx.owner, ethers.ZeroAddress, firstTokenId);
-//       });
-
-//       it("deletes the token", async function () {
-//         expect(await ctx.token.balanceOf(ctx.owner)).to.equal(1n);
-//         await expect(ctx.token.ownerOf(firstTokenId))
-//           .to.be.revertedWithCustomError(
-//             ctx.token,
-//             "ERC721NonexistentToken"
-//           )
-//           .withArgs(firstTokenId);
-//       });
-
-//       it("reverts when burning a token id that has been deleted", async function () {
-//         await expect(ctx.token.$_burn(firstTokenId))
-//           .to.be.revertedWithCustomError(
-//             ctx.token,
-//             "ERC721NonexistentToken"
-//           )
-//           .withArgs(firstTokenId);
-//       });
-//     });
-//   });
-// });
-
-// export type shouldBehaveLikeERC721MetadataParams = {
-//   token: any;
-//   owner: KeyringPair;
-// };
-
-// function shouldBehaveLikeERC721Metadata(
-//   getParams: () => shouldBehaveLikeERC721MetadataParams
-// ) {
-//   const ctx: shouldBehaveLikeERC721MetadataParams & {
-//     tx: any;
-//     newOwner: KeyringPair;
-//     approved: KeyringPair;
-//     operator: KeyringPair;
-//     to: KeyringPair;
-//     other: KeyringPair;
-//   } = {} as any;
-
-//   describe("with shouldBehaveLikeERC721Metadata tokens", function () {
-//     beforeEach(function () {
-//       Object.assign(ctx, getParams());
-//       [ctx.newOwner, ctx.approved, ctx.operator, ctx.to, ctx.other] =
-//         getSigners().filter((signer) => signer.address !== ctx.owner.address);
-//     });
-
-//     describe("token atribute", function () {
-//       it("return none by default", async function () {
-//         expect(
-//           await ctx.token.query.getAtribute(firstTokenId, [])
-//         ).to.haveOkResult(null);
-//       });
-
-//       it("reverts when queried for non existent token id", async function () {
-//         await expect(ctx.token.tokenURI(nonExistentTokenId))
-//           .to.be.revertedWithCustomError(ctx.token, "ERC721NonexistentToken")
-//           .withArgs(nonExistentTokenId);
-//       });
-
-//       describe("base URI", function () {
-//         beforeEach(function () {
-//           if (!ctx.token.interface.hasFunction("setBaseURI")) {
-//             ctx.skip();
-//           }
-//         });
-
-//         it("base URI can be set", async function () {
-//           await ctx.token.setBaseURI(baseURI);
-//           expect(await ctx.token.baseURI()).to.equal(baseURI);
-//         });
-
-//         it("base URI is added as a prefix to the token URI", async function () {
-//           await ctx.token.setBaseURI(baseURI);
-//           expect(await ctx.token.tokenURI(firstTokenId)).to.equal(
-//             baseURI + firstTokenId.toString()
-//           );
-//         });
-
-//         it("token URI can be changed by changing the base URI", async function () {
-//           await ctx.token.setBaseURI(baseURI);
-//           const newBaseURI = "https://api.example.com/v2/";
-//           await ctx.token.setBaseURI(newBaseURI);
-//           expect(await ctx.token.tokenURI(firstTokenId)).to.equal(
-//             newBaseURI + firstTokenId.toString()
-//           );
-//         });
-//       });
-//     });
-//   });
-// }

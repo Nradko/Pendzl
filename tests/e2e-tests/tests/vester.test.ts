@@ -88,7 +88,7 @@ describe.skip('Vester', () => {
       const tx = ctx.mock
         .withSigner(vesterSubmitter)
         .tx.createVest(createVestArgs.vestTo, createVestArgs.asset, createVestArgs.amount, createVestArgs.schedule, []);
-      await expect(tx).to.changeTokenBalances(
+      await expect(tx).to.changePSP22Balances(
         asset,
         [vesterSubmitter.address, ctx.mock.address],
         [new BN(createVestArgs.amount).neg(), new BN(createVestArgs.amount)],
@@ -137,7 +137,7 @@ describe.skip('Vester', () => {
           asset: createVestArgs.asset,
           amount: createVestArgs.amount,
         });
-        await expect(tx).to.changeTokenBalances(
+        await expect(tx).to.changePSP22Balances(
           asset,
           [ctx.mock.address, createVestArgs.vestTo],
           [new BN(createVestArgs.amount).neg(), new BN(createVestArgs.amount)],

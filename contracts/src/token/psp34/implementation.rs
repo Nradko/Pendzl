@@ -88,9 +88,14 @@ impl PSP34Storage for PSP34Data {
         id: &Id,
         from: &AccountId,
     ) -> Result<(), PSP34Error> {
-        if self.owner_of.get(id) != Some(*from) {
-            return Err(PSP34Error::NotApproved);
-        }
+        match self.owner_of.get(id) {
+            Some(v) => {
+                if v != *from {
+                    return Err(PSP34Error::NotApproved);
+                }
+            }
+            None => return Err(PSP34Error::TokenNotExists),
+        };
         self.owner_of.remove(id);
         let balance = self.owned_tokens_count.get(from).unwrap_or(0);
         self.owned_tokens_count.insert(from, &(balance - 1));

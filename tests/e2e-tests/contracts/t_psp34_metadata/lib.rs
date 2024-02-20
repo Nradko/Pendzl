@@ -7,6 +7,8 @@ pub mod t_psp34_metadata {
     use pendzl::contracts::token::psp34::*;
     use pendzl::traits::String;
 
+    const COLLECTION_ID: Id = Id::U8(0);
+
     #[derive(Default, StorageFieldGetter)]
     #[ink(storage)]
     pub struct Contract {
@@ -24,7 +26,7 @@ pub mod t_psp34_metadata {
 
             let name_key = String::from("name");
             let symbol_key = String::from("symbol");
-            let id = Id::Bytes(ink::selector_bytes!("CollectionName").to_vec());
+            let id = COLLECTION_ID;
             instance._set_attribute(&id.clone(), &name_key, &name);
             instance._set_attribute(&id, &symbol_key, &symbol);
 
@@ -68,6 +70,16 @@ pub mod t_psp34_metadata {
             id: Id,
         ) -> Result<(), PSP34Error> {
             self._update(&from.as_ref(), &to.as_ref(), &id)
+        }
+
+        #[ink(message)]
+        pub fn t_set_atribute(
+            &mut self,
+            id: Id,
+            key: String,
+            atribute: String,
+        ) {
+            self._set_attribute(&id, &key, &atribute)
         }
     }
 }
