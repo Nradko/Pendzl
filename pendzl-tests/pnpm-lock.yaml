@@ -86,8 +86,8 @@ devDependencies:
     specifier: ~5.0.4
     version: 5.0.4
   wookashwackomytest-polkahat-chai-matchers:
-    specifier: 0.0.28
-    version: 0.0.28(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
+    specifier: 0.0.30
+    version: 0.0.30(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
 
 packages:
 
@@ -634,6 +634,10 @@ packages:
 
   /@types/chai@4.3.11:
     resolution: {integrity: sha512-qQR1dr2rGIHYlJulmr8Ioq3De0Le9E4MJ5AiaeAETJJpndT1uUNHsGFK3L/UIu+rbkQSdj8J/w2bCsBZc/Y5fQ==}
+
+  /@types/deep-eql@4.0.2:
+    resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
+    dev: true
 
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -1228,7 +1232,7 @@ packages:
     resolution: {integrity: sha512-CYcENa+FtcUKLmhhqyctpclsq7QF38pKjZHsGNiSQF5r4FtoKDWabFDl3hzaEQMvT1LHEysw5twgLvpYYb4vbw==}
     engines: {node: ^10.12.0 || >=12.0.0}
     dependencies:
-      flatted: 3.2.9
+      flatted: 3.3.0
       keyv: 4.5.4
       rimraf: 3.0.2
     dev: true
@@ -1238,8 +1242,8 @@ packages:
     hasBin: true
     dev: true
 
-  /flatted@3.2.9:
-    resolution: {integrity: sha512-36yxDn5H7OFZQla0/jFJmbIKTdZAQHngCedGxiMmpNfEZM0sdEeT+WczLQrjK6D7o2aiyLYDnkw0R3JK0Qv1RQ==}
+  /flatted@3.3.0:
+    resolution: {integrity: sha512-noqGuLw158+DuD9UPRKHpJ2hGxpFyDlYYrfM0mWt4XhT4n0lwzTLh70Tkdyy4kyTmyTT9Bv7bWAJqw7cgkEXDg==}
     dev: true
 
   /formdata-polyfill@4.0.10:
@@ -1908,8 +1912,8 @@ packages:
       isexe: 2.0.0
     dev: true
 
-  /wookashwackomytest-polkahat-chai-matchers@0.0.28(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
-    resolution: {integrity: sha512-Y60xvBouSc3QPJOgH4Os04w6swc5EUx4eRaJ/OcfHHC7fgVrUIfKQolA4hd6eMQ0sx7P2lxpDIi+g6SX23161w==}
+  /wookashwackomytest-polkahat-chai-matchers@0.0.30(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
+    resolution: {integrity: sha512-t7jxyN9T+CFg46+junHKCweZjNKIgcfJLFRtixqMomZlkthPMbrq7YaLwVUu7Gft+HyJEngQnQQx105ubNBslg==}
     peerDependencies:
       chai: ^4.2.0
     dependencies:
@@ -1920,6 +1924,7 @@ packages:
       '@polkadot/types': 10.11.2
       '@polkadot/util': 12.6.2
       '@types/chai-as-promised': 7.1.8
+      '@types/deep-eql': 4.0.2
       chai: 4.4.1
       chai-as-promised: 7.1.1(chai@4.4.1)
       deep-eql: 4.1.3

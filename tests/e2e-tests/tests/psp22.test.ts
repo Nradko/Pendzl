@@ -20,7 +20,7 @@ async function prepareEnvBase(api: ApiPromise) {
 
   return { tPSP22: deployRet.contract };
 }
-describe.only('PSP 22', () => {
+describe('PSP 22', () => {
   const ctx: {
     token: TPsp22Contract;
     holder: KeyringPair;
