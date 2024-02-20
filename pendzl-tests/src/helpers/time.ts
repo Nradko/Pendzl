@@ -16,6 +16,7 @@ export async function getApiAt(api: ApiPromise, blockNumber: number) {
 export async function setBlockTimestamp(api: ApiPromise, timestamp: number) {
   const signer = getSigners()[0];
   if (process.env.DEBUG) console.log(`setting timestamp to: ${timestamp}`);
+  await transferNoop(api);
   await api.tx.timestamp.setTime(timestamp).signAndSend(signer, {});
   await transferNoop(api);
   const timestampNowPostChange = parseInt(

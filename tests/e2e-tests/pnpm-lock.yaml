@@ -126,8 +126,8 @@ dependencies:
     specifier: ../../pendzl-tests
     version: link:../../pendzl-tests
   wookashwackomytest-polkahat-chai-matchers:
-    specifier: 0.0.30
-    version: 0.0.30(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
+    specifier: 0.0.41
+    version: 0.0.41(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
   wookashwackomytest-typechain-compiler:
     specifier: 0.0.36
     version: 0.0.36(@types/node@20.11.19)(typescript@5.3.3)
@@ -5372,8 +5372,8 @@ packages:
       isexe: 2.0.0
     dev: false
 
-  /wookashwackomytest-polkahat-chai-matchers@0.0.30(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
-    resolution: {integrity: sha512-t7jxyN9T+CFg46+junHKCweZjNKIgcfJLFRtixqMomZlkthPMbrq7YaLwVUu7Gft+HyJEngQnQQx105ubNBslg==}
+  /wookashwackomytest-polkahat-chai-matchers@0.0.41(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
+    resolution: {integrity: sha512-w/dgysxgt9ANJ8/wyE1bbh3NVmQaMQRPO3VTJizV8fb7qIGjk/HldhqS6l95n4rsSx73NnQybDpyMn7vKzYuyA==}
     peerDependencies:
       chai: ^4.2.0
     dependencies:

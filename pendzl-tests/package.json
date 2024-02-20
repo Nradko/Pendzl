@@ -20,7 +20,7 @@
     "prettier": "prettier \"**/*.{js,md,json}\"",
     "pretest": "cd ../.. && pnpm build",
     "test": "mocha --recursive \"test/**/*.ts\" --exit",
-    "build": "tsc --build .",
+    "build": "tsc --build . && cp src/helpers/transferNoop/flipper.* helpers/transferNoop",
     "prepublishOnly": "pnpm build",
     "clean": "rimraf dist internal types ./src/**.{d.ts,js}{,.map} build-test tsconfig.tsbuildinfo"
   },
@@ -50,10 +50,10 @@
     "rimraf": "^3.0.2",
     "ts-node": "^10.8.0",
     "typescript": "~5.0.0",
-    "wookashwackomytest-polkahat-chai-matchers": "0.0.30"
+    "wookashwackomytest-polkahat-chai-matchers": "0.0.41"
   },
   "peerDependencies": {
-    "wookashwackomytest-polkahat-chai-matchers": "0.0.30",
+    "wookashwackomytest-polkahat-chai-matchers": "0.0.41",
     "chai": "^4.2.0"
   },
   "dependencies": {
