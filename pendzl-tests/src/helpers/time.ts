@@ -16,7 +16,7 @@ async function setBlockTimestamp(api: ApiPromise, timestamp: number) {
   const signer = getSigners()[0];
   if (process.env.DEBUG) console.log(`setting timestamp to: ${timestamp}`);
   let retryCount = 0;
-  while (retryCount < 2) {
+  while (retryCount < 10) {
     try {
       await api.tx.timestamp.setTime(timestamp).signAndSend(signer, {});
       const timestampNowPostChange = parseInt(
@@ -29,6 +29,10 @@ async function setBlockTimestamp(api: ApiPromise, timestamp: number) {
         console.log(`Retry ${retryCount} failed: ${error}`);
     }
   }
+  if (retryCount >= 5) {
+    console.warn(`Warning: Setting timestamp took ${retryCount} retries`);
+  }
+
   throw new Error("Failed to set custom timestamp");
 }
 async function increaseBlockTimestamp(
