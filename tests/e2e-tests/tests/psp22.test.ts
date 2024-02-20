@@ -76,7 +76,7 @@ describe('PSP 22', () => {
       });
 
       it('increments recipient balance', async function () {
-        await expect(ctx.tx).to.changeTokenBalances(ctx.token, [ctx.recipient.address], [value]);
+        await expect(ctx.tx).to.changePSP22Balances(ctx.token, [ctx.recipient.address], [value]);
       });
 
       it('emits Transfer event', async function () {
@@ -101,7 +101,7 @@ describe('PSP 22', () => {
         });
 
         it('decrements holder balance', async function () {
-          await expect(ctx.tx).to.changeTokenBalances(ctx.token, [ctx.holder.address], [value.neg()]);
+          await expect(ctx.tx).to.changePSP22Balances(ctx.token, [ctx.holder.address], [value.neg()]);
         });
 
         it('emits Transfer event', async function () {
@@ -126,7 +126,7 @@ describe('PSP 22', () => {
       await expect(tx).to.emitEvent(ctx.token, 'Transfer', { from: null, to: ctx.holder.address, value });
 
       expect(await ctx.token.query.totalSupply()).to.haveOkResult(ctx.totalSupply.add(value));
-      await expect(tx).to.changeTokenBalances(ctx.token, [ctx.holder.address], [value]);
+      await expect(tx).to.changePSP22Balances(ctx.token, [ctx.holder.address], [value]);
     });
 
     it('to is none', async function () {
@@ -134,7 +134,7 @@ describe('PSP 22', () => {
       await expect(tx).to.emitEvent(ctx.token, 'Transfer', { from: ctx.holder.address, to: null, value });
 
       expect(await ctx.token.query.totalSupply()).to.haveOkResult(ctx.totalSupply.sub(value));
-      await expect(tx).to.changeTokenBalances(ctx.token, [ctx.holder.address], [value.neg()]);
+      await expect(tx).to.changePSP22Balances(ctx.token, [ctx.holder.address], [value.neg()]);
     });
 
     describe('from and to are the same address', function () {
@@ -154,7 +154,7 @@ describe('PSP 22', () => {
 
         it('executes with balance', async function () {
           const tx = await ctx.token.tx.tUpdate(ctx.holder.address, ctx.holder.address, value);
-          await expect(tx).to.changeTokenBalances(ctx.token, [ctx.holder.address], [new BN(0)]);
+          await expect(tx).to.changePSP22Balances(ctx.token, [ctx.holder.address], [new BN(0)]);
           await expect(tx).to.emitEvent(ctx.token, 'Transfer', { from: ctx.holder.address, to: ctx.holder.address, value });
         });
       });

@@ -1046,7 +1046,7 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
                 )
             }
 
-            fn _release(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>, data: &Vec<u8>) -> Result<(), VestingError> {
+            fn _release(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>, data: &Vec<u8>) -> Result<u128, VestingError> {
                 pendzl::contracts::finance::general_vest::implementation::GeneralVestInternalDefaultImpl::_release_default_impl(self, receiver, asset, data)
             }
 
@@ -1099,7 +1099,7 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
                 )
             }
             #[ink(message)]
-            fn release(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>, data: Vec<u8>) -> Result<(), VestingError> {
+            fn release(&mut self, receiver: Option<AccountId>, asset: Option<AccountId>, data: Vec<u8>) -> Result<u128, VestingError> {
                 pendzl::contracts::finance::general_vest::implementation::GeneralVestDefaultImpl::release_default_impl(self, receiver, asset, data)
             }
             #[ink(message)]

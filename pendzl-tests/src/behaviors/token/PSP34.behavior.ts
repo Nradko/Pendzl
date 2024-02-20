@@ -173,7 +173,7 @@ export function shouldBehaveLikePSP34(
         });
 
         it("keeps the owner balance", async function () {
-          expect(tx).to.changeTokenBalances(
+          expect(tx).to.changePSP22Balances(
             ctx.token,
             [ctx.owner.address],
             [new BN(0)]
@@ -372,13 +372,13 @@ function transferWasSuccessful(ctx: () => transferWasSuccesfulParams) {
 
   it.only("adjusts owners and receiver balances", async function () {
     if (ctx().from === ctx().to) {
-      await expect(ctx().tx).to.changeTokenBalances(
+      await expect(ctx().tx).to.changePSP22Balances(
         ctx().token,
         [ctx().from],
         [new BN(0)]
       );
     } else {
-      await expect(ctx().tx).to.changeTokenBalances(
+      await expect(ctx().tx).to.changePSP22Balances(
         ctx().token,
         [ctx().from, ctx().to],
         [new BN(-1), new BN(1)]
@@ -443,9 +443,9 @@ function transferWasSuccessful(ctx: () => transferWasSuccesfulParams) {
 //   it("adjusts owners and receiver balances", async function () {
 //     const ctx = getParams();
 //     if (ctx.from === ctx.to) {
-//       expect(ctx.tx).to.changeTokenBalances(ctx.token, [ctx.from], [new BN(0)]);
+//       expect(ctx.tx).to.changePSP22Balances(ctx.token, [ctx.from], [new BN(0)]);
 //     } else {
-//       await expect(ctx.tx).to.changeTokenBalances(
+//       await expect(ctx.tx).to.changePSP22Balances(
 //         ctx.token,
 //         [ctx.from, ctx.to],
 //         [new BN(-1), new BN(1)]

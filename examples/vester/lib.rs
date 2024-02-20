@@ -152,7 +152,192 @@ pub mod tests {
     }
 
     type E2EResult<T> = Result<T, Box<dyn std::error::Error>>;
+    #[ink_e2e::test]
+    async fn create_vesting_schedule_psp22(
+        mut client: ink_e2e::Client<C, E>,
+    ) -> E2EResult<()> {
+        let vester_creator = ink_e2e::alice();
+        let vester_submitter = client
+            .create_and_fund_account(&ink_e2e::alice(), 10_000_000_000_000)
+            .await;
+        let psp22_mintable_creator = ink_e2e::bob();
+        let mut psp22_constructor = PSP22Ref::new(1_000_000);
+        let mut psp22 = client
+            .instantiate(
+                "my_psp22_mintable",
+                &psp22_mintable_creator,
+                &mut psp22_constructor,
+            )
+            .submit()
+            .await
+            .expect("instantiate psp22 failed")
+            .call::<Contract>();
 
+        // create_vest args
+        let create_vest_args = CreateVestingScheduleArgs {
+            vest_to: keypair_to_account(&ink_e2e::charlie()),
+            asset: Some(psp22.to_account_id()),
+            amount: 100,
+            schedule: VestingSchedule::Constant(1, 2),
+        };
+
+        let mut vester_constructor = VesterRef::new();
+        let mut vester = client
+            .instantiate("vester", &vester_creator, &mut vester_constructor)
+            .submit()
+            .await
+            .expect("instantiate vester failed")
+            .call::<Vester>();
+
+        let create_vest_res = client
+            .call(
+                &vester_submitter,
+                &vester.create_vest(
+                    create_vest_args.vest_to,
+                    create_vest_args.asset,
+                    create_vest_args.amount,
+                    create_vest_args.schedule.clone(),
+                    vec![],
+                ),
+            )
+            .dry_run()
+            .await
+            .expect("create vest failed")
+            .return_value();
+        assert_eq!(
+            create_vest_res,
+            Err(VestingError::PSP22Error(PSP22Error::InsufficientAllowance))
+        );
+
+        let _ = client
+            .call(
+                &vester_submitter,
+                &psp22.increase_allowance(
+                    vester.to_account_id(),
+                    create_vest_args.amount,
+                ),
+            )
+            .submit()
+            .await
+            .expect("give allowance failed")
+            .return_value();
+
+        let create_vest_res = client
+            .call(
+                &vester_submitter,
+                &vester.create_vest(
+                    create_vest_args.vest_to,
+                    create_vest_args.asset,
+                    create_vest_args.amount,
+                    create_vest_args.schedule.clone(),
+                    vec![],
+                ),
+            )
+            .dry_run()
+            .await
+            .expect("create vest failed")
+            .return_value();
+        assert_eq!(
+            create_vest_res,
+            Err(VestingError::PSP22Error(PSP22Error::InsufficientBalance))
+        );
+
+        let _ = client
+            .call(
+                &vester_creator,
+                &psp22.mint(
+                    keypair_to_account(&vester_submitter),
+                    create_vest_args.amount,
+                ),
+            )
+            .submit()
+            .await
+            .expect("mint failed");
+
+        let balance_of_vester = client
+            .call(&ink_e2e::alice(), &psp22.balance_of(vester.to_account_id()))
+            .dry_run()
+            .await?
+            .return_value();
+
+        let balance_of_vester_submitter = client
+            .call(
+                &ink_e2e::alice(),
+                &psp22.balance_of(keypair_to_account(&vester_submitter)),
+            )
+            .dry_run()
+            .await?
+            .return_value();
+
+        assert_eq!(balance_of_vester, 0);
+        assert_eq!(balance_of_vester_submitter, create_vest_args.amount);
+
+        let create_vest_res = client
+            .call(
+                &vester_submitter,
+                &vester.create_vest(
+                    create_vest_args.vest_to,
+                    create_vest_args.asset,
+                    create_vest_args.amount,
+                    create_vest_args.schedule.clone(),
+                    vec![],
+                ),
+            )
+            .submit()
+            .await
+            .expect("create vest failed");
+
+        let contract_emitted_events =
+            create_vest_res.contract_emitted_events()?;
+        let vester_events: Vec<_> = contract_emitted_events
+            .iter()
+            .filter(|event_with_topics| {
+                event_with_topics.event.contract == vester.to_account_id()
+            })
+            .collect();
+        let psp22_events: Vec<_> = contract_emitted_events
+            .iter()
+            .filter(|event_with_topics| {
+                event_with_topics.event.contract == psp22.to_account_id()
+            })
+            .collect();
+        assert!(matches!(create_vest_res.return_value(), Ok(())));
+
+        assert_psp22_transfer_event(
+            &psp22_events[1].event,
+            keypair_to_account(&vester_submitter),
+            vester.to_account_id(),
+            create_vest_args.amount,
+            psp22.to_account_id(),
+        );
+        assert_vesting_scheduled_event(
+            &vester_events[0].event,
+            keypair_to_account(&vester_submitter),
+            create_vest_args.vest_to,
+            Some(psp22.to_account_id()),
+            create_vest_args.amount,
+            create_vest_args.schedule,
+        );
+
+        let balance_of_vester = client
+            .call(&ink_e2e::alice(), &psp22.balance_of(vester.to_account_id()))
+            .dry_run()
+            .await?
+            .return_value();
+        let balance_of_vester_submitter = client
+            .call(
+                &ink_e2e::alice(),
+                &psp22.balance_of(keypair_to_account(&vester_submitter)),
+            )
+            .dry_run()
+            .await?
+            .return_value();
+
+        assert_eq!(balance_of_vester, create_vest_args.amount);
+        assert_eq!(balance_of_vester_submitter, 0);
+
+        Ok(())
+    }
     #[ink_e2e::test]
     async fn release_psp22(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
         let vester_creator = ink_e2e::alice();

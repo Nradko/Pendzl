@@ -90,14 +90,14 @@ export function shouldBehaveLikeERC20(
             });
 
             it("transfers the requested value", async function () {
-              await expect(ctx.tx).to.changeTokenBalances(
+              await expect(ctx.tx).to.changePSP22Balances(
                 ctx.token,
                 [ctx.holder.address, ctx.other.address],
                 [value.neg(), value]
               );
             });
             it("decreases the spender allowance", async function () {
-              await expect(ctx.tx).to.changeTokenAllowances(
+              await expect(ctx.tx).to.changePSP22Allowances(
                 ctx.token,
                 [[ctx.holder.address, ctx.recipient.address]],
                 [value.neg()]
@@ -286,7 +286,7 @@ export function shouldBehaveLikeERC20Transfer(
       });
 
       it("transfers the requested value", async function () {
-        await expect(ctx.tx).to.changeTokenBalances(
+        await expect(ctx.tx).to.changePSP22Balances(
           ctx.token,
           [ctx.holder.address, ctx.recipient.address],
           [value.neg(), value]
@@ -310,7 +310,7 @@ export function shouldBehaveLikeERC20Transfer(
       });
 
       it("transfers the requested value", async function () {
-        await expect(ctx.tx).to.changeTokenBalances(
+        await expect(ctx.tx).to.changePSP22Balances(
           ctx.token,
           [ctx.holder.address, ctx.recipient.address],
           [new BN(0), new BN(0)]

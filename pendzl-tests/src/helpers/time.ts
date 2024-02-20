@@ -13,7 +13,7 @@ export async function getApiAt(api: ApiPromise, blockNumber: number) {
   return apiAt;
 }
 
-export async function setBlockTimestamp(api: ApiPromise, timestamp: number) {
+async function setBlockTimestamp(api: ApiPromise, timestamp: number) {
   const signer = getSigners()[0];
   if (process.env.DEBUG) console.log(`setting timestamp to: ${timestamp}`);
   await transferNoop(api);
@@ -25,7 +25,7 @@ export async function setBlockTimestamp(api: ApiPromise, timestamp: number) {
   if (timestampNowPostChange !== timestamp)
     throw new Error("Failed to set custom timestamp");
 }
-export async function increaseBlockTimestamp(
+async function increaseBlockTimestamp(
   api: ApiPromise,
   deltaTimestamp: number
 ): Promise<number> {

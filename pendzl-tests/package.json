@@ -50,11 +50,11 @@
     "rimraf": "^3.0.2",
     "ts-node": "^10.8.0",
     "typescript": "5.3.2",
-    "wookashwackomytest-polkahat-chai-matchers": "0.0.41"
+    "wookashwackomytest-polkahat-chai-matchers": "0.0.48"
   },
   "peerDependencies": {
-    "wookashwackomytest-polkahat-chai-matchers": "0.0.41",
-    "chai": "^4.2.0"
+    "chai": "^4.2.0",
+    "wookashwackomytest-polkahat-chai-matchers": "0.0.48"
   },
   "dependencies": {
     "@polkadot/api": "^10.11.2",
@@ -63,6 +63,7 @@
     "@polkadot/keyring": "^12.6.2",
     "@polkadot/types": "^10.11.2",
     "@polkadot/util": "^12.6.2",
+    "@polkadot/util-crypto": "^12.6.2",
     "@types/chai-as-promised": "^7.1.5",
     "chai-as-promised": "^7.1.1",
     "deep-eql": "^4.0.1",
