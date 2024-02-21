@@ -1,8 +1,9 @@
 import { ApiPromise } from '@polkadot/api';
-import { getLocalApiProviderWrapper } from 'tests/setup/helpers';
+import { localApi } from 'wookashwackomytest-polkahat-network-helpers';
 import TAccessControlContract from 'typechain/contracts/t_access_control';
 import TAccessControlDeployer from 'typechain/deployers/t_access_control';
-import { getSigners, shouldBehaveLikeAccessControl } from 'wookashwackomytest-pendzl-tests';
+import { shouldBehaveLikeAccessControl } from 'wookashwackomytest-pendzl-tests';
+import { getSigners } from 'wookashwackomytest-polkahat-network-helpers';
 import 'wookashwackomytest-polkahat-chai-matchers';
 
 const [defaultAdmin, ...others] = getSigners();
@@ -10,9 +11,8 @@ const [defaultAdmin, ...others] = getSigners();
 describe('AccessControl', () => {
   let api: ApiPromise;
   let accessControlMock: TAccessControlContract;
-  const apiProviderWrapper = getLocalApiProviderWrapper(9944);
   beforeEach(async () => {
-    api = await apiProviderWrapper.getAndWaitForReady();
+    api = await localApi.get();
     accessControlMock = (await new TAccessControlDeployer(api, defaultAdmin).new()).contract;
   });
 

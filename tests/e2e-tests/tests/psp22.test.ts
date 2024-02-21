@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
-import { getLocalApiProviderWrapper } from 'tests/setup/helpers';
-import { getSigners, shouldBehaveLikeERC20, shouldBehaveLikeERC20Approve, shouldBehaveLikeERC20Transfer } from 'wookashwackomytest-pendzl-tests';
+import { shouldBehaveLikeERC20, shouldBehaveLikeERC20Approve, shouldBehaveLikeERC20Transfer } from 'wookashwackomytest-pendzl-tests';
+import { getSigners, localApi } from 'wookashwackomytest-polkahat-network-helpers';
 import TPsp22Deployer from 'typechain/deployers/t_psp22';
 import TPsp22Contract from 'typechain/contracts/t_psp22';
 import type { KeyringPair } from '@polkadot/keyring/types';
@@ -32,10 +32,9 @@ describe('PSP 22', () => {
     transfer: (from: KeyringPair, to: KeyringPair, value: BN) => Promise<SignAndSendSuccessResponse>;
     approve: (holder: KeyringPair, spender: KeyringPair, value: BN) => Promise<SignAndSendSuccessResponse>;
   } = {} as any;
-  const apiProviderWrapper = getLocalApiProviderWrapper(9944);
 
   beforeEach(async () => {
-    const api = await apiProviderWrapper.getAndWaitForReady();
+    const api = await localApi.get();
     const contracts = await prepareEnvBase(api);
     ctx.initialSupply = initialSupply;
     ctx.token = contracts.tPSP22;

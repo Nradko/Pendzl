@@ -1,8 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
-import { getLocalApiProviderWrapper } from 'tests/setup/helpers';
 import 'wookashwackomytest-polkahat-chai-matchers';
 import type { SignAndSendSuccessResponse } from 'wookashwackomytest-typechain-types';
-import { getSigners } from 'wookashwackomytest-pendzl-tests';
+import { getSigners, localApi } from 'wookashwackomytest-polkahat-network-helpers';
 import TPausableDeployer from 'typechain/deployers/t_pausable';
 import TPausableContract from 'typechain/contracts/t_pausable';
 import { expect } from 'chai';
@@ -13,7 +12,7 @@ describe('Pausable', function () {
   let tPausable: TPausableContract;
   let api: ApiPromise;
   beforeEach(async function () {
-    api = await getLocalApiProviderWrapper(9944).getAndWaitForReady();
+    api = await localApi.get();
     tPausable = (await new TPausableDeployer(api, deployer).new()).contract;
   });
 

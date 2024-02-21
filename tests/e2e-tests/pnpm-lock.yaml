@@ -126,17 +126,20 @@ dependencies:
     specifier: ../../pendzl-tests
     version: link:../../pendzl-tests
   wookashwackomytest-polkahat-chai-matchers:
-    specifier: 0.0.48
-    version: 0.0.48(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
+    specifier: 0.0.49
+    version: 0.0.49(@polkadot/util-crypto@12.6.2)(chai@4.4.1)
+  wookashwackomytest-polkahat-network-helpers:
+    specifier: ^0.0.1
+    version: 0.0.1(@polkadot/util@12.6.2)
   wookashwackomytest-typechain-compiler:
-    specifier: 0.0.36
-    version: 0.0.36(@types/node@20.11.19)(typescript@5.3.2)
+    specifier: 0.0.37
+    version: 0.0.37(@types/node@20.11.19)(typescript@5.3.2)
   wookashwackomytest-typechain-polkadot:
-    specifier: 0.0.36
-    version: 0.0.36(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)(typescript@5.3.2)
+    specifier: 0.0.37
+    version: 0.0.37(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)(typescript@5.3.2)
   wookashwackomytest-typechain-types:
-    specifier: 0.0.36
-    version: 0.0.36
+    specifier: 0.0.37
+    version: 0.0.37
 
 devDependencies:
   '@types/bn.js':
@@ -2207,7 +2210,7 @@ packages:
   /@types/fs-extra@9.0.13:
     resolution: {integrity: sha512-nEnwB++1u5lVDM2UI4c1+5R+FYaKfaAzS4OococimjVm3nQw3TuzH5UNsocrcTBbhnerblyHj4A49qXbIiZdpA==}
     dependencies:
-      '@types/node': 18.19.17
+      '@types/node': 20.11.19
     dev: false
 
   /@types/glob@8.1.0:
@@ -5372,8 +5375,8 @@ packages:
       isexe: 2.0.0
     dev: false
 
-  /wookashwackomytest-polkahat-chai-matchers@0.0.48(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
-    resolution: {integrity: sha512-/5BVXD4ZIFTD6MO2vUgf8ESbcf6ifu8ykO8cqcce22B7uYeleMTGFVyZnYlbMehp1urDrJWSO9OmCgWnTaNBjQ==}
+  /wookashwackomytest-polkahat-chai-matchers@0.0.49(@polkadot/util-crypto@12.6.2)(chai@4.4.1):
+    resolution: {integrity: sha512-xxN46nv3F5tZLVGiRmt0tyip4+B2K1gJokGJOTpbjCGF0L7xdDBE7Kym9cB28OiGy0lww2roRpjf7acI0zmfiQ==}
     peerDependencies:
       chai: ^4.2.0
     dependencies:
@@ -5398,8 +5401,20 @@ packages:
       - utf-8-validate
     dev: false
 
-  /wookashwackomytest-typechain-compiler@0.0.36(@types/node@20.11.19)(typescript@5.3.2):
-    resolution: {integrity: sha512-bPDOVgfbz2djinlVsiPCpP77sGJXhC/2tR00hYqL9chO/cy70T4RH07US9kBu/WCEeqD7yGV10hb+itVGqYS5A==}
+  /wookashwackomytest-polkahat-network-helpers@0.0.1(@polkadot/util@12.6.2):
+    resolution: {integrity: sha512-+YlN0ZKuamnO2thNTDxMIOMn+57M0kGSwPiO8NMHRVZMHkw+WPRH1/+2Rref6VmRj4LDRHpwlbljUvNDH16Djw==}
+    dependencies:
+      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      wookashwackomytest-typechain-types: 0.0.30
+    transitivePeerDependencies:
+      - '@polkadot/util'
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
+
+  /wookashwackomytest-typechain-compiler@0.0.37(@types/node@20.11.19)(typescript@5.3.2):
+    resolution: {integrity: sha512-SNivQ5lEplkSUf9ni2OUI8xEME6rHBEtUH69VBUDOGtKnHwC4rf6G4Bh9KI8cSzKixkD5hGLMfyabd8wLgKELA==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
     hasBin: true
     dependencies:
@@ -5421,8 +5436,8 @@ packages:
       - typescript
     dev: false
 
-  /wookashwackomytest-typechain-polkadot-parser@0.0.36:
-    resolution: {integrity: sha512-BhUZ/tRLwRcYTFxMF1eGhIvEXQCHaeXs1Se7f3QLAqve4vH3HOgJYzeL8Wc3ljIXL44OpdbBOVCsw7I+UbPPEQ==}
+  /wookashwackomytest-typechain-polkadot-parser@0.0.37:
+    resolution: {integrity: sha512-FAT9ljQGJhf/wQ3R6Ij186mmxMNMXoOHwnRfzHhOvGt9IzFMDTqm914xKCm56XR4ZVQeJbyf4qIS2AwjOvZyug==}
     dependencies:
       '@polkadot/api': 10.11.2
       '@polkadot/api-contract': 10.11.2
@@ -5436,8 +5451,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /wookashwackomytest-typechain-polkadot@0.0.36(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)(typescript@5.3.2):
-    resolution: {integrity: sha512-BIyTGpgdlVDOLkVWR2xSHaIj9rMXowftrXa9239Vx1m8cNMTcPm/vZL3ORRrxJqDoslYS+cXm3zs6zfqCCk8gA==}
+  /wookashwackomytest-typechain-polkadot@0.0.37(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)(typescript@5.3.2):
+    resolution: {integrity: sha512-ZsdmWFZjRsabnwTWsEqV+Cd4kln9opIV8nb22VM5Dl+eKfr63QM9DTFS1cltrm7QBiF48uaoQsFk/W6AF6Ntcg==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
     hasBin: true
     dependencies:
@@ -5454,7 +5469,7 @@ packages:
       ts-node: 10.9.2(@types/node@18.19.17)(typescript@5.3.2)
       tslib: 2.6.2
       tsx: 4.7.1
-      wookashwackomytest-typechain-polkadot-parser: 0.0.36
+      wookashwackomytest-typechain-polkadot-parser: 0.0.37
       yargs: 17.7.2
     transitivePeerDependencies:
       - '@polkadot/util'
@@ -5482,8 +5497,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /wookashwackomytest-typechain-types@0.0.36:
-    resolution: {integrity: sha512-m9SgJZMc3dT+G4k1gVtBxdeM7zrfvyP26aipM2DmydMHSL4HIPFa/sqO/3b232a0NG2GhuVyidUhDIGd/1/Gfw==}
+  /wookashwackomytest-typechain-types@0.0.37:
+    resolution: {integrity: sha512-a8w2vfCx6vISMvpeJJHpQLyj8EtDSM0QzBEQkQ3C+LvUj3meUqWxpriGKxH8NxFwGCv/aoDGv63T/Js/yaKp4w==}
     dependencies:
       '@polkadot/api': 10.11.2
       '@polkadot/api-contract': 10.11.2

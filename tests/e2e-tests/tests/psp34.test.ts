@@ -1,6 +1,6 @@
 // import { ApiPromise } from '@polkadot/api';
 // import { expect } from 'chai';
-// import { getLocalApiProviderWrapper } from 'tests/setup/helpers';
+// import { getLocalApiProviderWrapper } from 'wookashwackomytest-polkahat-network-helpers';
 // import TPSP34MetadataContract from 'typechain/contracts/t_psp34_metadata';
 // import TPSP34MetadataDeployer from 'typechain/deployers/t_psp34_metadata';
 // import { getSigners, shouldBehaveLikeOwnable } from 'wookashwackomytest-pendzl-tests';

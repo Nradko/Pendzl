@@ -1,18 +1,18 @@
 import { ApiPromise } from '@polkadot/api';
 import { expect } from 'chai';
-import { getLocalApiProviderWrapper } from 'tests/setup/helpers';
+import { localApi } from 'wookashwackomytest-polkahat-network-helpers';
 import TOwnableContract from 'typechain/contracts/t_ownable';
 import TOwnableDeployer from 'typechain/deployers/t_ownable';
-import { getSigners, shouldBehaveLikeOwnable } from 'wookashwackomytest-pendzl-tests';
+import { shouldBehaveLikeOwnable } from 'wookashwackomytest-pendzl-tests';
+import { getSigners } from 'wookashwackomytest-polkahat-network-helpers';
 import 'wookashwackomytest-polkahat-chai-matchers';
 
 const [deployer, owner, ...others] = getSigners();
 describe('Ownable', () => {
   let tOwnable: TOwnableContract;
   let api: ApiPromise;
-  const apiProviderWrapper = getLocalApiProviderWrapper(9944);
   beforeEach(async () => {
-    api = await apiProviderWrapper.getAndWaitForReady();
+    api = await localApi.get();
   });
 
   shouldBehaveLikeOwnable(() => ({ ownableDeployerCall: () => new TOwnableDeployer(api, deployer).new(owner.address), owner, other: others[0] }));

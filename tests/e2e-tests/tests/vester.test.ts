@@ -1,13 +1,12 @@
 import { ApiPromise } from '@polkadot/api';
 import BN from 'bn.js';
 import { expect } from 'chai';
-import { getLocalApiProviderWrapper } from 'tests/setup/helpers';
 import TPsp22Contract from 'typechain/contracts/t_psp22';
 import TVesterContract from 'typechain/contracts/t_vester';
 import TPsp22Deployer from 'typechain/deployers/t_psp22';
 import TVesterDeployer from 'typechain/deployers/t_vester';
 import { VestingData, VestingSchedule } from 'typechain/types-arguments/t_vester';
-import { clock, duration, getSigners, time } from 'wookashwackomytest-pendzl-tests';
+import { clock, duration, getSigners, localApi, time } from 'wookashwackomytest-polkahat-network-helpers';
 import 'wookashwackomytest-polkahat-chai-matchers';
 
 const [deployer, alice, bob, charlie, dave] = getSigners();
@@ -17,9 +16,8 @@ describe('Vester', () => {
   } = {} as any;
 
   let api: ApiPromise;
-  const apiProviderWrapper = getLocalApiProviderWrapper(9944);
   beforeEach(async () => {
-    api = await apiProviderWrapper.getAndWaitForReady();
+    api = await localApi.get();
     await time.setTo(10);
     const mock = await new TVesterDeployer(api, deployer).new();
     ctx.mock = mock.contract;
