@@ -1,6 +1,6 @@
 {
   "name": "wookashwackomytest-pendzl-tests",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Utils for testing",
   "homepage": "https://github.com/TODO",
   "repository": "github:wookashwackomy/TODO",
@@ -45,17 +45,13 @@
     "@typescript-eslint/parser": "5.61.0",
     "bn.js": "^5.1.5",
     "chai": "^4.4.1",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^8.57.0",
     "mocha": "^10.3.0",
     "prettier": "2.4.1",
     "rimraf": "^3.0.2",
     "typescript": "5.3.2",
-    "wookashwackomytest-polkahat-chai-matchers": "^0.0.65"
-  },
-  "peerDependencies": {
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "wookashwackomytest-polkahat-chai-matchers": "^0.0.65"
+    "wookashwackomytest-polkahat-chai-matchers": "^0.0.66"
   },
   "dependencies": {
     "@polkadot/api": "^10.12.2",
@@ -66,7 +62,7 @@
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
     "@types/chai-as-promised": "^7.1.8",
-    "wookashwackomytest-polkahat-network-helpers": "^0.0.8",
-    "wookashwackomytest-typechain-types": "0.0.38"
+    "wookashwackomytest-polkahat-network-helpers": "^0.0.9",
+    "wookashwackomytest-typechain-types": "0.0.39"
   }
 }
