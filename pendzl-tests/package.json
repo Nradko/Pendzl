@@ -1,6 +1,6 @@
 {
   "name": "wookashwackomytest-pendzl-tests",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Utils for testing",
   "homepage": "https://github.com/TODO",
   "repository": "github:wookashwackomy/TODO",
@@ -62,7 +62,7 @@
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
     "@types/chai-as-promised": "^7.1.8",
-    "wookashwackomytest-polkahat-network-helpers": "^0.0.11",
+    "wookashwackomytest-polkahat-network-helpers": "^0.0.12",
     "wookashwackomytest-typechain-types": "^0.0.43"
   }
 }

@@ -30,11 +30,11 @@ dependencies:
     specifier: ^7.1.8
     version: 7.1.8
   wookashwackomytest-polkahat-network-helpers:
-    specifier: ^0.0.10
-    version: 0.0.10
+    specifier: ^0.0.12
+    version: 0.0.12
   wookashwackomytest-typechain-types:
-    specifier: 0.0.40
-    version: 0.0.40
+    specifier: ^0.0.43
+    version: 0.0.43
 
 devDependencies:
   '@types/bn.js':
@@ -249,6 +249,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /@polkadot/api-augment@10.12.2:
     resolution: {integrity: sha512-bIz/HVKRcL5pJCg37cnf8ApWHJbRjAQBEvCubSDOquay/i25jG6Rs97zL4ptXHsp0md/TDeUQVloF5Feqn3/iQ==}
@@ -279,6 +280,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /@polkadot/api-base@10.12.2:
     resolution: {integrity: sha512-pkK1RNG0w5seb6BDwZbVZF+Q6rm7SiSXOa2WQQR9UbjptP7eA8bRtxVSOA4fb4lxbOjJXamCFimXaNc1B1XRLA==}
@@ -311,6 +313,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /@polkadot/api-contract@10.12.2:
     resolution: {integrity: sha512-dliJoc2vgImrxrdZsbXRdNkXtaJEH4PUtpkeCcLNfxandfmaYFlEXPQjJk4T6wzIHx/VLN0jbUm+Np1UhgHQfw==}
@@ -348,6 +351,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /@polkadot/api-derive@10.12.2:
     resolution: {integrity: sha512-TWUB+V31NrzxF+Ep7GucTyV20SbP0mUvDQGEannkENCTQpbL0JXIi1PHDCBNuShzdr1m6eQ5inLx1RmxvoOfDg==}
@@ -393,6 +397,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /@polkadot/api@10.12.2:
     resolution: {integrity: sha512-A03hpnbIko6CGC3R/rQBOg0aXNR5HFkynL2t5ueqzmYbxFQWx1e8gMXbJZnbVlwtwJJ6FIxzOA6mmZQr+yiLrw==}
@@ -452,6 +457,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /@polkadot/rpc-augment@10.12.2:
     resolution: {integrity: sha512-JXifdUrt1SfCQst7E5ifNVHiroonmG6CN0rf7i2eSLJt6u4/v90RpaNogHrMumN3ZIV0cLwV19eb6tYxFQo/GA==}
@@ -481,6 +487,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /@polkadot/rpc-core@10.12.2:
     resolution: {integrity: sha512-p0caB9O8uv5aJQwmq80l3mgdIX46N4t+YVeKDcN8tSyiLJ+2xYuHAtRfklDH5OewvnYdWjzqFx1LDmXoPtFh2g==}
@@ -519,6 +526,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /@polkadot/rpc-provider@10.12.2:
     resolution: {integrity: sha512-RhGSpDRHqp0NvznmTR11aRyO99GgKeV1bFkXw8JPsvuDkazROsS2XNmNXYFt8TZYGmcBxryVOw4neEfiyXljHw==}
@@ -551,6 +559,7 @@ packages:
       '@polkadot/types-codec': 10.11.2
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
+    dev: true
 
   /@polkadot/types-augment@10.12.2:
     resolution: {integrity: sha512-g5YvuXclkefe4dqpJXWesv1ksNeSsgP2PT4qdW+atkayTiCJIFYM2m6scNn+iZ98TWx6B5OOjMUQmRgiNOrpBA==}
@@ -568,6 +577,7 @@ packages:
       '@polkadot/util': 12.6.2
       '@polkadot/x-bigint': 12.6.2
       tslib: 2.6.2
+    dev: true
 
   /@polkadot/types-codec@10.12.2:
     resolution: {integrity: sha512-9DHBVvixuc0CNTBANsxGFITWcpUxfL5whL0h/tUA3yL/kT5/3Rp3E+GgEOJhwFAwMRHlNY7ll4lA9K2h+leELQ==}
@@ -584,6 +594,7 @@ packages:
       '@polkadot/types-codec': 10.11.2
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
+    dev: true
 
   /@polkadot/types-create@10.12.2:
     resolution: {integrity: sha512-SZsnB3hePa7zQJpeCqK7rGpiptLr8BpVALU3TiXiY96Wg4aafA5pAdAz+TOp/hskQP5h9X42WdkMhkabFLtGiA==}
@@ -603,6 +614,7 @@ packages:
       '@polkadot/types-create': 10.11.2
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
+    dev: true
 
   /@polkadot/types-known@10.12.2:
     resolution: {integrity: sha512-N8V82MZMjDZVXMzyDy4HEpwr8plht5VSYY0X6OJp+TSF+Y63bxZkHwpY14vq7d8eb57Ze8A8HKTuMfaP8bPC2g==}
@@ -621,6 +633,7 @@ packages:
     dependencies:
       '@polkadot/util': 12.6.2
       tslib: 2.6.2
+    dev: true
 
   /@polkadot/types-support@10.12.2:
     resolution: {integrity: sha512-0gIbphB94dyONaq0wvPaGeQ8IMURVOURDnm8yPXvqULFjr7E0PKVgG6rHAvcRl/D7T63WqjqIih5oDAfM/1U2Q==}
@@ -641,6 +654,7 @@ packages:
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       rxjs: 7.8.1
       tslib: 2.6.2
+    dev: true
 
   /@polkadot/types@10.12.2:
     resolution: {integrity: sha512-4iSmKpJ+PtC/n4jVgqRksc4NsGCYFE79tyjrb1W9ewYaaLhAwq7MW1TZY8Em08WwCmQSjxqcp9nYCs2plAJLEA==}
@@ -819,6 +833,7 @@ packages:
   /@substrate/connect-extension-protocol@1.0.1:
     resolution: {integrity: sha512-161JhCC1csjH3GE5mPLEd7HbWtwNSPJBg3p1Ksz9SFlTzj/bgEwudiRN2y5i0MoLGCIJRYKyKGMxVnd29PzNjg==}
     requiresBuild: true
+    dev: true
     optional: true
 
   /@substrate/connect-extension-protocol@2.0.0:
@@ -840,6 +855,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    dev: true
     optional: true
 
   /@substrate/connect@0.8.7:
@@ -2024,6 +2040,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    dev: true
     optional: true
 
   /string-width@4.2.3:
@@ -2157,8 +2174,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /wookashwackomytest-polkahat-network-helpers@0.0.10:
-    resolution: {integrity: sha512-SvhmlQkHATli9ld2nqCkKmjSTEXVzIevxAQpULrf6dlj5tWj9X/6n4nqA7mOHSi+PgGWemduwwt20/fHpAxeNA==}
+  /wookashwackomytest-polkahat-network-helpers@0.0.12:
+    resolution: {integrity: sha512-jToGnSjNDVSn41hgGhcRXIrp57GDaJbGfxlOC4VALI4l8Smq+Durm424nzqUqbopXaimPDZUlKNIl5iYJn4Qhw==}
     dependencies:
       '@polkadot/api': 10.12.2
       '@polkadot/api-augment': 10.12.2
@@ -2169,7 +2186,7 @@ packages:
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       '@types/bn.js': 5.1.5
       bn.js: 5.2.1
-      wookashwackomytest-typechain-types: 0.0.40
+      wookashwackomytest-typechain-types: 0.0.43
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -2188,6 +2205,21 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
+
+  /wookashwackomytest-typechain-types@0.0.43:
+    resolution: {integrity: sha512-DAVHSp4Qv4Z3kZXGrww2tVkGYSWl35unImYkyzJ05172u7P6nWYQFxUXfOKTaWUWUo85mwYfFH6xBq5Nb8WTEA==}
+    dependencies:
+      '@polkadot/api': 10.12.2
+      '@polkadot/api-contract': 10.12.2
+      '@types/bn.js': 5.1.5
+      '@types/node': 18.19.24
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: false
 
   /workerpool@6.2.1:
     resolution: {integrity: sha512-ILEIE97kDZvF9Wb9f6h5aXK4swSlKGUcOEGiIYb2OOu/IrDU9iwj0fD//SsA6E5ibwJxpEvhullJY4Sl4GcpAw==}
