@@ -21,6 +21,19 @@ pub struct SomeStructInner {
     pub x: bool,
     pub y: u128,
 }
+#[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub struct SomeStructInnerView {
+    pub x: bool,
+    pub y: u128,
+}
+
+#[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub struct SomeStructView {
+    pub a: bool,
+    pub inner: SomeStructInnerView,
+}
 
 #[derive(Default, Debug)]
 #[pendzl::storage_item]
@@ -37,9 +50,10 @@ pub struct FlipUpgradeableStorageItem {
     pub struct_v0: SomeStruct,
 }
 
-#[pendzl::implementation(AccessControl)]
+#[pendzl::implementation(AccessControl, Upgradeable)]
 #[ink::contract]
 mod t_flipper {
+
     use crate::*;
 
     #[ink(storage)]
@@ -64,14 +78,28 @@ mod t_flipper {
                 inner: SomeStructInner { x: false, y: 42 },
             });
             Self {
-                access: Default::default(),
+                access: AccessControlData::new(Some(Self::env().caller())),
                 value: init_value,
                 upgradeable: init_upgradeable,
             }
-            // Self {
-            //     // value: init_value,
-            //     access: Default::default(),
-            // }
+        }
+
+        #[ink(message)]
+        pub fn get_val_v0(&self) -> u128 {
+            self.upgradeable.val_v0
+        }
+
+        #[ink(message)]
+        pub fn get_struct_v0(&self) -> SomeStructView {
+            let struct_v0 =
+                self.upgradeable.struct_v0.get().unwrap_or_default();
+            SomeStructView {
+                a: struct_v0.a,
+                inner: SomeStructInnerView {
+                    x: struct_v0.inner.x,
+                    y: struct_v0.inner.y,
+                },
+            }
         }
 
         #[ink(constructor)]
@@ -87,11 +115,7 @@ mod t_flipper {
         }
 
         #[ink(message)]
-        pub fn flip_and_return_value(&mut self) -> Result<u128, FlipperError> {
-            self.value = !self.value;
-            self.env().emit_event(Flipped {
-                new_value: self.value,
-            });
+        pub fn return_value(&mut self) -> Result<u128, FlipperError> {
             Ok(5)
         }
 
@@ -107,8 +131,7 @@ mod t_flipper {
 
         #[ink(message)]
         pub fn get(&self) -> bool {
-            // self.value
-            true
+            self.value
         }
     }
 }

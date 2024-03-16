@@ -20,14 +20,15 @@
     // "./examples/psp22_bare_minimum/Cargo.toml",
     // "./examples/vester_custom/ts_provider/Cargo.toml",
     // "./examples/vester_custom/vester_custom/Cargo.toml",
-    // // "./examples/psp22/Cargo.toml",
+    // "./examples/psp22/Cargo.toml",
     // "./tests/e2e-tests/contracts/t_psp34_metadata/Cargo.toml",
     // "./tests/e2e-tests/contracts/t_access_control/Cargo.toml",
     // "./tests/e2e-tests/contracts/t_pausable/Cargo.toml",
     // "./tests/e2e-tests/contracts/t_vault/Cargo.toml",
     // "./tests/e2e-tests/contracts/t_ownable/Cargo.toml",
     // "./tests/e2e-tests/contracts/t_psp22/Cargo.toml",
-    "./tests/e2e-tests/contracts/t_flipper_v0/Cargo.toml"
+    "./tests/e2e-tests/contracts/t_flipper_v0/Cargo.toml",
+    "./tests/e2e-tests/contracts/t_flipper_v1/Cargo.toml"
     // "./tests/e2e-tests/contracts/t_vester/Cargo.toml"
   ],
   "rust-analyzer.showUnlinkedFileNotification": true,
