@@ -1,2 +1,2 @@
 #[cfg(feature = "upgradeable")]
-pub mod code_hash;
+pub mod set_code_hash;
