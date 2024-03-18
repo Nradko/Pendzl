@@ -1144,36 +1144,36 @@ pub(crate) fn impl_vesting(impl_args: &mut ImplArgs) {
 pub(crate) fn impl_upgradeable(impl_args: &mut ImplArgs) {
     let storage_struct_name = impl_args.contract_name();
     let internal_default_impl = syn::parse2::<syn::ItemImpl>(quote!(
-        impl pendzl::contracts::code_hash::UpgradeableInternalDefaultImpl for #storage_struct_name {}
+        impl pendzl::contracts::set_code_hash::UpgradeableInternalDefaultImpl for #storage_struct_name {}
     ))
     .expect("Should parse");
 
     let mut internal = syn::parse2::<syn::ItemImpl>(quote!(
-        impl pendzl::contracts::code_hash::UpgradeableInternal for #storage_struct_name {
-            fn _set_code_hash(&mut self, code_hash: Hash) -> Result<(), UpgradeableError> {
-                pendzl::contracts::code_hash::UpgradeableInternalDefaultImpl::_set_code_hash_default_impl(self, code_hash)
+        impl pendzl::contracts::set_code_hash::UpgradeableInternal for #storage_struct_name {
+            fn _set_code_hash(&mut self, set_code_hash: Hash) -> Result<(), UpgradeableError> {
+                pendzl::contracts::set_code_hash::UpgradeableInternalDefaultImpl::_set_code_hash_default_impl(self, set_code_hash)
             }
         }
     ))
     .expect("Should parse");
 
     let upgradeable_default_impl = syn::parse2::<syn::ItemImpl>(quote!(
-        impl pendzl::contracts::code_hash::UpgradeableDefaultImpl for #storage_struct_name {}
+        impl pendzl::contracts::set_code_hash::UpgradeableDefaultImpl for #storage_struct_name {}
     ))
     .expect("Should parse");
 
     let mut upgradeable = syn::parse2::<syn::ItemImpl>(quote!(
-        impl pendzl::contracts::code_hash::Upgradeable for #storage_struct_name {
+        impl pendzl::contracts::set_code_hash::Upgradeable for #storage_struct_name {
             #[ink(message)]
-            fn set_code_hash(&mut self, code_hash: Hash) -> Result<(), UpgradeableError> {
-                pendzl::contracts::code_hash::UpgradeableDefaultImpl::set_code_hash_default_impl(self, code_hash)
+            fn set_code_hash(&mut self, set_code_hash: Hash) -> Result<(), UpgradeableError> {
+                pendzl::contracts::set_code_hash::UpgradeableDefaultImpl::set_code_hash_default_impl(self, set_code_hash)
             }
         }
     ))
     .expect("Should parse");
 
     let import = syn::parse2::<syn::ItemUse>(quote!(
-        pub use pendzl::contracts::code_hash::*;
+        pub use pendzl::contracts::set_code_hash::*;
     ))
     .expect("Should parse");
 
