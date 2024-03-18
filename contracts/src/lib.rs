@@ -27,5 +27,5 @@ pub use token::psp22;
 #[cfg(feature = "psp34")]
 pub use token::psp34;
 
-#[cfg(feature = "upgradeable")]
+#[cfg(feature = "set_code_hash")]
 pub use upgradeability::set_code_hash;
