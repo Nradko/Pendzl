@@ -1,17 +1,17 @@
-use super::UpgradeableError;
-use super::UpgradeableInternal;
+use super::SetCodeHashError;
+use super::SetCodeHashInternal;
 use pendzl::traits::Hash;
 
 use crate::access::ownable::OwnableInternal;
 
-pub trait UpgradeableDefaultImpl:
-    OwnableInternal + Sized + UpgradeableInternal
+pub trait SetCodeHashDefaultImpl:
+    OwnableInternal + Sized + SetCodeHashInternal
 {
     fn set_code_hash_default_impl(
         &mut self,
         code_hash: Hash,
-    ) -> Result<(), UpgradeableError> {
+    ) -> Result<(), SetCodeHashError> {
         OwnableInternal::_only_owner(self)?;
-        UpgradeableInternal::_set_code_hash(self, code_hash)
+        SetCodeHashInternal::_set_code_hash(self, code_hash)
     }
 }
