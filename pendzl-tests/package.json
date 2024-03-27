@@ -1,6 +1,9 @@
 {
   "name": "@c-forge/pendzl-tests",
   "version": "0.0.12",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Utils for testing",
   "homepage": "https://github.com/TODO",
   "repository": "github:wookashwackomy/TODO",
