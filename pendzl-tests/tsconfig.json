@@ -11,7 +11,8 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "composite": true
+    "composite": true,
+    "types": ["mocha", "node"]
   },
   "exclude": ["./dist", "./node_modules"]
 }
