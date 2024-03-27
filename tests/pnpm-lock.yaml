@@ -15,14 +15,14 @@ dependencies:
     specifier: ^0.0.22
     version: 0.0.22
   '@c-forge/typechain-compiler':
-    specifier: 0.0.53
-    version: 0.0.53(@types/node@20.11.30)(typescript@5.4.2)
+    specifier: 0.0.54
+    version: 0.0.54(@types/node@20.11.30)(typescript@5.4.2)
   '@c-forge/typechain-polkadot':
-    specifier: 0.0.53
-    version: 0.0.53(@polkadot/util-crypto@12.6.2)
+    specifier: 0.0.54
+    version: 0.0.54(@polkadot/util-crypto@12.6.2)
   '@c-forge/typechain-types':
-    specifier: 0.0.53
-    version: 0.0.53(@polkadot/util-crypto@12.6.2)
+    specifier: 0.0.54
+    version: 0.0.54(@polkadot/util-crypto@12.6.2)
   '@polkadot/api':
     specifier: ^10.12.4
     version: 10.12.4
@@ -194,8 +194,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@c-forge/typechain-compiler@0.0.53(@types/node@20.11.30)(typescript@5.4.2):
-    resolution: {integrity: sha512-gTMuZxtXV5k3VE2tCmKaBDmRA1ibde1mnCtabF0y0+WWIUOiP3Bm+PFBfDclUtwLjG+sXUH2AMAv0lARuKT4fA==}
+  /@c-forge/typechain-compiler@0.0.54(@types/node@20.11.30)(typescript@5.4.2):
+    resolution: {integrity: sha512-yWgA13edUcoAHrVYXMn13aDAHScU0+kCmIlarcceaWG5zh/TaK0mnQnGkTg4h/PrTt8mu9in474NNUg1nBO2Mg==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
     hasBin: true
     dependencies:
@@ -219,8 +219,8 @@ packages:
       - typescript
     dev: false
 
-  /@c-forge/typechain-polkadot-parser@0.0.53:
-    resolution: {integrity: sha512-D3PPF0Req4p7lSLkVPl20gSFAKP/izCt2Qcvd3kobIMz9PaH1Sq4lwowGCUu4XEC/nhD1x1CJ2+qkth+TS1RMA==}
+  /@c-forge/typechain-polkadot-parser@0.0.54:
+    resolution: {integrity: sha512-PwqNpvFgQOG8QHcH9TTIfiYtbza/Rdxf0jHH72EFKjF7y0c/UbP03oIfPChSMpn0Lp+eGX6qSrxlsj/YGpIMEQ==}
     dependencies:
       '@polkadot/api': 10.12.4
       '@polkadot/api-contract': 10.12.4
@@ -236,13 +236,13 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@c-forge/typechain-polkadot@0.0.53(@polkadot/util-crypto@12.6.2):
-    resolution: {integrity: sha512-f0SDO6s6JBabmEFKkRjMEFDjCrW2Xfoupn+EgMaLdCVY0d57dnGV58DE5F3+Y7E1DL0hFE3XBX5Igcuqro5YRQ==}
+  /@c-forge/typechain-polkadot@0.0.54(@polkadot/util-crypto@12.6.2):
+    resolution: {integrity: sha512-v+Rd4e6CkJnyo37iNKsDREc4Jr6+F4erYxF4BBR1si7DSQIXWCHjODeNlgHXkSTgcaCuPMAUHEsVvo4imtUf8A==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
     hasBin: true
     dependencies:
-      '@c-forge/typechain-polkadot-parser': 0.0.53
-      '@c-forge/typechain-types': 0.0.53(@polkadot/util-crypto@12.6.2)
+      '@c-forge/typechain-polkadot-parser': 0.0.54
+      '@c-forge/typechain-types': 0.0.54(@polkadot/util-crypto@12.6.2)
       '@polkadot/api': 10.12.4
       '@polkadot/api-contract': 10.12.4
       '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
@@ -302,8 +302,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@c-forge/typechain-types@0.0.53(@polkadot/util-crypto@12.6.2):
-    resolution: {integrity: sha512-QxXt1vCY8TM+gh4hDYk9NWHD65ZOf5UI7Qi23olc+Kx+hVGxHfnHgTUhux1Vj67Vc4yHv2jVibRfj2JIMNZTgw==}
+  /@c-forge/typechain-types@0.0.54(@polkadot/util-crypto@12.6.2):
+    resolution: {integrity: sha512-V+b6jYB3qkcEmHuWzn/9ikSTWqatYAXJg5punlZEi0dG8FJnvzyY+uXw5+AlC4U7ix1NPlEfTWPiXm/l3vtHFA==}
     dependencies:
       '@polkadot/api': 10.12.4
       '@polkadot/api-contract': 10.12.4

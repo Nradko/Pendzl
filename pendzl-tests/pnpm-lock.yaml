@@ -9,8 +9,8 @@ dependencies:
     specifier: ^0.0.22
     version: 0.0.22
   '@c-forge/typechain-types':
-    specifier: ^0.0.53
-    version: 0.0.53(@polkadot/util-crypto@12.6.2)
+    specifier: ^0.0.54
+    version: 0.0.54(@polkadot/util-crypto@12.6.2)
   '@polkadot/api':
     specifier: ^10.12.4
     version: 10.12.4
@@ -172,8 +172,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@c-forge/typechain-types@0.0.53(@polkadot/util-crypto@12.6.2):
-    resolution: {integrity: sha512-QxXt1vCY8TM+gh4hDYk9NWHD65ZOf5UI7Qi23olc+Kx+hVGxHfnHgTUhux1Vj67Vc4yHv2jVibRfj2JIMNZTgw==}
+  /@c-forge/typechain-types@0.0.54(@polkadot/util-crypto@12.6.2):
+    resolution: {integrity: sha512-V+b6jYB3qkcEmHuWzn/9ikSTWqatYAXJg5punlZEi0dG8FJnvzyY+uXw5+AlC4U7ix1NPlEfTWPiXm/l3vtHFA==}
     dependencies:
       '@polkadot/api': 10.12.4
       '@polkadot/api-contract': 10.12.4

@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "@c-forge/polkahat-network-helpers": "^0.0.22",
-    "@c-forge/typechain-types": "^0.0.53",
+    "@c-forge/typechain-types": "^0.0.54",
     "@polkadot/api": "^10.12.4",
     "@polkadot/api-augment": "^10.12.4",
     "@polkadot/api-contract": "^10.12.4",
