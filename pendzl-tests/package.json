@@ -1,6 +1,6 @@
 {
   "name": "@c-forge/pendzl-tests",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "publishConfig": {
     "access": "public"
   },
@@ -9,8 +9,8 @@
   "repository": "github:wookashwackomy/TODO",
   "author": "",
   "license": "MIT",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "smart-contracts",
     "polkadot",
