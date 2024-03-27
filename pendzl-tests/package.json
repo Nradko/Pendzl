@@ -1,6 +1,6 @@
 {
   "name": "@c-forge/pendzl-tests",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "publishConfig": {
     "access": "public"
   },
@@ -29,6 +29,7 @@
     "clean": "rimraf dist internal types *.{d.ts,js}{,.map} build-test tsconfig.tsbuildinfo"
   },
   "files": [
+    "index.ts",
     "dist/",
     "dist/*.d.ts",
     "dist/*.js",
