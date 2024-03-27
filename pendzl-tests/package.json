@@ -1,6 +1,6 @@
 {
   "name": "@c-forge/pendzl-tests",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "publishConfig": {
     "access": "public"
   },
@@ -45,9 +45,9 @@
   ],
   "dependencies": {
     "@types/mocha": "^10.0.6",
-    "@c-forge/polkahat-chai-matchers": "^0.0.73",
-    "@c-forge/polkahat-network-helpers": "^0.0.22",
-    "@c-forge/typechain-types": "^0.0.54",
+    "@c-forge/polkahat-chai-matchers": "^0.0.74",
+    "@c-forge/polkahat-network-helpers": "^0.0.74",
+    "@c-forge/typechain-types": "^0.0.55",
     "@polkadot/api": "^10.12.4",
     "@polkadot/api-augment": "^10.12.4",
     "@polkadot/api-contract": "^10.12.4",

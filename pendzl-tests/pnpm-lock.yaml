@@ -6,14 +6,14 @@ settings:
 
 dependencies:
   '@c-forge/polkahat-chai-matchers':
-    specifier: ^0.0.73
-    version: 0.0.73(@polkadot/util-crypto@12.6.2)
+    specifier: ^0.0.74
+    version: 0.0.74(@polkadot/util-crypto@12.6.2)
   '@c-forge/polkahat-network-helpers':
-    specifier: ^0.0.22
-    version: 0.0.22
+    specifier: ^0.0.74
+    version: 0.0.74
   '@c-forge/typechain-types':
-    specifier: ^0.0.54
-    version: 0.0.54(@polkadot/util-crypto@12.6.2)
+    specifier: ^0.0.55
+    version: 0.0.55(@polkadot/util-crypto@12.6.2)
   '@polkadot/api':
     specifier: ^10.12.4
     version: 10.12.4
@@ -88,10 +88,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /@c-forge/polkahat-chai-matchers@0.0.73(@polkadot/util-crypto@12.6.2):
-    resolution: {integrity: sha512-Z+IMMRQEnycPXcKJaaS3+UmgS6lkyzvZlMIkYGPAlQ/mjeyHFYpXhkY26gZN0qoEGPl3arZ3xKgumoIEyZAvpw==}
+  /@c-forge/polkahat-chai-matchers@0.0.74(@polkadot/util-crypto@12.6.2):
+    resolution: {integrity: sha512-FtUaLmM/2dc/MBYbkzk6Z269YJsi9PhoeBFGK+Q0XFu8CClDWpzJROKCEcOvgopeBqqPrr7+aJdGi6s2njRCXQ==}
     dependencies:
-      '@c-forge/typechain-types': 0.0.52(@polkadot/util-crypto@12.6.2)
+      '@c-forge/typechain-types': 0.0.55(@polkadot/util-crypto@12.6.2)
       '@polkadot/api': 10.12.4
       '@polkadot/api-augment': 10.12.4
       '@polkadot/api-contract': 10.12.4
@@ -113,10 +113,10 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@c-forge/polkahat-network-helpers@0.0.22:
-    resolution: {integrity: sha512-ITnxDqNEqhFmk7ZzLBH4xxFWGahW/hIdxeJ+W1X7YT8s1FgtVdCzgGZinr0NBmL/6i+GAg4vxSjQ7xWzQS71Gg==}
+  /@c-forge/polkahat-network-helpers@0.0.74:
+    resolution: {integrity: sha512-sgfWxNB1nEDHDLaIMWsmnd0h1qZ+e4mVj7sK/dvkogJCjf3PCgVWQeTHLUqj41rm5Rj0PdKE4VPm4gYoE4TA2A==}
     dependencies:
-      '@c-forge/typechain-types': 0.0.51(@polkadot/util-crypto@12.6.2)
+      '@c-forge/typechain-types': 0.0.55(@polkadot/util-crypto@12.6.2)
       '@polkadot/api': 10.12.4
       '@polkadot/api-augment': 10.12.4
       '@polkadot/api-contract': 10.12.4
@@ -132,46 +132,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@c-forge/typechain-types@0.0.51(@polkadot/util-crypto@12.6.2):
-    resolution: {integrity: sha512-qQd02wthF0Nc9Fm8D2VY2t9d8XjbGDXTESZ2zjNm5QqR09D9RjQFiZxhHup5Vg53JTi5RBGLFnkXWF8DS/Vb/g==}
-    dependencies:
-      '@polkadot/api': 10.12.4
-      '@polkadot/api-contract': 10.12.4
-      '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
-      '@polkadot/types': 10.12.4
-      '@polkadot/types-codec': 10.12.4
-      '@polkadot/util': 12.6.2
-      '@types/bn.js': 5.1.5
-      '@types/node': 18.19.24
-      tslib: 2.6.2
-    transitivePeerDependencies:
-      - '@polkadot/util-crypto'
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /@c-forge/typechain-types@0.0.52(@polkadot/util-crypto@12.6.2):
-    resolution: {integrity: sha512-MBJDRaMTxEWUfd4l8cRsKy8byuyBgsag1HS465P1oC8rOMBnopRrRRkRqF7JVdg6+eLI4rZbpMXI3y2KDS2d6Q==}
-    dependencies:
-      '@polkadot/api': 10.12.4
-      '@polkadot/api-contract': 10.12.4
-      '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2)(@polkadot/util@12.6.2)
-      '@polkadot/types': 10.12.4
-      '@polkadot/types-codec': 10.12.4
-      '@polkadot/util': 12.6.2
-      '@types/bn.js': 5.1.5
-      '@types/node': 18.19.26
-      tslib: 2.6.2
-    transitivePeerDependencies:
-      - '@polkadot/util-crypto'
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /@c-forge/typechain-types@0.0.54(@polkadot/util-crypto@12.6.2):
-    resolution: {integrity: sha512-V+b6jYB3qkcEmHuWzn/9ikSTWqatYAXJg5punlZEi0dG8FJnvzyY+uXw5+AlC4U7ix1NPlEfTWPiXm/l3vtHFA==}
+  /@c-forge/typechain-types@0.0.55(@polkadot/util-crypto@12.6.2):
+    resolution: {integrity: sha512-xkCuOeUP52iWtaS5My8HUiSoxZeLfx+PKqdWp8faJBOmYUTXEwNCkktFv2dUYhKtwejuB/CE6XpeEIv8ln/7Uw==}
     dependencies:
       '@polkadot/api': 10.12.4
       '@polkadot/api-contract': 10.12.4
@@ -839,12 +801,6 @@ packages:
 
   /@types/node@16.18.89:
     resolution: {integrity: sha512-QlrE8QI5z62nfnkiUZysUsAaxWaTMoGqFVcB3PvK1WxJ0c699bacErV4Fabe9Hki6ZnaHalgzihLbTl2d34XfQ==}
-    dev: false
-
-  /@types/node@18.19.24:
-    resolution: {integrity: sha512-eghAz3gnbQbvnHqB+mgB2ZR3aH6RhdEmHGS48BnV75KceQPHqabkxKI0BbUSsqhqy2Ddhc2xD/VAR9ySZd57Lw==}
-    dependencies:
-      undici-types: 5.26.5
     dev: false
 
   /@types/node@18.19.26:

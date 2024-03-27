@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@c-forge/pendzl-tests": "link:../pendzl-tests",
-    "@c-forge/polkahat-chai-matchers": "0.0.73",
-    "@c-forge/polkahat-network-helpers": "^0.0.22",
+    "@c-forge/polkahat-chai-matchers": "0.0.74",
+    "@c-forge/polkahat-network-helpers": "^0.0.74",
     "@c-forge/typechain-compiler": "0.0.54",
     "@c-forge/typechain-polkadot": "0.0.54",
     "@c-forge/typechain-types": "0.0.54",
